@@ -66,6 +66,10 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div><div class="greeting" id="greeting">DOBRO DOŠLI</div><div class="time" id="clock">--:--:--</div><div class="date" id="date">Učitavanje datuma…</div></div>
  <div class="clockright"><div class="location" id="location">Određivanje lokacije…</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
 </section>
+ <section class="panel" data-id="search">
+ <h2>🔎 PRETRAGA</h2>
+ <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
+</section>
 <section class="panel">
  <h2>🌤 VREMENSKA PROGNOZA <span class="muted" id="weather-place" style="font-size:12px;font-weight:400"></span><a id="omlink" class="omlink" href="#" target="_blank" rel="noopener" title="Prognoza na Google-u">↗ Google Prognoza</a></h2>
  <div class="weather-now wclick" title="Klikni za detaljnu prognozu"><div class="weather-icon" id="wicon">🌤️</div><div><div class="temp" id="temp">--°</div><div class="weather-desc" id="wdesc">Učitavanje prognoze…</div></div></div>
@@ -106,10 +110,6 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="linkgrid" id="linkgrid"></div>
  <div class="eventrow" style="flex-wrap:wrap"><input id="linkname" class="field" placeholder="Naziv" style="max-width:130px"><input id="linkurl" class="field" placeholder="Sajt ili aplikacija (gmail.com, spotify:)" style="min-width:150px"><button id="linkadd" class="primary">Dodaj</button></div>
  <div class="muted" style="font-size:11px;margin-top:8px">Za aplikacije koristi njihovu šemu: spotify:, viber://, tel:+381…, mailto:…</div>
-</section>
-<section class="panel" data-id="search">
- <h2>🔎 PRETRAGA</h2>
- <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
 </section>
 <section class="panel" data-id="todo">
  <h2>✅ ZADACI <span class="muted" id="todocount" style="font-size:12px;font-weight:400"></span></h2>
