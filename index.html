@@ -247,7 +247,7 @@ main.addEventListener('drop',e=>{e.preventDefault();const o=e.target.closest('.p
 main.addEventListener('dragend',()=>{document.querySelectorAll('.dragging,.dragover').forEach(x=>x.classList.remove('dragging','dragover'));drag=null});
 $('editlayout').onclick=()=>{const on=document.body.classList.toggle('editing');$('editlayout').classList.toggle('active',on);$('editlayout').textContent=on?'✓ Gotovo':'✥ Raspored';$('resetlayout').style.display=on?'':'none';$('addbar').style.display=on?'flex':'none';[...main.children].forEach(p=>p.draggable=on)};
 $('resetlayout').onclick=()=>{lay={order:DEF,wide:['clock'],hidden:[]};applyLayout();saveLayout()};
-/* ===== YouTube mini plejer sa pretragom ===== */
+/* ===== YouTube mini plejer sa stabilnom pretragom ===== */
 let ytFail=0,yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
 
 // Prikaz liste sačuvanih/pronađenih pesama
@@ -276,44 +276,16 @@ window.onYouTubeIframeAPIReady=()=>{
 
 {const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
 
-// Funkcija za pretragu pesama preko javnog API-ja umesto lepljenja linka
-$('ytsearchbtn').onclick=async()=>{
+// Stabilna pretraga koja otvara YouTube pretragu na klik
+$('ytsearchbtn').onclick=()=>{
     const q=$('ytquery').value.trim();
     if(!q)return;
-    $('yterr').textContent='Pretraga u toku...';
     
-    try{
-        let res=await fetch(`https://vid.puffyan.us/api/v1/search?q=${encodeURIComponent(q)}&type=video`);
-        if(!res.ok)throw new Error('Greška');
-        let data=await res.json();
-        
-        if(!data.length){
-            $('yterr').textContent='Nema rezultata.';
-            return;
-        }
-        
-        $('yterr').textContent='';
-        // Prikazujemo prvih 6 rezultata pretrage u listi
-        $('ytlist').innerHTML=data.slice(0,6).map((vid,i)=>`
-            <div class="ytrow" onclick="playSearchedVideo('${vid.videoId}', '${vid.title.replace(/'/g, "\\'")}')">
-                <span>🎵 ${vid.title}</span>
-                <button class="primary" style="padding:2px 8px;font-size:11px">Dodaj i pusti</button>
-            </div>
-        `).join('');
-    }catch(err){
-        $('yterr').innerHTML=`Pretraga direktno na YouTube-u: <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc">Otvori rezultate ↗</a>`;
-    }
-};
-
-// Pomoćna funkcija kada klikneš na pesmu iz rezultata pretrage
-window.playSearchedVideo=(id,title)=>{
-    const item={t:'v',id:id,title:title};
-    ytList.unshift(item); // dodaje na vrh liste
-    if(ytList.length>20)ytList.pop(); // ograničenje na max 20 u istoriji
-    sv('atmosYT',ytList);
-    drawYT();
-    ytPlay(0);
-    $('ytquery').value='';
+    // Prikazuje poruku sa linkom ka rezultatima
+    $('yterr').innerHTML=`Rezultati pretrage za "<b>${q}</b>": <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc; font-weight:bold;">Otvori na YouTube-u ↗</a>`;
+    
+    // Automatski otvara pretragu u novom tabu
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank', 'noopener');
 };
 
 // Podrška za Enter taster u polju za pretragu
