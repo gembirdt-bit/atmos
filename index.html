@@ -247,23 +247,102 @@ main.addEventListener('drop',e=>{e.preventDefault();const o=e.target.closest('.p
 main.addEventListener('dragend',()=>{document.querySelectorAll('.dragging,.dragover').forEach(x=>x.classList.remove('dragging','dragover'));drag=null});
 $('editlayout').onclick=()=>{const on=document.body.classList.toggle('editing');$('editlayout').classList.toggle('active',on);$('editlayout').textContent=on?'✓ Gotovo':'✥ Raspored';$('resetlayout').style.display=on?'':'none';$('addbar').style.display=on?'flex':'none';[...main.children].forEach(p=>p.draggable=on)};
 $('resetlayout').onclick=()=>{lay={order:DEF,wide:['clock'],hidden:[]};applyLayout();saveLayout()};
-/* ===== YouTube mini plejer ===== */
+/* ===== YouTube mini plejer sa pretragom ===== */
 let ytFail=0,yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
-function ytParse(u){u=u.trim();try{const x=new URL(u),l=x.searchParams.get('list'),v=x.searchParams.get('v')||(x.hostname==='youtu.be'?x.pathname.slice(1):'')||(x.pathname.match(/\/(?:embed|shorts|live)\/([\w-]{11})/)||[])[1];if(v&&/^[\w-]{11}$/.test(v))return{t:'v',id:v};if(l)return{t:'p',id:l}}catch{}return /^[\w-]{11}$/.test(u)?{t:'v',id:u}:null}
-function drawYT(){$('ytlist').innerHTML=ytList.length?ytList.map((s,i)=>`<div class="ytrow${i===ytIdx?' on':''}" data-p="${i}"><span>${s.t==='p'?'📃':'🎵'} ${esc(s.title)}</span><button data-d="${i}">×</button></div>`).join(''):'<div class="muted" style="font-size:13px">Lista je prazna.</div>'}
-function ytPlay(i){if(!ytReady||!ytList[i])return;ytIdx=i;const s=ytList[i];if(s.t==='p')yt.loadPlaylist({list:s.id,listType:'playlist'});else yt.loadVideoById(s.id);$('ytname').textContent=s.title;drawYT()}
+
+// Prikaz liste sačuvanih/pronađenih pesama
+function drawYT(){
+    $('ytlist').innerHTML=ytList.length?ytList.map((s,i)=>`<div class="ytrow${i===ytIdx?' on':''}" data-p="${i}"><span>🎵 ${esc(s.title)}</span><button data-d="${i}">×</button></div>`).join(''):'<div class="muted" style="font-size:13px">Lista je prazna.</div>';
+}
+
+function ytPlay(i){
+    if(!ytReady||!ytList[i])return;
+    ytIdx=i;
+    const s=ytList[i];
+    yt.loadVideoById(s.id);
+    $('ytname').textContent=s.title;
+    drawYT();
+}
+
 function ytStep(d){if(!ytList.length)return;ytPlay((ytIdx+d+ytList.length)%ytList.length)}
-window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{onReady:()=>{ytReady=true;ytNote()},onError:ytErr,onStateChange:e=>{if(e.data===1){ytFail=0;$('yterr').textContent=''}if(e.data!==0)return;const s=ytList[ytIdx];if(s&&s.t==='p'){const n=(yt.getPlaylist()||[]).length;if(yt.getPlaylistIndex()<n-1)return}ytStep(1)}}})};
+
+window.onYouTubeIframeAPIReady=()=>{
+    yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{
+        onReady:()=>{ytReady=true;ytNote()},
+        onError:ytErr,
+        onStateChange:e=>{if(e.data===1){ytFail=0;$('yterr').textContent=''}if(e.data===0)ytStep(1)}
+    }})
+};
+
 {const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
-$('ytadd').onclick=async()=>{const p=ytParse($('yturl').value);if(!p)return alert('Nevažeći YouTube link.');$('yturl').value='';const item={...p,title:p.t==='p'?'YouTube plejlista':'YouTube '+p.id};ytList.push(item);sv('atmosYT',ytList);drawYT();if(p.t==='v'){try{const r=await fetch('https://noembed.com/json?url='+encodeURIComponent('https://www.youtube.com/watch?v='+p.id));const j=await r.json();if(j.title){item.title=j.title;sv('atmosYT',ytList);drawYT()}}catch{}}};
-$('yturl').onkeydown=e=>{if(e.key==='Enter')$('ytadd').click()};
-$('ytlist').onclick=e=>{const d=e.target.dataset.d;if(d!==undefined){ytList.splice(+d,1);if(ytIdx>=+d)ytIdx--;sv('atmosYT',ytList);drawYT();return}const r=e.target.closest('[data-p]');if(r)ytPlay(+r.dataset.p)};
-$('ytprev').onclick=()=>ytStep(-1);$('ytnext').onclick=()=>ytStep(1);
+
+// Funkcija za pretragu pesama preko javnog API-ja umesto lepljenja linka
+$('ytsearchbtn').onclick=async()=>{
+    const q=$('ytquery').value.trim();
+    if(!q)return;
+    $('yterr').textContent='Pretraga u toku...';
+    
+    try{
+        let res=await fetch(`https://vid.puffyan.us/api/v1/search?q=${encodeURIComponent(q)}&type=video`);
+        if(!res.ok)throw new Error('Greška');
+        let data=await res.json();
+        
+        if(!data.length){
+            $('yterr').textContent='Nema rezultata.';
+            return;
+        }
+        
+        $('yterr').textContent='';
+        // Prikazujemo prvih 6 rezultata pretrage u listi
+        $('ytlist').innerHTML=data.slice(0,6).map((vid,i)=>`
+            <div class="ytrow" onclick="playSearchedVideo('${vid.videoId}', '${vid.title.replace(/'/g, "\\'")}')">
+                <span>🎵 ${vid.title}</span>
+                <button class="primary" style="padding:2px 8px;font-size:11px">Dodaj i pusti</button>
+            </div>
+        `).join('');
+    }catch(err){
+        $('yterr').innerHTML=`Pretraga direktno na YouTube-u: <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc">Otvori rezultate ↗</a>`;
+    }
+};
+
+// Pomoćna funkcija kada klikneš na pesmu iz rezultata pretrage
+window.playSearchedVideo=(id,title)=>{
+    const item={t:'v',id:id,title:title};
+    ytList.unshift(item); // dodaje na vrh liste
+    if(ytList.length>20)ytList.pop(); // ograničenje na max 20 u istoriji
+    sv('atmosYT',ytList);
+    drawYT();
+    ytPlay(0);
+    $('ytquery').value='';
+};
+
+// Podrška za Enter taster u polju za pretragu
+$('ytquery').onkeydown=e=>{if(e.key==='Enter')$('ytsearchbtn').click()};
+
+$('ytlist').onclick=e=>{
+    const d=e.target.dataset.d;
+    if(d!==undefined){ytList.splice(+d,1);if(ytIdx>=+d)ytIdx--;sv('atmosYT',ytList);drawYT();return}
+    const r=e.target.closest('[data-p]');
+    if(r)ytPlay(+r.dataset.p);
+};
+
+$('ytprev').onclick=()=>ytStep(-1);
+$('ytnext').onclick=()=>ytStep(1);
 $('ytplay').onclick=()=>{if(!ytReady)return;if(ytIdx<0)return ytPlay(0);yt.getPlayerState()===1?yt.pauseVideo():yt.playVideo()};
 $('ytmini').onclick=()=>$('ytwrap').classList.toggle('mini');
+
 function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica je otvorena sa diska (file://) — YouTube tada često odbija ugrađeni plejer (greška 153). Pokreni je preko http://localhost ili sa hostinga; do tada koristi „↗ YouTube".'}
-function ytErr(e){const m={2:'Neispravan link.',5:'Greška HTML5 plejera.',100:'Video nije dostupan ili je obrisan.',101:'Vlasnik ne dozvoljava ugrađeni plejer.',150:'Vlasnik ne dozvoljava ugrađeni plejer.',153:'YouTube nije dobio adresu stranice (tipično kad je fajl otvoren sa diska).'};$('yterr').textContent='⚠ Greška '+e.data+': '+(m[e.data]||'nepoznata greška')+(e.data===153?' Pokreni preko http://localhost ili hostinga, ili koristi „↗ YouTube".':' Probaj „↗ YouTube".');if([100,101,150].includes(e.data)&&ytList.length>1&&++ytFail<ytList.length)setTimeout(()=>ytStep(1),1200)}
-$('ytopen').onclick=()=>{const t=ytList[ytIdx];window.open(!t?'https://www.youtube.com':t.t==='p'?'https://www.youtube.com/playlist?list='+t.id:'https://www.youtube.com/watch?v='+t.id,'_blank','noopener')};
+
+function ytErr(e){
+    const m={2:'Neispravan link.',5:'Greška HTML5 plejera.',100:'Video nije dostupan ili je obrisan.',101:'Vlasnik ne dozvoljava ugrađeni plejer.',150:'Vlasnik ne dozvoljava ugrađeni plejer.',153:'YouTube nije dobio adresu stranice.'};
+    $('yterr').textContent='⚠ Greška '+e.data+': '+(m[e.data]||'nepoznata greška');
+}
+
+$('ytopen').onclick=()=>{
+    const t=ytList[ytIdx];
+    window.open(!t?'https://www.youtube.com':'https://www.youtube.com/watch?v='+t.id,'_blank','noopener');
+};
+
 drawYT();
 /* ===== brzi linkovi ===== */
 let links=ls('atmosLinks',[{n:'Gmail',u:'https://mail.google.com'},{n:'YouTube',u:'https://www.youtube.com'},{n:'Google Maps',u:'https://maps.google.com'},{n:'Google Drive',u:'https://drive.google.com'}]);
