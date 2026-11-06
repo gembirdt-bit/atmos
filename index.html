@@ -33,9 +33,8 @@ audio{width:100%;margin-top:12px;height:38px}
 .media-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.filelabel{display:inline-block;padding:10px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#ffffff12}.filelabel input{display:none}
 
 .panel{position:relative}.panel.wide{grid-column:1/-1}
-.tools{display:none;position:absolute;top:-15px;right:16px;gap:4px;z-index:3;background:#101827;border:1px solid var(--line);border-radius:12px;padding:3px}
-.tools button{padding:3px 10px;font-size:13px;border-radius:9px}
-body.editing .tools{display:flex}body.editing .panel{outline:2px dashed #7dd3fc99;outline-offset:3px;cursor:grab}
+.panel-tools{display:none;position:absolute;top:15px;right:20px;gap:6px;z-index:3}.panel-tools button{padding:4px 10px;font-size:12px;background:rgba(0,0,0,0.6);border:1px solid var(--line);border-radius:8px}
+body.editing .panel-tools{display:flex}body.editing .panel{outline:2px dashed #7dd3fc99;outline-offset:3px;cursor:grab}
 .panel.dragging{opacity:.35}.panel.dragover{outline:2px solid #fbbf24!important}
 .linkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:14px}.lnk{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:14px;background:#ffffff0c;color:#fff;text-decoration:none;font-size:12px;text-align:center;word-break:break-word}.lnk:hover{background:#ffffff1f}.lnk img{width:32px;height:32px;border-radius:8px}.lnk .em{font-size:28px;line-height:32px}.lnk .x{position:absolute;top:3px;right:3px;padding:0 6px;font-size:12px;border-radius:8px;opacity:.5}
 .panel.off{display:none!important}select.field option{color:#000}textarea.field{width:100%;min-height:150px;resize:vertical}
@@ -63,14 +62,17 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <header><div class="brand">ATMOS<span>•</span></div><div class="topright"><span id="bgstatus">Pozadina se menja na 10 min</span><button id="resetlayout" style="display:none">↺ Reset</button><button id="installbtn" title="Instaliraj kao aplikaciju">⬇ Instaliraj</button><button id="editlayout">✥ Raspored</button><button id="fullscreen">⛶ Ekran</button><button id="settingsbtn" title="Podešavanja" aria-label="Podešavanja">⚙</button></div></header><div id="addbar"></div>
 <main id="main">
 <section class="panel clock wide" data-id="clock">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <div><div class="greeting" id="greeting">DOBRO DOŠLI</div><div class="time" id="clock">--:--:--</div><div class="date" id="date">Učitavanje datuma…</div></div>
  <div class="clockright"><div class="location" id="location">Određivanje lokacije…</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
 </section>
 <section class="panel" data-id="search">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🔎 PRETRAGA</h2>
  <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
 </section>
 <section class="panel" data-id="weather">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🌤 VREMENSKA PROGNOZA <span class="muted" id="weather-place" style="font-size:12px;font-weight:400"></span><a id="omlink" class="omlink" href="#" target="_blank" rel="noopener" title="Prognoza na Google-u">↗ Google Prognoza</a></h2>
  <div class="weather-now wclick" title="Klikni za detaljnu prognozu"><div class="weather-icon" id="wicon">🌤️</div><div><div class="temp" id="temp">--°</div><div class="weather-desc" id="wdesc">Učitavanje prognoze…</div></div></div>
  <div class="weather-meta"><span id="feels">Osećaj: --</span><span id="wind">Vetar: --</span><span id="humidity">Vlažnost: --</span></div>
@@ -78,6 +80,7 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button id="locate" class="primary">📍 Moja lokacija</button><input id="city" class="field" placeholder="Unesi grad (npr. Novi Sad)" style="flex:1;min-width:130px"><button id="citybtn">Prikaži</button></div>
 </section>
 <section class="panel" data-id="radio">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>📻 RADIO STANICE SRBIJE</h2>
  <div class="muted" style="font-size:12px;margin:-8px 0 12px">Izbor popularnih stanica · streamovi se učitavaju iz javnog radio direktorijuma</div>
  <div class="radio-list" id="stations"><div class="muted">Učitavanje radio stanica…</div></div>
@@ -86,59 +89,70 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div style="font-size:11px;color:#aebdce;margin-top:8px">Ako neka stanica ne radi, moguće je da je njen stream privremeno nedostupan ili ograničen od strane emitera.</div>
 </section>
 <section class="panel wide" data-id="photos">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🖼 FOTO-SLAJDER</h2>
  <div class="photo-stage anim-fade" id="photoStage"><div class="photo-caption" id="photoCaption">Dodajte fotografije za prikaz</div></div>
  <div class="photo-controls" id="photoControls"><button id="photoPrev">‹</button><button id="photoPlay" class="primary">▶ Pokreni</button><button id="photoNext">›</button><span class="photo-count" id="photoCount">0 / 0</span><select id="photoAnim" class="field"><option value="fade">Fade</option><option value="slide">Slide</option><option value="zoom">Zoom</option><option value="ken">Ken Burns</option></select><select id="photoSpeed" class="field"><option value="3">3 sek</option><option value="5" selected>5 sek</option><option value="8">8 sek</option><option value="12">12 sek</option></select><button id="photoPick">📁 Izaberi folder</button><button id="photoGrant" class="primary" style="display:none">🔓 Dozvoli pristup folderu</button></div>
  <div class="muted" id="photoNote" style="font-size:11px;margin-top:8px">Slike se čitaju direktno iz izabranog foldera na disku — ništa se ne kopira niti otprema. Nove slike u folderu pojavljuju se same.</div>
 </section>
 <section class="panel" data-id="calendar">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <div class="calendar-head"><h2 style="margin:0">🗓 KALENDAR</h2><div style="display:flex;gap:6px"><button id="prev">‹</button><div class="month" id="month"></div><button id="next">›</button></div></div>
  <div class="calgrid" id="cal"></div>
  <div class="eventarea"><strong id="selectedlabel">Događaji</strong><div id="events" class="muted" style="font-size:13px;margin-top:7px">Nema dodatih događaja.</div>
  <div class="eventrow"><input id="eventtext" class="field" placeholder="Novi događaj…"><button id="addevent" class="primary">Dodaj</button></div></div>
 </section>
 <section class="panel" data-id="alarm">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>⏰ ALARM</h2><div class="alarmrow"><input id="alarmtime" class="field" type="time"><input id="alarmname" class="field" placeholder="Naziv alarma" style="flex:1;min-width:110px"><button id="setalarm" class="primary">Podesi alarm</button></div>
  <div class="alarmnext" id="alarmnext">Sledeći alarm: <strong>nije podešen</strong></div><div style="display:flex;gap:8px;margin-top:12px"><button id="cancelalarm">Otkaži alarm</button><button id="silence" style="display:none">Isključi zvuk</button></div>
  <div class="muted" style="font-size:11px;margin-top:12px">Alarm radi dok je ova stranica otvorena i uređaj nije u režimu spavanja. Ne čita alarme iz sistemske Clock aplikacije.</div>
 </section>
 <section class="panel" data-id="media">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🎵 MEDIA PLEJER</h2><div class="media-controls"><label class="filelabel">＋ Audio fajlovi<input type="file" id="musicfile" accept="audio/*" multiple></label><label class="filelabel">📁 Ceo folder<input type="file" id="musicfolder" webkitdirectory multiple></label></div><div class="muted" id="musicname" style="font-size:12px;margin-top:10px">Nije izabran fajl</div><audio id="musicaudio" controls></audio><div class="media-controls" style="margin-top:10px"><button id="mprev">⏮</button><button id="mnext">⏭</button><button id="mshuf" title="Nasumično">🔀</button><button id="mloop" title="Ponavljaj listu">🔁</button></div><div class="ytlist" id="musiclist" style="max-height:200px"></div><div class="muted" style="font-size:11px;margin-top:8px">Izaberi folder (računar) ili označi više fajlova odjednom (telefon). Podržani su MP3, WAV, OGG, M4A, FLAC i drugi formati koje pregledač može da reprodukuje.</div>
 </section>
 <section class="panel" data-id="links">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🔗 BRZI LINKOVI</h2>
  <div class="linkgrid" id="linkgrid"></div>
  <div class="eventrow" style="flex-wrap:wrap"><input id="linkname" class="field" placeholder="Naziv" style="max-width:130px"><input id="linkurl" class="field" placeholder="Sajt ili aplikacija (gmail.com, spotify:)" style="min-width:150px"><button id="linkadd" class="primary">Dodaj</button></div>
  <div class="muted" style="font-size:11px;margin-top:8px">Za aplikacije koristi njihovu šemu: spotify:, viber://, tel:+381…, mailto:…</div>
 </section>
 <section class="panel" data-id="todo">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>✅ ZADACI <span class="muted" id="todocount" style="font-size:12px;font-weight:400"></span></h2>
  <div class="eventrow" style="margin:0 0 10px"><input id="todotext" class="field" placeholder="Novi zadatak…"><button id="todoadd" class="primary">Dodaj</button></div>
  <div class="ytlist" id="todolist" style="margin:0;max-height:220px"></div>
  <button id="todoclear" style="margin-top:10px;padding:6px 12px;font-size:12px">Obriši završene</button>
 </section>
 <section class="panel" data-id="notes">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>📝 BELEŠKE</h2>
  <textarea id="notes" class="field" placeholder="Brze beleške… čuvaju se automatski."></textarea>
 </section>
 <section class="panel" data-id="timer">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>⏱ TAJMER I ŠTOPERICA</h2>
  <div class="bigtime" id="tdisp">25:00</div>
  <div class="media-controls"><input id="tmin" class="field" type="number" min="1" max="600" value="25" style="width:80px"><span class="muted">min</span><button data-m="5">5</button><button data-m="10">10</button><button data-m="25">🍅 25</button><button id="tstart" class="primary">▶ Start</button><button id="treset">↺</button></div>
  <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:6px"><div class="bigtime" id="swdisp">00:00.0</div><div class="media-controls"><button id="swstart" class="primary">▶ Start</button><button id="swreset">↺</button></div></div>
 </section>
 <section class="panel" data-id="world">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🌍 SVETSKI SATOVI</h2>
  <div id="worldlist"></div>
  <div class="eventrow"><select id="worldsel" class="field" style="flex:1"></select><button id="worldadd" class="primary">Dodaj grad</button></div>
 </section>
 <section class="panel" data-id="calc" tabindex="0">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>🧮 KALKULATOR</h2>
  <div class="calcdisp"><div id="cexpr" class="muted"></div><div id="cval">0</div></div>
  <div class="calckeys" id="calckeys"><button data-k="C">C</button><button data-k="(">(</button><button data-k=")">)</button><button data-k="÷" class="op">÷</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="×" class="op">×</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="−" class="op">−</button><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button><button data-k="⌫">⌫</button><button data-k="0">0</button><button data-k=",">,</button><button data-k="=" class="eq">=</button></div>
  <div class="muted" style="font-size:11px;margin-top:8px">Klikni na kalkulator pa možeš da kucaš i sa tastature (Enter = rezultat, Esc = brisanje).</div>
 </section>
 <section class="panel" data-id="joke">
+ <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <h2>😂 VIC DANA</h2>
  <div class="muted" id="joketxt" style="font-size:14px;line-height:1.5;margin-bottom:14px;min-height:50px;">Učitavanje vica…</div>
  <div style="display:flex;gap:8px;">
@@ -289,24 +303,40 @@ document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUr
 
 function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
 
-/* DRAG & DROP LOGIKA ZA PROMENU RASPOREDA WIDGETA */
+/* DRAG & DROP I PROMENA VELIČINE WIDGETA */
 const mainGrid = $('main');
 let isEditing = false;
 let draggedItem = null;
 
 function saveLayout(){
-    const order = Array.from(mainGrid.children).map(panel => panel.dataset.id).filter(Boolean);
-    sv('atmosLayout', order);
+    const layoutData = Array.from(mainGrid.children).map(panel => ({
+        id: panel.dataset.id,
+        wide: panel.classList.contains('wide')
+    })).filter(p => p.id);
+    sv('atmosLayoutState', layoutData);
 }
 
 function loadLayout(){
-    const order = ls('atmosLayout', null);
-    if(!order || !Array.isArray(order)) return;
+    const saved = ls('atmosLayoutState', null);
+    if(!saved || !Array.isArray(saved)) return;
     const panels = Array.from(mainGrid.children);
-    order.forEach(id => {
-        const panel = panels.find(p => p.dataset.id === id);
-        if(panel) mainGrid.appendChild(panel);
+    
+    saved.forEach(item => {
+        const panel = panels.find(p => p.dataset.id === item.id);
+        if(panel){
+            if(item.wide) panel.classList.add('wide');
+            else panel.classList.remove('wide');
+            mainGrid.appendChild(panel);
+            updateResizeBtnText(panel);
+        }
     });
+}
+
+function updateResizeBtnText(panel){
+    const btn = panel.querySelector('.resize-btn');
+    if(btn){
+        btn.textContent = panel.classList.contains('wide') ? '▯ Normalno' : '↔ Široko';
+    }
 }
 
 function initDragAndDrop(){
@@ -314,6 +344,19 @@ function initDragAndDrop(){
     const panels = mainGrid.querySelectorAll('.panel');
     
     panels.forEach(panel => {
+        // Ažuriraj tekst dugmeta za promenu veličine pri učitavanju
+        updateResizeBtnText(panel);
+
+        const resizeBtn = panel.querySelector('.resize-btn');
+        if(resizeBtn){
+            resizeBtn.onclick = (e) => {
+                e.stopPropagation();
+                panel.classList.toggle('wide');
+                updateResizeBtnText(panel);
+                saveLayout();
+            };
+        }
+
         panel.addEventListener('dragstart', (e) => {
             if(!isEditing) return;
             draggedItem = panel;
@@ -369,8 +412,8 @@ $('editlayout').onclick = () => {
 };
 
 $('resetlayout').onclick = () => {
-    if(confirm('Želite li da vratite podrazumevani raspored widgeta?')){
-        localStorage.removeItem('atmosLayout');
+    if(confirm('Želite li da vratite podrazumevani raspored i veličine widgeta?')){
+        localStorage.removeItem('atmosLayoutState');
         location.reload();
     }
 };
