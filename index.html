@@ -103,27 +103,6 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel">
  <h2>🎵 MEDIA PLEJER</h2><div class="media-controls"><label class="filelabel">＋ Audio fajlovi<input type="file" id="musicfile" accept="audio/*" multiple></label><label class="filelabel">📁 Ceo folder<input type="file" id="musicfolder" webkitdirectory multiple></label></div><div class="muted" id="musicname" style="font-size:12px;margin-top:10px">Nije izabran fajl</div><audio id="musicaudio" controls></audio><div class="media-controls" style="margin-top:10px"><button id="mprev">⏮</button><button id="mnext">⏭</button><button id="mshuf" title="Nasumično">🔀</button><button id="mloop" title="Ponavljaj listu">🔁</button></div><div class="ytlist" id="musiclist" style="max-height:200px"></div><div class="muted" style="font-size:11px;margin-top:8px">Izaberi folder (računar) ili označi više fajlova odjednom (telefon). Podržani su MP3, WAV, OGG, M4A, FLAC i drugi formati koje pregledač može da reprodukuje.</div>
 </section>
-
-<!-- YOUTUBE SEKCIJA SA PRETRAGOM -->
-<section class="panel" data-id="youtube">
- <h2>▶ YOUTUBE MUZIKA</h2>
- <div class="ytwrap" id="ytwrap"><div id="ytplayer"></div></div>
- <div class="muted" id="ytname" style="font-size:13px;margin-top:8px">Unesi naziv pesme za pretragu</div>
- <div class="media-controls" style="margin-top:10px">
-    <button id="ytprev">⏮</button>
-    <button id="ytplay">⏯</button>
-    <button id="ytnext">⏭</button>
-    <button id="ytmini">▭ Mini</button>
-    <button id="ytopen" title="Otvori na YouTube-u">↗ YouTube</button>
- </div>
- <div class="eventrow">
-    <input id="ytquery" class="field" placeholder="Pretraži pesmu na YouTube-u..." style="flex:1">
-    <button id="ytsearchbtn" class="primary">Traži</button>
- </div>
- <div class="ytlist" id="ytlist"></div>
- <div id="yterr" style="font-size:12px;margin-top:8px;color:#fbbf24"></div>
-</section>
-
 <section class="panel" data-id="links">
  <h2>🔗 BRZI LINKOVI</h2>
  <div class="linkgrid" id="linkgrid"></div>
@@ -233,9 +212,22 @@ async function weather(){
         $('wdesc').textContent='Prognoza trenutno nije dostupna';
     }
 }
-function omUrl(){return 'https://open-meteo.com/en/docs?latitude='+lat.toFixed(4)+'&longitude='+lon.toFixed(4)+'&timezone=auto'}
-function omUpdate(){$('omlink').href=omUrl();$('omlink').title='Detaljna prognoza za '+place+' na Open-Meteo'}
+
+/* KREIRANJE LINKA ZA DETALJNU PROGNOZU (Open-Meteo Weather aplikacija/mapa za te koordinate) */
+function omUrl(){
+    return `https://meteocharts.com/#lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}` 
+    /* Ako želiš zvanični Open-Meteo weather preusmerivač ili Google pretragu umesto ovoga, možeš zameniti sa:
+       'https://www.google.com/search?q=vremenska+prognoza+' + encodeURIComponent(place) */
+}
+
+function omUpdate(){
+    $('omlink').href = omUrl();
+    $('omlink').title = 'Detaljna prognoza za ' + place;
+}
+
+// Klik na samu karticu prognoze (ikonicu, temperaturu ili prognozu po danima) otvara detaljnu prognozu
 document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUrl(),'_blank','noopener'));
+
 function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
 function geolocate(){if(!navigator.geolocation){alert('Pregledač ne podržava lokaciju.');return}navigator.geolocation.getCurrentPosition(async p=>{lat=p.coords.latitude;lon=p.coords.longitude;try{let r=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=sr&format=json`);let j=await r.json();place=j.results?.[0]?.name||'Moja lokacija'}catch{place='Moja lokacija'}$('location').textContent=place;weather()},()=>alert('Dozvolite pristup lokaciji.'),{enableHighAccuracy:false,timeout:10000})}
 $('locate').onclick=geolocate;
@@ -275,7 +267,7 @@ async function loadStations(){
 loadStations();
 
 function playStation(s){$('radioaudio').src=s.url;$('radioaudio').play();$('playing').textContent=s.name}
-$('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio').currentTime=0;$('playing').textContent='Izaberite radio stanicu'};
+$('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio'].currentTime=0;$('playing').textContent='Izaberite radio stanicu'};
 
 /* ===== YouTube mini plejer sa stabilnom pretragom ===== */
 let yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
@@ -284,23 +276,6 @@ function ytPlay(i){if(!ytReady||!ytList[i])return;ytIdx=i;const s=ytList[i];yt.l
 function ytStep(d){if(!ytList.length)return;ytPlay((ytIdx+d+ytList.length)%ytList.length)}
 window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{onReady:()=>{ytReady=true;ytNote()},onError:ytErr,onStateChange:e=>{if(e.data===0)ytStep(1)}}})};
 {const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
-
-$('ytsearchbtn').onclick=()=>{
-    const q=$('ytquery').value.trim();
-    if(!q)return;
-    $('yterr').innerHTML=`Rezultati pretrage za "<b>${q}</b>": <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc; font-weight:bold;">Otvori na YouTube-u ↗</a>`;
-    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank', 'noopener');
-};
-$('ytquery').onkeydown=e=>{if(e.key==='Enter')$('ytsearchbtn').click()};
-
-$('ytlist').onclick=e=>{const d=e.target.dataset.d;if(d!==undefined){ytList.splice(+d,1);if(ytIdx>=+d)ytIdx--;sv('atmosYT',ytList);drawYT();return}const r=e.target.closest('[data-p]');if(r)ytPlay(+r.dataset.p)};
-$('ytprev').onclick=()=>ytStep(-1);$('ytnext').onclick=()=>ytStep(1);
-$('ytplay').onclick=()=>{if(!ytReady)return;if(ytIdx<0)return ytPlay(0);yt.getPlayerState()===1?yt.pauseVideo():yt.playVideo()};
-$('ytmini').onclick=()=>$('ytwrap').classList.toggle('mini');
-function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica otvorena sa diska (file://) — YouTube odbija ugrađeni plejer. Koristi „↗ YouTube".'}
-function ytErr(e){$('yterr').textContent='⚠ YouTube greška: '+e.data}
-$('ytopen').onclick=()=>{const t=ytList[ytIdx];window.open(!t?'https://www.youtube.com':'https://www.youtube.com/watch?v='+t.id,'_blank','noopener')};
-drawYT();
 
 /* ===== Vic dana widget ===== */
 const jokes = [
