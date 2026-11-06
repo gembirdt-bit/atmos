@@ -133,6 +133,13 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="calckeys" id="calckeys"><button data-k="C">C</button><button data-k="(">(</button><button data-k=")">)</button><button data-k="÷" class="op">÷</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="×" class="op">×</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="−" class="op">−</button><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button><button data-k="⌫">⌫</button><button data-k="0">0</button><button data-k=",">,</button><button data-k="=" class="eq">=</button></div>
  <div class="muted" style="font-size:11px;margin-top:8px">Klikni na kalkulator pa možeš da kucaš i sa tastature (Enter = rezultat, Esc = brisanje).</div>
 </section>
+ <section class="panel" data-id="joke">
+  <h2>😂 VIC DANA</h2>
+  <div class="muted" id="joketxt" style="font-size:14px;line-height:1.5;margin-bottom:14px;min-height:50px;">Učitavanje vica…</div>
+  <div style="display:flex;gap:8px;">
+    <button id="newjoke" class="primary">🔄 Novi vic</button>
+  </div>
+</section>
 </main>
 <div id="setmodal"><div class="setbox">
  <h2>⚙ PODEŠAVANJA</h2>
@@ -270,6 +277,35 @@ function drawWorldSel(){$('worldsel').innerHTML=Object.keys(TZ).filter(n=>!wl.in
 $('worldlist').onclick=e=>{const w=e.target.dataset.w;if(w===undefined)return;wl.splice(+w,1);sv('atmosWorld',wl);drawWorld();drawWorldSel()};
 $('worldadd').onclick=()=>{const n=$('worldsel').value;if(!n)return;wl.push(n);sv('atmosWorld',wl);drawWorld();drawWorldSel()};
 drawWorld();drawWorldSel();setInterval(drawWorld,15000);
+ /* ===== Vic dana widget sa online izvora ===== */
+async function loadJoke() {
+    $('joketxt').textContent = 'Učitavanje vica…';
+    try {
+        // Možemo povlačiti viceve sa javnog besplatnog API-ja (ili preko prilagođenog RSS/JSON izvora)
+        let res = await fetch('https://v2.jokeapi.dev/joke/Any?lang=en&type=single');
+        // Napomena: Pošto su besplatni javni API-ji uglavnom na engleskom, 
+        // možemo napraviti i bogatu domaću listu sa preko 50 viceva da uvek bude smešno na srpskom!
+        
+        if(!res.ok) throw new Error('Greška');
+        let data = await res.json();
+        $('joketxt').textContent = data.joke || 'Došlo je do greške pri učitavanju.';
+    } catch (err) {
+        // Rezervna (fallback) domaća lista ako API nije dostupan
+        const fallbackJokes = [
+            "Mujo: - Fato, bre, šta je ovo, nestalo struje, a ti sediš u mraku? Fato: - Pa čekam da se sijalica zagreje pa da čitam novine!",
+            "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
+            "Zašto Mujo drži računar ispod kreveta? Pa da spava na internetu!",
+            "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen..."
+        ];
+        $('joketxt').textContent = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+    }
+}
+
+// Učitaj vic pri pokretanju
+loadJoke();
+
+// Klik na dugme za novi vic
+$('newjoke').onclick = loadJoke;
 /* ===== teme, zalazak sunca i foto-slajder ===== */
 let solarRise='',solarSet='';function updateTheme(sunrise,sunset){if(sunrise)solarRise=sunrise;if(sunset)solarSet=sunset;sunrise=solarRise;sunset=solarSet;let mode=set.theme||'auto';if(mode==='auto'){const now=new Date(),mins=now.getHours()*60+now.getMinutes();let rise=7*60,down=19*60;try{if(sunrise)rise=new Date(sunrise).getHours()*60+new Date(sunrise).getMinutes();if(sunset)down=new Date(sunset).getHours()*60+new Date(sunset).getMinutes()}catch{}mode=(mins>=rise&&mins<down)?'light':'dark'}document.body.classList.toggle('theme-light',mode==='light');document.body.classList.remove('theme-ocean','theme-forest','theme-violet','theme-sunset','font-modern','font-rounded','font-serif','font-mono');document.body.classList.add('theme-'+(set.palette||'ocean'),'font-'+(set.font||'modern'));}
 let photoItems=[],slideIndex=0,photoTimer=null,photoRunning=false,photoDir=null,photoUrl=null,photoTok=0,photoScanT=null;
