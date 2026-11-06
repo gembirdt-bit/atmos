@@ -27,7 +27,7 @@ main{max-width:1500px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-
 h2{font-size:16px;letter-spacing:.5px;margin:0 0 16px;display:flex;align-items:center;gap:9px}.muted{color:var(--muted)}.weather-now{display:flex;align-items:center;gap:18px}.weather-icon{font-size:58px}.temp{font-size:56px;font-weight:300}.weather-desc{font-size:18px}.weather-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:20px}.day{background:#ffffff0c;border-radius:14px;padding:10px 5px;text-align:center;font-size:12px}.day .ico{font-size:23px;margin:8px 0}.day b{display:block;font-size:14px}
 .radio-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:250px;overflow:auto}.station{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#ffffff0c;padding:10px;border-radius:12px;font-size:13px}.station button{padding:7px 10px;font-size:12px}.nowplaying{margin-top:14px;padding:12px;border-radius:14px;background:#0b1422;display:flex;justify-content:space-between;align-items:center;gap:10px}.nowplaying strong{display:block}.nowplaying small{color:var(--muted)}
 audio{width:100%;margin-top:12px;height:38px}
-.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.month{font-size:18px;font-weight:650}.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calgrid div{text-align:center;padding:8px 2px;font-size:13px}.dow{color:#9fb3c8;font-size:11px!important}.calday{border-radius:9px;background:#ffffff09;cursor:pointer;min-height:34px}.calday.today{background:var(--acc);font-weight:bold}.calday.selected{outline:2px solid #7dd3fc}.calday.has{position:relative}.calday.has:after{content:"";width:4px;height:4px;border-radius:50%;background:#fbbf24;position:absolute;bottom:3px;left:calc(50% - 2px)}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.month{font-size:18px;font-weight:650}.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calgrid div{text-align:center;padding:8px 2px;font-size:13px}.dow{color:#9fb3c8;font-size:11px!important}.calday{border-radius:9px;background:#ffffff09;cursor:pointer;min-height:34px;display:flex;align-items:center;justify-content:center;position:relative;font-size:13px}.calday.today{background:var(--acc);font-weight:bold}.calday.selected{outline:2px solid #7dd3fc}.calday.has:after{content:"";width:4px;height:4px;border-radius:50%;background:#fbbf24;position:absolute;bottom:3px;left:calc(50% - 2px)}
 .eventarea{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}.eventrow{display:flex;gap:8px;margin-top:8px}.eventrow input{min-width:0;flex:1}.field{background:#ffffff12;border:1px solid var(--line);border-radius:10px;color:white;padding:10px}.field::placeholder{color:#b7c3d1}
 .alarmrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.alarmrow input{width:125px}.alarmnext{font-size:14px;margin-top:14px;color:#dce8f5}.alarmnext strong{color:#fff}
 .media-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.filelabel{display:inline-block;padding:10px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#ffffff12}.filelabel input{display:none}
@@ -385,7 +385,7 @@ $('citybtn').onclick = async () => {
     }
 };
 
-/* RADIO STANICE */
+/* RADIO STANICE - ISPRAVLJENO I TESTIRANO */
 const stations=[
     {name:'RTS Radio Beograd 1',url:'https://rts.streaming.rs:8443/rts_rb1.mp3'},
     {name:'RTS Radio Beograd 2',url:'https://rts.streaming.rs:8443/rts_rb2.mp3'},
@@ -400,7 +400,7 @@ const stations=[
 function initStations(){
     const c=$('stations');
     if(!c) return;
-    c.innerHTML=stations.map((s,i)=>`
+    c.innerHTML=stations.map(s=>`
         <div class="station">
             <span>${s.name}</span>
             <button class="primary" onclick="playRadio('${s.url}','${s.name}')">Pusti</button>
@@ -411,7 +411,11 @@ function initStations(){
 function playRadio(url,name){
     const audio=$('radioaudio');
     audio.src=url;
-    audio.play().catch(()=>{});
+    audio.load();
+    audio.play().catch(err=>{
+        console.error("Greška pri reprodukciji radio streama:", err);
+        alert("Pokretanje streama nije uspelo, pokušajte ponovo.");
+    });
     $('playing').textContent=name;
 }
 
@@ -423,6 +427,88 @@ $('stopradio').onclick=()=>{
 };
 
 initStations();
+
+/* KALENDAR - POPRAVLJEN WIDGET I RENDER */
+let calDate = new Date();
+let eventsData = ls('atmosEvents', {});
+let selectedDateKey = '';
+
+function initCalendar(){
+    const year = calDate.getFullYear();
+    const month = calDate.getMonth();
+    
+    $('month').textContent = months[month].charAt(0).toUpperCase() + months[month].slice(1) + ' ' + year;
+    
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    // Prilagođavanje da nedelja bude poslednja (0 -> 6, ostali -1)
+    const startShift = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    
+    let html = ['Pon','Uto','Sre','Čet','Pet','Sub','Ned'].map(d=>`<div class="dow">${d}</div>`).join('');
+    
+    for(let i=0; i<startShift; i++){
+        html += `<div></div>`;
+    }
+    
+    const today = new Date();
+    for(let d=1; d<=totalDays; d++){
+        const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isToday = d===today.getDate() && month===today.getMonth() && year===today.getFullYear();
+        const hasEvents = eventsData[dateKey] && eventsData[dateKey].length > 0;
+        const isSelected = selectedDateKey === dateKey;
+        
+        html += `<div class="calday ${isToday?'today':''} ${hasEvents?'has':''} ${isSelected?'selected':''}" onclick="selectCalDate('${dateKey}')">${d}</div>`;
+    }
+    
+    $('cal').innerHTML = html;
+    if(!selectedDateKey){
+        selectCalDate(`${year}-${String(month+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`);
+    } else {
+        renderEvents();
+    }
+}
+
+window.selectCalDate = function(key){
+    selectedDateKey = key;
+    initCalendar();
+};
+
+function renderEvents(){
+    if(!selectedDateKey) return;
+    const evs = eventsData[selectedDateKey] || [];
+    $('selectedlabel').textContent = `Događaji (${selectedDateKey})`;
+    if(evs.length === 0){
+        $('events').className = 'muted';
+        $('events').textContent = 'Nema dodatih događaja za izabrani datum.';
+    } else {
+        $('events').className = '';
+        $('events').innerHTML = evs.map((e, idx)=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#ffffff0a;padding:6px 10px;border-radius:8px;margin-top:4px"><span>${e}</span><button onclick="removeEvent('${selectedDateKey}', ${idx})" style="padding:2px 6px;font-size:11px">✕</button></div>`).join('');
+    }
+}
+
+$('addevent').onclick = () => {
+    const txt = $('eventtext').value.trim();
+    if(!txt || !selectedDateKey) return;
+    if(!eventsData[selectedDateKey]) eventsData[selectedDateKey] = [];
+    eventsData[selectedDateKey].push(txt);
+    sv('atmosEvents', eventsData);
+    $('eventtext').value = '';
+    initCalendar();
+};
+
+window.removeEvent = function(key, idx){
+    if(eventsData[key]){
+        eventsData[key].splice(idx, 1);
+        if(eventsData[key].length === 0) delete eventsData[key];
+        sv('atmosEvents', eventsData);
+        initCalendar();
+    }
+};
+
+$('prev').onclick = () => { calDate.setMonth(calDate.getMonth()-1); initCalendar(); };
+$('next').onclick = () => { calDate.setMonth(calDate.getMonth()+1); initCalendar(); };
+
+initCalendar();
 
 /* FOTO SLAJDER SA LOKALNIM FOLDEROM */
 let slideImages = [];
@@ -464,7 +550,6 @@ $('photoPick').onclick = async () => {
 function renderPhoto(){
     if(slideImages.length === 0) return;
     const stage = $('photoStage');
-    // Ukloni staru sliku ako postoji
     const oldImg = stage.querySelector('img');
     if(oldImg) oldImg.remove();
     
