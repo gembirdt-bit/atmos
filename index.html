@@ -299,24 +299,36 @@ let lat=44.8176,lon=20.4569,place='Beograd';const wcodes={0:['Vedro','☀️'],1
 async function weather(){
     omUpdate();
     try{
-        const u=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=5`;
+        const u=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto`;
         const r=await fetch(u);
-        if(!r.ok)throw 0;
-        const j=await r.json(),c=j.current,d=j.daily;
-        updateTheme(d.sunrise?.[0],d.sunset?.[0]);
-        let desc=wcodes[c.weather_code]||['Promenljivo','🌤️'];
-        $('temp').textContent=Math.round(c.temperature_2m)+'°';
-        $('wicon').textContent=desc[1];
-        $('wdesc').textContent=desc[0];
-        $('feels').textContent='Osećaj: '+Math.round(c.apparent_temperature)+'°C';
-        $('wind').textContent='Vetar: '+Math.round(c.wind_speed_10m)+' km/h';
-        $('humidity').textContent='Vlažnost: '+c.relative_humidity_2m+'%';
-        $('weather-place').textContent='· '+place;
-        $('forecast').innerHTML=d.time.map((day,i)=>`<div class="day">${new Date(day+'T12:00:00').toLocaleDateString('sr-RS',{weekday:'short'})}<div class="ico">${(wcodes[d.weather_code[i]]||['','🌤️'])[1]}</div><b>${Math.round(d.temperature_2m_max[i])}°</b><span class="muted">${Math.round(d.temperature_2m_min[i])}°</span></div>`).join('');
+        if(!r.ok)throw new Error('Mrežna greška');
+        const j=await r.json();
+        const c=j.current;
+        const d=j.daily;
+        
+        if(d && d.sunrise && d.sunrise[0]) {
+            updateTheme(d.sunrise[0], d.sunset[0]);
+        }
+        
+        let desc = wcodes[c.weather_code] || ['Promenljivo','🌤️'];
+        $('temp').textContent = Math.round(c.temperature_2m) + '°';
+        $('wicon').textContent = desc[1];
+        $('wdesc').textContent = desc[0];
+        $('feels').textContent = 'Osećaj: ' + Math.round(c.apparent_temperature) + '°C';
+        $('wind').textContent = 'Vetar: ' + Math.round(c.wind_speed_10m) + ' km/h';
+        $('humidity').textContent = 'Vlažnost: ' + c.relative_humidity_2m + '%';
+        $('weather-place').textContent = '· ' + place;
+        
+        if(d && d.time) {
+            $('forecast').innerHTML = d.time.map((day,i)=>`<div class="day">${new Date(day+'T12:00:00').toLocaleDateString('sr-RS',{weekday:'short'})}<div class="ico">${(wcodes[d.weather_code[i]]||['','🌤️'])[1]}</div><b>${Math.round(d.temperature_2m_max[i])}°</b><span class="muted">${Math.round(d.temperature_2m_min[i])}°</span></div>`).join('');
+        }
     }catch(e){
-        $('wdesc').textContent='Prognoza trenutno nije dostupna';
+        $('wdesc').textContent = 'Prognoza trenutno nije dostupna';
     }
 }
+
+weather();
+setInterval(weather, 900000);
 
 function omUrl(){
     return 'https://www.google.com/search?q=vremenska+prognoza+' + encodeURIComponent(place);
@@ -327,7 +339,49 @@ function omUpdate(){
 }
 document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUrl(),'_blank','noopener'));
 
-function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
+function setLoc(a,b,n){
+    lat=a; lon=b; place=n;
+    $('location').textContent=n;
+    weather();
+}
+
+$('locate').onclick = () => {
+    if(navigator.geolocation){
+        $('wdesc').textContent = 'Određivanje lokacije…';
+        navigator.geolocation.getCurrentPosition(
+            async pos => {
+                const la = pos.coords.latitude;
+                const lo = pos.coords.longitude;
+                setLoc(la, lo, 'Moja lokacija');
+            },
+            () => { alert('Geolokacija nije dozvoljena.'); weather(); },
+            {timeout: 10000}
+        );
+    } else {
+        alert('Geolokacija nije podržana u ovom pretraživaču.');
+    }
+};
+
+$('citybtn').onclick = async () => {
+    const q = $('city').value.trim();
+    if(!q) return;
+    $('wdesc').textContent = 'Pretraga grada…';
+    try {
+        const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=sr`);
+        const data = await res.json();
+        if(data && data.results && data.results.length > 0){
+            const item = data.results[0];
+            setLoc(item.latitude, item.longitude, item.name + (item.country ? ', ' + item.country : ''));
+            $('city').value = '';
+        } else {
+            alert('Grad nije pronađen.');
+            weather();
+        }
+    } catch(e) {
+        alert('Greška pri pretrazi grada.');
+        weather();
+    }
+};
 
 /* DRAG & DROP I PROMENA VELIČINE WIDGETA */
 const mainGrid = $('main');
