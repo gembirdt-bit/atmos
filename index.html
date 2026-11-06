@@ -265,7 +265,33 @@ tick();setInterval(tick,1000);setInterval(()=>updateTheme(),60000);
 
 $('fullscreen').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
 const photos=['photo-1500530855697-b586d89ba3ee','photo-1470770841072-f978cf4d019e','photo-1501785888041-af3ef285b470','photo-1470252649378-9c29740c9fa8','photo-1472214103451-9374bd1c798e','photo-1441974231531-c6227db76b6e','photo-1507525428034-b723cf961d3e'];
-let photoIndex=-1,bgTimer=null;function changeBg(){if(set.customBg){document.body.style.backgroundImage=`url("${set.customBg}")`;$('bgstatus').textContent='Sopstvena pozadina';return}if(set.noBg){document.body.style.backgroundImage='none';$('bgstatus').textContent='Pozadina: tamna';return}photoIndex=(photoIndex+1)%photos.length;document.body.style.backgroundImage=`url(https://images.unsplash.com/${photos[photoIndex]}?auto=format&fit=crop&w=2200&q=85)`;$('bgstatus').textContent='Pozadina '+(photoIndex+1)+' / '+photos.length+(set.bgMin>0?' · menja se na '+set.bgMin+' min':'')}
+let photoIndex=-1,bgTimer=null;
+
+function changeBg(){
+    if(set.customBg){
+        document.body.style.backgroundImage=`url("${set.customBg}")`;
+        $('bgstatus').textContent='Sopstvena pozadina';
+        return;
+    }
+    if(set.noBg){
+        document.body.style.backgroundImage='none';
+        $('bgstatus').textContent='Pozadina: tamna';
+        return;
+    }
+    photoIndex=(photoIndex+1)%photos.length;
+    const imgUrl=`https://images.unsplash.com/${photos[photoIndex]}?auto=format&fit=crop&w=2200&q=85`;
+    const testImg = new Image();
+    testImg.onload = () => {
+        document.body.style.backgroundImage=`url("${imgUrl}")`;
+        $('bgstatus').textContent='Pozadina '+(photoIndex+1)+' / '+photos.length+(set.bgMin>0?' · menja se na '+set.bgMin+' min':'');
+    };
+    testImg.onerror = () => {
+        document.body.style.backgroundImage='none';
+        $('bgstatus').textContent='Pozadina nedostupna (mreža)';
+    };
+    testImg.src = imgUrl;
+}
+
 function bgSchedule(){clearInterval(bgTimer);if(set.bgMin>0&&!set.noBg)bgTimer=setInterval(changeBg,set.bgMin*60000)}changeBg();bgSchedule();
 
 let lat=44.8176,lon=20.4569,place='Beograd';const wcodes={0:['Vedro','☀️'],1:['Pretežno vedro','🌤️'],2:['Delimično oblačno','⛅'],3:['Oblačno','☁️'],45:['Magla','🌫️'],48:['Magla','🌫️'],51:['Slaba rosulja','🌦️'],53:['Rosulja','🌦️'],55:['Jaka rosulja','🌧️'],61:['Slaba kiša','🌦️'],63:['Kiša','🌧️'],65:['Jaka kiša','🌧️'],71:['Slab sneg','🌨️'],73:['Sneg','❄️'],75:['Jak sneg','❄️'],80:['Pljuskovi','🌦️'],81:['Pljuskovi','🌧️'],82:['Jaki pljuskovi','⛈️'],95:['Grmljavina','⛈️'],96:['Grmljavina i grad','⛈️'],99:['Oluja sa gradom','⛈️']};
@@ -309,27 +335,33 @@ let isEditing = false;
 let draggedItem = null;
 
 function saveLayout(){
-    const layoutData = Array.from(mainGrid.children).map(panel => ({
-        id: panel.dataset.id,
-        wide: panel.classList.contains('wide')
-    })).filter(p => p.id);
-    sv('atmosLayoutState', layoutData);
+    try {
+        const layoutData = Array.from(mainGrid.children).map(panel => ({
+            id: panel.dataset.id,
+            wide: panel.classList.contains('wide')
+        })).filter(p => p.id);
+        sv('atmosLayoutState', layoutData);
+    } catch(e) {}
 }
 
 function loadLayout(){
-    const saved = ls('atmosLayoutState', null);
-    if(!saved || !Array.isArray(saved)) return;
-    const panels = Array.from(mainGrid.children);
-    
-    saved.forEach(item => {
-        const panel = panels.find(p => p.dataset.id === item.id);
-        if(panel){
-            if(item.wide) panel.classList.add('wide');
-            else panel.classList.remove('wide');
-            mainGrid.appendChild(panel);
-            updateResizeBtnText(panel);
-        }
-    });
+    try {
+        const saved = ls('atmosLayoutState', null);
+        if(!saved || !Array.isArray(saved)) return;
+        const panels = Array.from(mainGrid.children);
+        
+        saved.forEach(item => {
+            const panel = panels.find(p => p.dataset.id === item.id);
+            if(panel){
+                if(item.wide) panel.classList.add('wide');
+                else panel.classList.remove('wide');
+                mainGrid.appendChild(panel);
+                updateResizeBtnText(panel);
+            }
+        });
+    } catch(e) {
+        localStorage.removeItem('atmosLayoutState');
+    }
 }
 
 function updateResizeBtnText(panel){
@@ -344,7 +376,6 @@ function initDragAndDrop(){
     const panels = mainGrid.querySelectorAll('.panel');
     
     panels.forEach(panel => {
-        // Ažuriraj tekst dugmeta za promenu veličine pri učitavanju
         updateResizeBtnText(panel);
 
         const resizeBtn = panel.querySelector('.resize-btn');
