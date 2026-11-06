@@ -64,7 +64,7 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel clock wide" data-id="clock">
  <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
  <div><div class="greeting" id="greeting">DOBRO DOŠLI</div><div class="time" id="clock">--:--:--</div><div class="date" id="date">Učitavanje datuma…</div></div>
- <div class="clockright"><div class="location" id="location">Određivanje lokacije…</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
+ <div class="clockright"><div class="location" id="location">Beograd</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
 </section>
 <section class="panel" data-id="search">
  <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
@@ -73,7 +73,7 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 </section>
 <section class="panel" data-id="weather">
  <div class="panel-tools"><button class="resize-btn">↔ Široko</button></div>
- <h2>🌤 VREMENSKA PROGNOZA <span class="muted" id="weather-place" style="font-size:12px;font-weight:400"></span><a id="omlink" class="omlink" href="#" target="_blank" rel="noopener" title="Prognoza na Google-u">↗ Google Prognoza</a></h2>
+ <h2>🌤 VREMENSKA PROGNOZA <span class="muted" id="weather-place" style="font-size:12px;font-weight:400">· Beograd</span><a id="omlink" class="omlink" href="https://www.google.com/search?q=vremenska+prognoza+Beograd" target="_blank" rel="noopener" title="Prognoza na Google-u">↗ Google Prognoza</a></h2>
  <div class="weather-now wclick" title="Klikni za detaljnu prognozu"><div class="weather-icon" id="wicon">🌤️</div><div><div class="temp" id="temp">--°</div><div class="weather-desc" id="wdesc">Učitavanje prognoze…</div></div></div>
  <div class="weather-meta"><span id="feels">Osećaj: --</span><span id="wind">Vetar: --</span><span id="humidity">Vlažnost: --</span></div>
  <div class="forecast wclick" id="forecast" title="Klikni za detaljnu prognozu"></div>
@@ -294,7 +294,8 @@ function changeBg(){
 
 function bgSchedule(){clearInterval(bgTimer);if(set.bgMin>0&&!set.noBg)bgTimer=setInterval(changeBg,set.bgMin*60000)}changeBg();bgSchedule();
 
-let lat=44.8176,lon=20.4569,place='Beograd';const wcodes={0:['Vedro','☀️'],1:['Pretežno vedro','🌤️'],2:['Delimično oblačno','⛅'],3:['Oblačno','☁️'],45:['Magla','🌫️'],48:['Magla','🌫️'],51:['Slaba rosulja','🌦️'],53:['Rosulja','🌦️'],55:['Jaka rosulja','🌧️'],61:['Slaba kiša','🌦️'],63:['Kiša','🌧️'],65:['Jaka kiša','🌧️'],71:['Slab sneg','🌨️'],73:['Sneg','❄️'],75:['Jak sneg','❄️'],80:['Pljuskovi','🌦️'],81:['Pljuskovi','🌧️'],82:['Jaki pljuskovi','⛈️'],95:['Grmljavina','⛈️'],96:['Grmljavina i grad','⛈️'],99:['Oluja sa gradom','⛈️']};
+let lat=44.8176, lon=20.4569, place='Beograd';
+const wcodes={0:['Vedro','☀️'],1:['Pretežno vedro','🌤️'],2:['Delimično oblačno','⛅'],3:['Oblačno','☁️'],45:['Magla','🌫️'],48:['Magla','🌫️'],51:['Slaba rosulja','🌦️'],53:['Rosulja','🌦️'],55:['Jaka rosulja','🌧️'],61:['Slaba kiša','🌦️'],63:['Kiša','🌧️'],65:['Jaka kiša','🌧️'],71:['Slab sneg','🌨️'],73:['Sneg','❄️'],75:['Jak sneg','❄️'],80:['Pljuskovi','🌦️'],81:['Pljuskovi','🌧️'],82:['Jaki pljuskovi','⛈️'],95:['Grmljavina','⛈️'],96:['Grmljavina i grad','⛈️'],99:['Oluja sa gradom','⛈️']};
 
 async function weather(){
     omUpdate();
@@ -318,6 +319,7 @@ async function weather(){
         $('wind').textContent = 'Vetar: ' + Math.round(c.wind_speed_10m) + ' km/h';
         $('humidity').textContent = 'Vlažnost: ' + c.relative_humidity_2m + '%';
         $('weather-place').textContent = '· ' + place;
+        $('location').textContent = place;
         
         if(d && d.time) {
             $('forecast').innerHTML = d.time.map((day,i)=>`<div class="day">${new Date(day+'T12:00:00').toLocaleDateString('sr-RS',{weekday:'short'})}<div class="ico">${(wcodes[d.weather_code[i]]||['','🌤️'])[1]}</div><b>${Math.round(d.temperature_2m_max[i])}°</b><span class="muted">${Math.round(d.temperature_2m_min[i])}°</span></div>`).join('');
