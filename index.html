@@ -177,17 +177,78 @@ const $=id=>document.getElementById(id);
 const ls=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 const SDEF={name:'',h12:false,sec:true,f:false,bgMin:10,noBg:false,acc:'#1686b8',ga:.72,gb:15,theme:'auto',palette:'ocean',font:'modern',customBg:''};
 let set=Object.assign({},SDEF,ls('atmosSet',{}));
-function applySet(){const r=document.documentElement.style;r.setProperty('--acc',set.acc);r.setProperty('--ga',set.ga);r.setProperty('--gb',set.gb+'px')}applySet();
 
-/* Podešavanja - Modal logika */
-$('settingsbtn').onclick=()=>$('setmodal').classList.add('open');
-$('s_close').onclick=()=>$('setmodal').classList.remove('open');
-$('setmodal').onclick=e=>{if(e.target===$('setmodal'))$('setmodal').classList.remove('open')};
+function applySet(){
+    const r=document.documentElement.style;
+    r.setProperty('--acc',set.acc);
+    r.setProperty('--ga',set.ga);
+    r.setProperty('--gb',set.gb+'px');
+    
+    document.body.className=`theme-${set.palette} font-${set.font}`+(set.theme==='light'||(set.theme==='auto'&&isLightHour())?' theme-light':'');
+}
+applySet();
+
+/* Povezivanje elemenata podešavanja sa skladištem */
+function initSetInputs(){
+    $('s_name').value=set.name;
+    $('s_h12').checked=set.h12;
+    $('s_sec').checked=set.sec;
+    $('s_bg').value=set.bgMin;
+    $('s_nobg').checked=set.noBg;
+    $('s_acc').value=set.acc;
+    $('s_ga').value=set.ga;
+    $('s_gb').value=set.gb;
+    $('s_theme').value=set.theme;
+    $('s_palette').value=set.palette;
+    $('s_font').value=set.font;
+}
+
+function saveSet(){
+    set.name=$('s_name').value.trim();
+    set.h12=$('s_h12').checked;
+    set.sec=$('s_sec').checked;
+    set.bgMin=+$('s_bg').value;
+    set.noBg=$('s_nobg').checked;
+    set.acc=$('s_acc').value;
+    set.ga=+$('s_ga').value;
+    set.gb=+$('s_gb').value;
+    set.theme=$('s_theme').value;
+    set.palette=$('s_palette').value;
+    set.font=$('s_font').value;
+    sv('atmosSet',set);
+    applySet();
+    changeBg();
+    bgSchedule();
+}
+
+$('settingsbtn').onclick=()=>{initSetInputs();$('setmodal').classList.add('open')};
+$('s_close').onclick=()=>{saveSet();$('setmodal').classList.remove('open')};
+$('setmodal').onclick=e=>{if(e.target===$('setmodal')){saveSet();$('setmodal').classList.remove('open')}};
+$('s_reset').onclick=()=>{if(confirm('Vratiti podrazumevana podešavanja?')){set=Object.assign({},SDEF);sv('atmosSet',set);initSetInputs();applySet();changeBg();bgSchedule()}};
+
+$('s_custombg').onchange=e=>{const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{set.customBg=ev.target.result;sv('atmosSet',set);changeBg()};reader.readAsDataURL(f)};
+$('s_clearbg').onclick=()=>{set.customBg='';sv('atmosSet',set);changeBg()};
+
+['s_name','s_h12','s_sec','s_bg','s_nobg','s_acc','s_ga','s_gb','s_theme','s_palette','s_font'].forEach(id=>{
+    $(id).oninput=saveSet;
+    $(id).onchange=saveSet;
+});
+
+function isLightHour(){const h=new Date().getHours();return h>=6&&h<20}
+function updateTheme(sr,ss){
+    if(set.theme==='auto'){
+        let light=isLightHour();
+        if(sr&&ss){const now=new Date(),s_rise=new Date(sr),s_set=new Date(ss);light=now>=s_rise&&now<s_set}
+        document.body.classList.toggle('theme-light',light);
+    }else{
+        document.body.classList.toggle('theme-light',set.theme==='light');
+    }
+}
 
 const days=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
 const months=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
 function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit',second:set.sec?'2-digit':undefined,hour12:set.h12});$('date').textContent=days[d.getDay()]+', '+d.getDate()+'. '+months[d.getMonth()]+' '+d.getFullYear()+'.';$('greeting').textContent=(d.getHours()<11?'DOBRO JUTRO':d.getHours()<18?'DOBAR DAN':'DOBRO VEČE')+(set.name?', '+set.name.toUpperCase():'')}
-tick();setInterval(tick,1000);
+tick();setInterval(tick,1000);setInterval(()=>updateTheme(),60000);
 
 $('fullscreen').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
 const photos=['photo-1500530855697-b586d89ba3ee','photo-1470770841072-f978cf4d019e','photo-1501785888041-af3ef285b470','photo-1470252649378-9c29740c9fa8','photo-1472214103451-9374bd1c798e','photo-1441974231531-c6227db76b6e','photo-1507525428034-b723cf961d3e'];
@@ -203,6 +264,7 @@ async function weather(){
         const r=await fetch(u);
         if(!r.ok)throw 0;
         const j=await r.json(),c=j.current,d=j.daily;
+        updateTheme(d.sunrise?.[0],d.sunset?.[0]);
         let desc=wcodes[c.weather_code]||['Promenljivo','🌤️'];
         $('temp').textContent=Math.round(c.temperature_2m)+'°';
         $('wicon').textContent=desc[1];
