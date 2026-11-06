@@ -261,12 +261,96 @@ drawYT();
 
 /* ===== Vic dana widget ===== */
 const jokes = [
+    // Mujo i Fata
     "Mujo: - Fato, bre, šta je ovo, nestalo struje, a ti sediš u mraku? Fato: - Pa čekam da se sijalica zagreje pa da čitam novine!",
-    "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
     "Zašto Mujo drži računar ispod kreveta? Pa da spava na internetu!",
-    "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen...",
     "Ide Mujo ulicom i priča sam sa sobom. Prolazi komšija pa ga pita: - Mujo, što pričaš sam sa sobom? Mujo: - Pa volim da pričam sa pametnim čovekom, a i volim da slušam pametnog čoveka!",
-    "Došao Perica u restoran, pa zove konobara: - Konobaru, ovaj biftek je strašno tvrd! Konobaru, molim te, donesi mi testeru!"
+    "Pita Mujo Hasu: - Haso, bre, šta je to 'sudbina'? - E, moj Mujo, to ti je kad nemaš para, a oženiš se udovicom koja ima petoro dece!",
+    "Vraća se Mujo kući sa posla ranije i zatekne Hasu u krevetu sa Fatom. Gleda Mujo, pa kaže: - Dobro, bre, Haso, ja ti verujem, al' Fata pretera ga!",
+    "Pita Mujo sina: - Sine, šta si danas učio u školi? - Pa, tata, učili smo struju. - E, svaka čast, bar da je neko nešto naučio u ovoj kući, a ne samo računi da stižu!",
+    "Zašto Mujo otvara jogurt u prodavnici pre nego što ga plati? Piše na njemu: 'Otvoriti ovde'.",
+    "Pita Fata Muju: - Mujo, jel' bi ti mene prevario? - Pa, Fato, ne znam... Zavisi kakva je ponuda!",
+    "Sedi Mujo u kafani i pije pivo, pa govori konobaru: - Daj mi još jedno pivo! - A konobar će: - Pa već si popio deset! - E pa, vidiš, to ti je dokaz da slabo brojiš!",
+    "Pita Mujo Hasu: - Čuješ, Haso, jel' znaš ti razliku između zida i plavuše? - Ne znam. - E, ni ja, oboje odbijaju udarac!",
+    
+    // Perica i škola
+    "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen...",
+    "Došao Perica u restoran, pa zove konobara: - Konobaru, ovaj biftek je strašno tvrd! Konobaru, molim te, donesi mi testeru!",
+    "Pita učiteljica u školi: - Deco, ko mi navede primer jedne nepovratne radnje, dobiće peticu. Javlja se Perica: - Proliv, učiteljice!",
+    "Pita učiteljica: - Perice, ko je napisao 'Gorski vijenac'? - Pa, nisam ja, majke mi!",
+    "Pita učiteljica decu: - Ko zna šta znači reč 'alternativa'? Javlja se Perica: - To vam je, učiteljice, kad nemaš s kim da se svađaš, pa se posvađaš sam sa sobom.",
+    "Dobio Perica jedinicu iz matematike, pa mu tata govori: - Sram te bilo, ja sam u tvojim godinama uvek bio odličan đak! - E, tata, lako je tebi bilo, tebe je učio učitelj, a mene uči profesor.",
+    "Pita učiteljica: - Perice, navedi mi jedno domaću životinju koja daje mleko. - Krava, učiteljice. - Odlično. A koja daje vunu? - Ovca. - Bravo. A koja daje perje i jaja? - Jastuk, učiteljice!",
+    "Učiteljica pita: - Perice, šta misliš, od čega nam najviše koristi Sunce? - Pa, od toga što nam greje planetu. - A Mesec? - Pa, da nam sveti noću kad je mrak. - Vrlo dobro. A šta ti misliš, čemu služe zvezde? - Pa da nam ne bude mrak kad nema Meseca! - Pa dobro, Perice, jel' imaš ti neku drugu teoriju? - Da, da pitate nekog drugog jer meni ponestaje mašte.",
+    "Pita tata Pericu: - Sine, kako je bilo na pismenom iz matematike? - Pa, tata, pola zadataka sam uradio tačno! - O, pa to je odlično! Čestitam! - Ma da, samo što su mi svi ti zadatci bili netačni.",
+    "Pita učiteljica: - Perice, zašto kasniš u školu? - Pa, učiteljice, sreo sam onog čoveka što deli novčanice na ulici. - Jao, divno! Pa koliko si dobio? - Pa, delio je 100 dinara svakome ko skoči sa 10 metara visine, pa sam morao peške po stepenicama.",
+
+    // Plavuše
+    "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
+    "Zašto plavuša stavlja frižider na krevet? Da joj pivo bude pri ruci kad legne da spava.",
+    "Šta radi plavuša kad otvori jogurt? Baca poklopac jer misli da je dobitni kod u pitanju.",
+    "Pita plavuša drugaricu: - Čula sam da je ova godina prestupna. Šta to tačno znači? - Pa, to ti je ono kad svi prestupaju preko zakona.",
+    "Zašto plavuša drži zatvorene oči dok se ogleda? Da se ne iznenadi kad vidi sebe.",
+    "Ulazi plavuša u knjižaru i pita: - Imate li neku knjigu o muškarcima? Prodavac se nasmeje i kaže: - Imamo, na odeljenju naučne fantastike.",
+    "Zašto plavuša gura automobil oko zgrade? Pa, rekoše joj da napravi jedan krug oko bloka.",
+    "Šta radi plavuša na računaru? Traži dugme 'bilo koji taster' jer joj piše da pritisne 'Any key'.",
+    "Pita plavuša policajca: - Izvinite, zašto mi pišete kaznu kad sam parkirala na mestu za invalide? Pa zar ne vidite onaj veliki znak sa invalidskim kolicima? - Aaa, ja mislila da je to igralište za skejtere!",
+    "Zašto plavuša plače u autobusu? Zato što je zaboravila kući kartu koju je kupila za tramvaj.",
+
+    // Kratki i suludi vicevi
+    "Ide vo vozom kroz tunel. Mrak, pa svetlost, pa mrak, pa svetlost... Kaže putnik preko puta: - Jao, al' se ispremetah od ovog puta!",
+    "Sede dva kostura u kafiću. Jedan naručuje: - Konobaru, daj mi jedno pivo i jednu metlu!",
+    "Zašto crnogorac drži jogurt na glavi? Zato što mu je lekar prepisao obloge za mozak.",
+    "Ide puž preko šine, naiđe voz i prepolovi ga. Posle pola sata proviri prednji deo iz trave i pita zadnji: - Čuješ, bre, jel' znaš ti gde smo mi to udarili?",
+    "Pita tip u apoteci: - Izvinite, imate li naočare za sunce? - Imamo, naravno. Kakve želite? - Pa, da izgledam pametnije kad ih stavim.",
+    "Sede dva mrava na grani, prolazi slon. Grana pukne, slon padne u blato, a mrav će drugom: - Jesi vid'o kako ga unakazismo? A nismo ni hteli!",
+    "Pita momak devojku: - Hoćeš li da se udaš za mene? - Pa, ne znam... A kolika ti je plata? - Pa, hiljadu evra. - E, za te pare mogu da nađem dvojicu po petsto!",
+    "Šeta frajer psa i sretne prijatelja. - Kakav ti je ovo pas, bre? Izgleda kao krokodil! - Pa, kupio sam ga na buvljaku za deset evra, a tip mi rekao da je čistokrvni terijer, samo da mu dam vremena da poraste.",
+    "Zašto policajac nosi šargarepu u džepu kad ide na pecanje? Pa da hrani morske konjiće!",
+    "Sede dva policajca u autu i jedan kaže drugom: - Vidi onaj znak tamo, piše 'Oštra krivina'. A drugi će: - Ma nema šanse, pa nije to nož da se posečeš!",
+
+    // Svakodnevne situacije i crnjaci
+    "Žali se čovek prijatelju: - Jao, moja žena ima užasan hobi! Po ceo dan skuplja salvete iz restorana. - Pa dobro, to je slatko. - Jeste, al' ih skuplja dok ja sedim u kolima i čekam da platim račun!",
+    "Pita dete oca: - Tata, jel' istina da u Africi možeš da kupiš ženu za tri krave? - Jeste, sine, istina je. - Jao, jedva čekam da porastem pa da odem tamo! - Nemoj, sine, ošišaće te krava načisto.",
+    "Pita gazda radnika: - Pa dobro, bre, ti stalno kasniš na posao! Jel' znaš ti koliko je sati kad ti dolaziš? - Pa, ne znam tačno, gazda, uvek kasnim pre nego što saznam.",
+    "Kaže žena mužu: - Dragi, kupila sam novu haljinu, koštala je pravo bogatstvo! A muž će smireno: - Eto, vidiš, a ti si govorio da nemaš za hleb.",
+    "Pita učiteljica malog Ivicu: - Znaš li ti, Ivice, šta znači reč 'kolega'? - To vam je, učiteljice, onaj čovek koji radi isto što i ti, samo što ga manje plaćaju.",
+    "Pita pacijent doktora: - Doktore, jel' ova operacija opasna? - Ma ne brinite se ništa, stoput sam je dosad radio! - Uf, laknulo mi je. - Pa da, jednom mora da uspije!",
+    "Došao čovek kod vračare, a ona mu gleda u šolju i kaže: - Vidim veliku nesreću... Izgubićeš ženu uskoro... - Ma znam to, babi, nego reci ti meni jel' ću imati sreće u ljubavi posle toga?",
+    "Pita policajac vozača: - Gospodine, pa vi ste pijani ko majka! A vozač odgovara: - Bogami, gospodine policajče, laknulo mi je kad ste to rekli, jer sam već pomislio da sam oslepeo kad ne vidim semafor.",
+    "Kako se zove najkraći vic na svetu? - Crnogorac trči.",
+    "Zašto plavuša baca sat kroz prozor? Zato što želi da vidi kako vreme leti.",
+
+    // Još nasumičnih narodnih viceva za zabavu
+    "Sede dva penzionera na klupi u parku i gledaju devojke. Jedan uzdahne: - Eh, kad se setim, u moje vreme smo za takve noge išli u rat! A drugi odgovara: - Pa brate, i sad nam se ratuje, al' ne daju noge.",
+    "Pita momak devojku: - Da li veruješ u ljubav na prvi pogled? - Pa, verujem... Hoćeš da prođem još jednom?",
+    "Došao gastarbajter u rodno selo posle deset godina i pita komšiju: - Pa dobro, bre, šta se ovo promenilo? Gde su oni stari hrastovi? - E, moj rođače, posekli ih za struju. - A gde je ona stara crkva? - Spaljena za Novu godinu. - A gde je onaj moj verni pas Šarov? - Crko od prejedanja. - Od čega se prejeo? - Pa od mesa onog tvog konja što je crko kad je čuo da ti je žena pobegla s poštarom.",
+    "Zašto policajac drži uši zatvorene dok spava? Da mu ne uđe promaja u mozak.",
+    "Pita sudija optuženog: - Zašto ste opljačkali banku? - Pa, gospodine sudija, tamo je bio novac, a ja sam bio u krizi. - Pa dobro, a zašto ste poneli i aparat za kafu? - E, pa moram i ja negde da odmorim posle napornog posla!",
+    "Sastali se direktor i radnik, pa direktor kaže: - Slušaj, od sutra imaš smanjenu platu za 20 posto. - A radnik će hladnokrvno: - Nema problema, direktorcino, ionako nisam primetio kad ste je prošli put povećali.",
+    "Koja je razlika između slona i komarca? - Pa, slon može da ima buve, ali komarac ne može da ima slona.",
+    "Šeta Mujo kroz šumu i sretne medveda. Medved će: - Sad ću da te pojedem! A Mujo zaplače: - Jao, nemoj molim te, imam ženu i troje dece kod kuće! - E pa, zao mi je, al' moraš da smršaš, vidi na šta ličiš!",
+    "Pita učiteljica: - Ivice, znaš li ti ko je bio Vuk Karadžić? - Pa, to vam je onaj što je izmislio azbuku da bismo posle morali da učimo pismene zadatke iz srpskog!",
+    "Razgovaraju dva puža: - Znaš li da je onaj komšija puž prodao kuću i kupio auto? - Pa šta, sad će bar brže da stiže do salate!",
+    "Zašto kornjače nose oklop na leđima? Zato što nemaju džepove za ključeve.",
+    "Pita otac sina: - Sine, kolika ti je bila ocena iz istorije? - Pa, tata, istorijska! - Šta to znači? - Pa pala je kao kula od karata.",
+    "Sede dva lava u kavezu u zoološkom vrtu i pričaju: - Znaš li šta je najgore kod ovih posetilaca? - Što nam stalno bacaju onaj kokicarski otpad. - Ma nije to, nego što nam ne daju so da začinimo ove turiste!",
+    "Zašto je lav kralj životinja? Zato što slon nema dovoljno glasnu riku.",
+    "Ide čovek ulicom, nosi frižider na glavi, pa ga pita prolaznik: - Čoveče, što nosiš frižider na glavi? - E, moj brate, u stanu nema mesta, a ovde mi se hladi pivo dok šetam.",
+    "Pita Fata Muju: - Mujo, jel' znaš ti da kuvaš? - Pa, znam, mogu da zagrejem vodu u čajniku! - E, pa to nije kuvanje, to je obaveštavanje da je vruća.",
+    "Kako se na engleskom kaže: 'Nemam pojma'? - I don't know. - E vidiš, niko ne zna, a svi se prave pametni!",
+    "Zašto zec trči kroz šumu sa povezom na očima? Pa zato što beži od lovačkih priča.",
+    "Pita učiteljica malog Ivicu: - Ivice, reci mi tri reči koje se najčešće koriste u školi. - Ne znam, učiteljice. - Odlično, sedi, pet!",
+    "Pita momak devojku: - Jel' voliš muziku? - Obožavam! - E super, onda mi pomozi da prenesemo ovaj klavir na peti sprat.",
+    "Pita učiteljica: - Perice, šta bi učinio da vidiš medveda u šumi? - Popeo bih se na drvo. - A šta ako se i medved popne na drvo? - Pa pobegao bih na tanku granu gde on ne može. - A šta ako se i tamo popne? - E pa, učiteljice, sad već ispada da ste vi uortačeni s medvedom i da radite protiv mene!",
+    "Zašto se plavuša smeje kad grmi? Misli da je neko slika.",
+    "Pita otac sina: - Sine, zašto imaš keca iz vladanja? - Pa, tata, učiteljica je rekla da budem miran kao bubica, a ja sam se malo previše uneli u ulogu.",
+    "Sede dva policajca u mraku i jedan pita drugog: - Čuješ li ti ovo? - Šta? - Ma nešto šušti u žbunju. - A, to je verovatno vetar. - Pa dobro, al' što ima dugačke uši i beži kad ga zovemo? - E, to je onda poseban vetar.",
+    "Kako se zove zec koji trenira boks? - Ražnjić u najavi.",
+    "Zašto fudbaleri nose kopačke sa kramponima? Da im se noge ne klizaju dok sede na klupi za rezerve.",
+    "Pita Mujo Hasu: - Haso, bre, zašto ti držiš zatvorene oči kad piješ lek? - Pa piše u uputstvu: 'Držati zatvoreno nakon uzimanja'.",
+    "Došao čovek kod psihijatra pa kaže: - Doktore, imam ozbiljan problem, stalno ummišljam da sam pas! - Pa dobro, od kad to traje? - Pa, od malih nogu... - A zašto tek sad dolazite? - Pa, tek mi je juče žena zabranila da spavam na krevetu.",
+    "Šta radi Mujo na vrhu solitera sa bušilicom? Buši rupe u oblacima da padne kiša."
 ];
 function loadJoke() {
     const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
