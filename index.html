@@ -105,17 +105,20 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel" data-id="youtube">
  <h2>▶ YOUTUBE MUZIKA</h2>
  <div class="ytwrap" id="ytwrap"><div id="ytplayer"></div></div>
- <div class="muted" id="ytname" style="font-size:13px;margin-top:8px">Dodaj link i pusti pesmu</div>
- <div class="media-controls" style="margin-top:10px"><button id="ytprev">⏮</button><button id="ytplay">⏯</button><button id="ytnext">⏭</button><button id="ytmini">▭ Mini</button><button id="ytopen" title="Otvori na YouTube-u">↗ YouTube</button></div>
- <div class="eventrow"><input id="yturl" class="field" placeholder="Nalepi YouTube link (video ili plejlista)"><button id="ytadd" class="primary">Dodaj</button></div>
+ <div class="muted" id="ytname" style="font-size:13px;margin-top:8px">Unesi naziv pesme za pretragu</div>
+ <div class="media-controls" style="margin-top:10px">
+    <button id="ytprev">⏮</button>
+    <button id="ytplay">⏯</button>
+    <button id="ytnext">⏭</button>
+    <button id="ytmini">▭ Mini</button>
+    <button id="ytopen" title="Otvori na YouTube-u">↗ YouTube</button>
+  </div>
+ <div class="eventrow">
+    <input id="ytquery" class="field" placeholder="Pretraži pesmu na YouTube-u (npr. Balašević)..." style="flex:1">
+    <button id="ytsearchbtn" class="primary">Traži</button>
+  </div>
  <div class="ytlist" id="ytlist"></div>
  <div id="yterr" style="font-size:12px;margin-top:8px;color:#fbbf24"></div>
-</section>
-<section class="panel" data-id="links">
- <h2>🔗 BRZI LINKOVI</h2>
- <div class="linkgrid" id="linkgrid"></div>
- <div class="eventrow" style="flex-wrap:wrap"><input id="linkname" class="field" placeholder="Naziv" style="max-width:130px"><input id="linkurl" class="field" placeholder="Sajt ili aplikacija (gmail.com, spotify:)" style="min-width:150px"><button id="linkadd" class="primary">Dodaj</button></div>
- <div class="muted" style="font-size:11px;margin-top:8px">Za aplikacije koristi njihovu šemu: spotify:, viber://, tel:+381…, mailto:…</div>
 </section>
 <section class="panel" data-id="search">
  <h2>🔎 PRETRAGA</h2>
