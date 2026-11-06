@@ -178,6 +178,12 @@ const ls=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return 
 const SDEF={name:'',h12:false,sec:true,f:false,bgMin:10,noBg:false,acc:'#1686b8',ga:.72,gb:15,theme:'auto',palette:'ocean',font:'modern',customBg:''};
 let set=Object.assign({},SDEF,ls('atmosSet',{}));
 function applySet(){const r=document.documentElement.style;r.setProperty('--acc',set.acc);r.setProperty('--ga',set.ga);r.setProperty('--gb',set.gb+'px')}applySet();
+
+/* Podešavanja - Modal logika */
+$('settingsbtn').onclick=()=>$('setmodal').classList.add('open');
+$('s_close').onclick=()=>$('setmodal').classList.remove('open');
+$('setmodal').onclick=e=>{if(e.target===$('setmodal'))$('setmodal').classList.remove('open')};
+
 const days=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
 const months=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
 function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit',second:set.sec?'2-digit':undefined,hour12:set.h12});$('date').textContent=days[d.getDay()]+', '+d.getDate()+'. '+months[d.getMonth()]+' '+d.getFullYear()+'.';$('greeting').textContent=(d.getHours()<11?'DOBRO JUTRO':d.getHours()<18?'DOBAR DAN':'DOBRO VEČE')+(set.name?', '+set.name.toUpperCase():'')}
@@ -211,17 +217,13 @@ async function weather(){
     }
 }
 
-/* Open-Meteo ostaje u widgetu, a klik otvara Google pretragu prognoze za izabrani grad */
 function omUrl(){
     return 'https://www.google.com/search?q=vremenska+prognoza+' + encodeURIComponent(place);
 }
-
 function omUpdate(){
     $('omlink').href = omUrl();
     $('omlink').title = 'Prognoza za ' + place + ' na Google-u';
 }
-
-// Klik na samu prognozu (ikonu, temperaturu, dane) otvara Google pretragu prognoze za grad
 document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUrl(),'_blank','noopener'));
 
 function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
