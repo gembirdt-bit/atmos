@@ -102,24 +102,6 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel">
  <h2>🎵 MEDIA PLEJER</h2><div class="media-controls"><label class="filelabel">＋ Audio fajlovi<input type="file" id="musicfile" accept="audio/*" multiple></label><label class="filelabel">📁 Ceo folder<input type="file" id="musicfolder" webkitdirectory multiple></label></div><div class="muted" id="musicname" style="font-size:12px;margin-top:10px">Nije izabran fajl</div><audio id="musicaudio" controls></audio><div class="media-controls" style="margin-top:10px"><button id="mprev">⏮</button><button id="mnext">⏭</button><button id="mshuf" title="Nasumično">🔀</button><button id="mloop" title="Ponavljaj listu">🔁</button></div><div class="ytlist" id="musiclist" style="max-height:200px"></div><div class="muted" style="font-size:11px;margin-top:8px">Izaberi folder (računar) ili označi više fajlova odjednom (telefon). Podržani su MP3, WAV, OGG, M4A, FLAC i drugi formati koje pregledač može da reprodukuje.</div>
 </section>
-<section class="panel" data-id="youtube">
- <h2>▶ YOUTUBE MUZIKA</h2>
- <div class="ytwrap" id="ytwrap"><div id="ytplayer"></div></div>
- <div class="muted" id="ytname" style="font-size:13px;margin-top:8px">Unesi naziv pesme za pretragu</div>
- <div class="media-controls" style="margin-top:10px">
-    <button id="ytprev">⏮</button>
-    <button id="ytplay">⏯</button>
-    <button id="ytnext">⏭</button>
-    <button id="ytmini">▭ Mini</button>
-    <button id="ytopen" title="Otvori na YouTube-u">↗ YouTube</button>
-  </div>
- <div class="eventrow">
-    <input id="ytquery" class="field" placeholder="Pretraži pesmu na YouTube-u (npr. Balašević)..." style="flex:1">
-    <button id="ytsearchbtn" class="primary">Traži</button>
-  </div>
- <div class="ytlist" id="ytlist"></div>
- <div id="yterr" style="font-size:12px;margin-top:8px;color:#fbbf24"></div>
-</section>
 <section class="panel" data-id="search">
  <h2>🔎 PRETRAGA</h2>
  <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
@@ -247,75 +229,7 @@ main.addEventListener('drop',e=>{e.preventDefault();const o=e.target.closest('.p
 main.addEventListener('dragend',()=>{document.querySelectorAll('.dragging,.dragover').forEach(x=>x.classList.remove('dragging','dragover'));drag=null});
 $('editlayout').onclick=()=>{const on=document.body.classList.toggle('editing');$('editlayout').classList.toggle('active',on);$('editlayout').textContent=on?'✓ Gotovo':'✥ Raspored';$('resetlayout').style.display=on?'':'none';$('addbar').style.display=on?'flex':'none';[...main.children].forEach(p=>p.draggable=on)};
 $('resetlayout').onclick=()=>{lay={order:DEF,wide:['clock'],hidden:[]};applyLayout();saveLayout()};
-/* ===== YouTube mini plejer sa stabilnom pretragom ===== */
-let ytFail=0,yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
 
-// Prikaz liste sačuvanih/pronađenih pesama
-function drawYT(){
-    $('ytlist').innerHTML=ytList.length?ytList.map((s,i)=>`<div class="ytrow${i===ytIdx?' on':''}" data-p="${i}"><span>🎵 ${esc(s.title)}</span><button data-d="${i}">×</button></div>`).join(''):'<div class="muted" style="font-size:13px">Lista je prazna.</div>';
-}
-
-function ytPlay(i){
-    if(!ytReady||!ytList[i])return;
-    ytIdx=i;
-    const s=ytList[i];
-    yt.loadVideoById(s.id);
-    $('ytname').textContent=s.title;
-    drawYT();
-}
-
-function ytStep(d){if(!ytList.length)return;ytPlay((ytIdx+d+ytList.length)%ytList.length)}
-
-window.onYouTubeIframeAPIReady=()=>{
-    yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{
-        onReady:()=>{ytReady=true;ytNote()},
-        onError:ytErr,
-        onStateChange:e=>{if(e.data===1){ytFail=0;$('yterr').textContent=''}if(e.data===0)ytStep(1)}
-    }})
-};
-
-{const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
-
-// Stabilna pretraga koja otvara YouTube pretragu na klik
-$('ytsearchbtn').onclick=()=>{
-    const q=$('ytquery').value.trim();
-    if(!q)return;
-    
-    // Prikazuje poruku sa linkom ka rezultatima
-    $('yterr').innerHTML=`Rezultati pretrage za "<b>${q}</b>": <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc; font-weight:bold;">Otvori na YouTube-u ↗</a>`;
-    
-    // Automatski otvara pretragu u novom tabu
-    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank', 'noopener');
-};
-
-// Podrška za Enter taster u polju za pretragu
-$('ytquery').onkeydown=e=>{if(e.key==='Enter')$('ytsearchbtn').click()};
-
-$('ytlist').onclick=e=>{
-    const d=e.target.dataset.d;
-    if(d!==undefined){ytList.splice(+d,1);if(ytIdx>=+d)ytIdx--;sv('atmosYT',ytList);drawYT();return}
-    const r=e.target.closest('[data-p]');
-    if(r)ytPlay(+r.dataset.p);
-};
-
-$('ytprev').onclick=()=>ytStep(-1);
-$('ytnext').onclick=()=>ytStep(1);
-$('ytplay').onclick=()=>{if(!ytReady)return;if(ytIdx<0)return ytPlay(0);yt.getPlayerState()===1?yt.pauseVideo():yt.playVideo()};
-$('ytmini').onclick=()=>$('ytwrap').classList.toggle('mini');
-
-function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica je otvorena sa diska (file://) — YouTube tada često odbija ugrađeni plejer (greška 153). Pokreni je preko http://localhost ili sa hostinga; do tada koristi „↗ YouTube".'}
-
-function ytErr(e){
-    const m={2:'Neispravan link.',5:'Greška HTML5 plejera.',100:'Video nije dostupan ili je obrisan.',101:'Vlasnik ne dozvoljava ugrađeni plejer.',150:'Vlasnik ne dozvoljava ugrađeni plejer.',153:'YouTube nije dobio adresu stranice.'};
-    $('yterr').textContent='⚠ Greška '+e.data+': '+(m[e.data]||'nepoznata greška');
-}
-
-$('ytopen').onclick=()=>{
-    const t=ytList[ytIdx];
-    window.open(!t?'https://www.youtube.com':'https://www.youtube.com/watch?v='+t.id,'_blank','noopener');
-};
-
-drawYT();
 /* ===== brzi linkovi ===== */
 let links=ls('atmosLinks',[{n:'Gmail',u:'https://mail.google.com'},{n:'YouTube',u:'https://www.youtube.com'},{n:'Google Maps',u:'https://maps.google.com'},{n:'Google Drive',u:'https://drive.google.com'}]);
 function normUrl(u){u=u.trim();return /^(https?:|mailto:|tel:|sms:|spotify:|[a-z][a-z0-9+.-]*:\/\/)/i.test(u)?u:'https://'+u}
