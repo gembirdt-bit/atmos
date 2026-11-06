@@ -6,6 +6,14 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes"><!doctype html>
+<html lang="sr">
+<head>
+<title>Atmos — Smart Dashboard </title>
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Atmos">
@@ -102,6 +110,33 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel">
  <h2>🎵 MEDIA PLEJER</h2><div class="media-controls"><label class="filelabel">＋ Audio fajlovi<input type="file" id="musicfile" accept="audio/*" multiple></label><label class="filelabel">📁 Ceo folder<input type="file" id="musicfolder" webkitdirectory multiple></label></div><div class="muted" id="musicname" style="font-size:12px;margin-top:10px">Nije izabran fajl</div><audio id="musicaudio" controls></audio><div class="media-controls" style="margin-top:10px"><button id="mprev">⏮</button><button id="mnext">⏭</button><button id="mshuf" title="Nasumično">🔀</button><button id="mloop" title="Ponavljaj listu">🔁</button></div><div class="ytlist" id="musiclist" style="max-height:200px"></div><div class="muted" style="font-size:11px;margin-top:8px">Izaberi folder (računar) ili označi više fajlova odjednom (telefon). Podržani su MP3, WAV, OGG, M4A, FLAC i drugi formati koje pregledač može da reprodukuje.</div>
 </section>
+
+<!-- YOUTUBE SEKCIJA SA PRETRAGOM -->
+<section class="panel" data-id="youtube">
+ <h2>▶ YOUTUBE MUZIKA</h2>
+ <div class="ytwrap" id="ytwrap"><div id="ytplayer"></div></div>
+ <div class="muted" id="ytname" style="font-size:13px;margin-top:8px">Unesi naziv pesme za pretragu</div>
+ <div class="media-controls" style="margin-top:10px">
+    <button id="ytprev">⏮</button>
+    <button id="ytplay">⏯</button>
+    <button id="ytnext">⏭</button>
+    <button id="ytmini">▭ Mini</button>
+    <button id="ytopen" title="Otvori na YouTube-u">↗ YouTube</button>
+ </div>
+ <div class="eventrow">
+    <input id="ytquery" class="field" placeholder="Pretraži pesmu na YouTube-u..." style="flex:1">
+    <button id="ytsearchbtn" class="primary">Traži</button>
+ </div>
+ <div class="ytlist" id="ytlist"></div>
+ <div id="yterr" style="font-size:12px;margin-top:8px;color:#fbbf24"></div>
+</section>
+
+<section class="panel" data-id="links">
+ <h2>🔗 BRZI LINKOVI</h2>
+ <div class="linkgrid" id="linkgrid"></div>
+ <div class="eventrow" style="flex-wrap:wrap"><input id="linkname" class="field" placeholder="Naziv" style="max-width:130px"><input id="linkurl" class="field" placeholder="Sajt ili aplikacija (gmail.com, spotify:)" style="min-width:150px"><button id="linkadd" class="primary">Dodaj</button></div>
+ <div class="muted" style="font-size:11px;margin-top:8px">Za aplikacije koristi njihovu šemu: spotify:, viber://, tel:+381…, mailto:…</div>
+</section>
 <section class="panel" data-id="search">
  <h2>🔎 PRETRAGA</h2>
  <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
@@ -133,6 +168,8 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="calckeys" id="calckeys"><button data-k="C">C</button><button data-k="(">(</button><button data-k=")">)</button><button data-k="÷" class="op">÷</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="×" class="op">×</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="−" class="op">−</button><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button><button data-k="⌫">⌫</button><button data-k="0">0</button><button data-k=",">,</button><button data-k="=" class="eq">=</button></div>
  <div class="muted" style="font-size:11px;margin-top:8px">Klikni na kalkulator pa možeš da kucaš i sa tastature (Enter = rezultat, Esc = brisanje).</div>
 </section>
+
+<!-- VIC DANA WIDGET -->
  <section class="panel" data-id="joke">
   <h2>😂 VIC DANA</h2>
   <div class="muted" id="joketxt" style="font-size:14px;line-height:1.5;margin-bottom:14px;min-height:50px;">Učitavanje vica…</div>
@@ -141,6 +178,7 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
   </div>
 </section>
 </main>
+
 <div id="setmodal"><div class="setbox">
  <h2>⚙ PODEŠAVANJA</h2>
  <div class="setrow"><span>Režim izgleda</span><select id="s_theme" class="field"><option value="auto">Automatski (izlazak/zalazak)</option><option value="dark">Tamna</option><option value="light">Svetla</option></select></div>
@@ -161,7 +199,9 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="setrow setcol"><span>Sačuvaj sva podešavanja u fajl ili ih vrati iz fajla</span><div class="btns"><button id="b_export">⬇ Izvezi</button><label class="filelabel">⬆ Uvezi<input id="b_import" type="file" accept=".json,application/json"></label></div><small id="b_status" class="muted"></small></div>
  <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end"><button id="s_reset">Vrati podrazumevano</button><button id="s_close" class="primary">Zatvori</button></div>
 </div></div>
+
 <footer>Atmos Dashboard · Vremenska prognoza: Open-Meteo · Radio: javni radio streamovi · Pozadine: Unsplash<div class="author">Autor: zeljkoracunariborca</div></footer>
+
 <script>
 const $=id=>document.getElementById(id);
 const ls=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
@@ -186,241 +226,103 @@ function geolocate(){if(!navigator.geolocation){alert('Pregledač ne podržava l
 $('locate').onclick=geolocate;
 $('citybtn').onclick=async()=>{let q=$('city').value.trim();if(!q)return;try{let r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=sr&format=json');let j=await r.json();if(!j.results?.length)throw 0;let x=j.results[0];setLoc(x.latitude,x.longitude,[x.name,x.admin1].filter(Boolean).join(', '))}catch{alert('Grad nije pronađen.')}};
 setLoc(lat,lon,place);
+
 const stationNames=['Naxi Radio','Hit Music FM','Radio S1','Radio Karolina','Radio S Narodni','Play Radio','Cool Radio','Radio IN','OK Radio','Rock Radio','Radio 202','TDI Radio','Radio S2','Radio S3','JAT Radio','Radio Lola'];
-async function loadStations(){let list=$('stations');try{let urls=[];for(const name of stationNames){let r=await fetch('https://de1.api.radio-browser.info/json/stations/byname/'+encodeURIComponent(name)+'?limit=5&hidebroken=true');let a=await r.json();let exact=a.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(' radio',''))&&x.url_resolved?.startsWith('https://'))||a.find(x=>x.url_resolved?.startsWith('https://'));if(exact)urls.push({name,url:exact.url_resolved})}if(!urls.length)throw 0;list.innerHTML=urls.map((s,i)=>`<div class="station"><span>${s.name}</span><button data-i="${i}">▶ Pusti</button></div>`).join('');list.querySelectorAll('button').forEach(b=>b.onclick=()=>playStation(urls[+b.dataset.i]));}catch{list.innerHTML=stationNames.map(n=>`<div class="station"><span>${n}</span><a href="https://www.radiofm.rs/" target="_blank" style="color:#7dd3fc">Otvori ↗</a></div>`).join('')}}
-function playStation(s){$('radioaudio').src=s.url;$('radioaudio').play().catch(()=>alert('Pregledač nije uspeo da pokrene ovaj stream. Probajte drugu stanicu.'));$('playing').textContent=s.name}
-$('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio').removeAttribute('src');$('playing').textContent='Radio je zaustavljen'};loadStations();
-let view=new Date(),selected=new Date();let events=JSON.parse(localStorage.getItem('atmosEvents')||'{}');
-function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function drawCal(){let y=view.getFullYear(),m=view.getMonth(),first=new Date(y,m,1),offset=(first.getDay()+6)%7,count=new Date(y,m+1,0).getDate();$('month').textContent=months[m]+' '+y;$('cal').innerHTML=['PON','UTO','SRE','ČET','PET','SUB','NED'].map(x=>`<div class="dow">${x}</div>`).join('');for(let i=0;i<offset;i++)$('cal').innerHTML+='<div></div>';for(let n=1;n<=count;n++){let d=new Date(y,m,n),k=key(d),cl='calday'+(key(new Date())===k?' today':'')+(key(selected)===k?' selected':'')+(events[k]?.length?' has':'');$('cal').innerHTML+=`<div class="${cl}" data-day="${n}">${n}</div>`}document.querySelectorAll('[data-day]').forEach(el=>el.onclick=()=>{selected=new Date(y,m,+el.dataset.day);drawCal();drawEvents()});drawEvents()}
-function drawEvents(){let k=key(selected);$('selectedlabel').textContent=selected.toLocaleDateString('sr-RS',{day:'numeric',month:'long',year:'numeric'});let a=events[k]||[];$('events').innerHTML=a.length?a.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:8px;margin:6px 0"><span>• ${esc(x)}</span><button data-del="${i}" style="padding:3px 8px">×</button></div>`).join(''):'Nema dodatih događaja.';document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{a.splice(+b.dataset.del,1);events[k]=a;saveEvents()})}
-function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function saveEvents(){localStorage.setItem('atmosEvents',JSON.stringify(events));drawCal()}
-$('prev').onclick=()=>{view.setMonth(view.getMonth()-1);drawCal()};$('next').onclick=()=>{view.setMonth(view.getMonth()+1);drawCal()};$('addevent').onclick=()=>{let v=$('eventtext').value.trim();if(!v)return;let k=key(selected);(events[k]??=[]).push(v);$('eventtext').value='';saveEvents()};drawCal();
-let alarmTimer=null,alarmAt=null,alarmSound=null;function showAlarm(){if(!alarmAt){$('alarmnext').innerHTML='Sledeći alarm: <strong>nije podešen</strong>';return}$('alarmnext').innerHTML='Sledeći alarm: <strong>'+alarmAt.toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit'})+'</strong> · '+(window.alarmLabel||'Alarm')}
-$('setalarm').onclick=()=>{let t=$('alarmtime').value;if(!t)return alert('Izaberite vreme alarma.');let [h,m]=t.split(':').map(Number),d=new Date();d.setHours(h,m,0,0);if(d<=new Date())d.setDate(d.getDate()+1);alarmAt=d;window.alarmLabel=$('alarmname').value||'Alarm';clearTimeout(alarmTimer);alarmTimer=setTimeout(ring,Math.max(0,d-Date.now()));showAlarm()};
-function ring(){alarmAt=null;showAlarm();$('silence').style.display='inline-block';try{let C=window.AudioContext||window.webkitAudioContext;alarmSound=new C();let osc=alarmSound.createOscillator(),gain=alarmSound.createGain();osc.connect(gain);gain.connect(alarmSound.destination);osc.frequency.value=880;gain.gain.value=.18;osc.start();osc.stop(alarmSound.currentTime+1);osc.onended=()=>{if(alarmSound&&alarmSound.state!=='closed')setTimeout(()=>{if($('silence').style.display!=='none')ringBeep()},700)}}catch{}alert('⏰ '+(window.alarmLabel||'Vreme je!'))}
-function ringBeep(){if(!alarmSound||alarmSound.state==='closed')return;let o=alarmSound.createOscillator(),g=alarmSound.createGain();o.connect(g);g.connect(alarmSound.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(alarmSound.currentTime+.8);o.onended=()=>setTimeout(ringBeep,800)}
-$('silence').onclick=()=>{$('silence').style.display='none';if(alarmSound){alarmSound.close();alarmSound=null}};
-$('cancelalarm').onclick=()=>{clearTimeout(alarmTimer);alarmAt=null;showAlarm();$('silence').click()};showAlarm();
-let mTracks=[],mIdx=-1,musicUrl=null,mShuf=false,mLoop=false;
-const AUD=/\.(mp3|wav|ogg|oga|m4a|aac|flac|opus|wma|weba)$/i;
-function mLoad(files){const a=[...files].filter(f=>f.type.startsWith('audio/')||AUD.test(f.name));if(!a.length){$('musicname').textContent='Nema audio fajlova u izboru';return}a.sort((x,y)=>(x.webkitRelativePath||x.name).localeCompare(y.webkitRelativePath||y.name,undefined,{numeric:true}));mTracks=a;mPlay(0)}
-function drawM(){$('musiclist').innerHTML=mTracks.map((f,i)=>`<div class="ytrow${i===mIdx?' on':''}" data-m="${i}"><span>${i+1}. ${esc(f.name)}</span></div>`).join('');$('musiclist').querySelector('.on')?.scrollIntoView({block:'nearest'})}
-function mPlay(i){if(!mTracks[i])return;mIdx=i;if(musicUrl)URL.revokeObjectURL(musicUrl);musicUrl=URL.createObjectURL(mTracks[i]);$('musicaudio').src=musicUrl;$('musicname').textContent=(i+1)+'/'+mTracks.length+' · '+mTracks[i].name;$('musicaudio').play().catch(()=>{});drawM()}
-function mStep(d,auto){if(!mTracks.length)return;let n;if(mShuf&&mTracks.length>1){do n=Math.floor(Math.random()*mTracks.length);while(n===mIdx)}else{n=mIdx+d;if(n>=mTracks.length){if(auto&&!mLoop)return;n=0}if(n<0)n=mTracks.length-1}mPlay(n)}
-$('musicfile').onchange=$('musicfolder').onchange=e=>{mLoad(e.target.files);e.target.value=''};
-$('musicaudio').onended=()=>mStep(1,true);
-$('mprev').onclick=()=>mStep(-1);$('mnext').onclick=()=>mStep(1);
-$('mshuf').onclick=()=>{mShuf=!mShuf;$('mshuf').classList.toggle('active',mShuf)};$('mloop').onclick=()=>{mLoop=!mLoop;$('mloop').classList.toggle('active',mLoop)};
-$('musiclist').onclick=e=>{const r=e.target.closest('[data-m]');if(r)mPlay(+r.dataset.m)};
+async function loadStations(){let list=$('stations');try{let urls=[];for(const name of stationNames){let r=await fetch('https://de1.api.radio-browser.info/json/stations/byname/'+encodeURIComponent(name)+'?limit=5&hidebroken=true');let a=await r.json();let exact=a.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(' radio',''))&&x.url_resolved?.startsWith('https://'))||a.find(x=>x.url_resolved?.startsWith('https://'));if(exact)urls.push({name,url:exact.url_resolved})}if(!urls.length)throw 0;list.innerHTML=urls.map((s,i)=>`<div class="station"><span>${s.name}</span><button data-i="${i}">▶ Pusti</button></div>`).join('');list.querySelectorAll('button').forEach(b=>b.onclick=()=>playStation(urls[+b.dataset.i]));}catch{list.innerHTML='<div class="muted">Radio stanice trenutno nisu dostupne.</div>'}}
+loadStations();
 
-/* ===== helpers ===== */
-/* ===== raspored widgeta ===== */
-const main=document.querySelector('main');
-['clock','weather','radio','photos','calendar','alarm','media'].forEach((id,i)=>main.children[i].dataset.id=id);
-const NAMES={photos:'Foto-slajder',clock:'Sat',weather:'Vreme',radio:'Radio',calendar:'Kalendar',alarm:'Alarm',media:'Media plejer',youtube:'YouTube',links:'Brzi linkovi',search:'Pretraga',todo:'Zadaci',notes:'Beleške',timer:'Tajmer i štoperica',world:'Svetski satovi',calc:'Kalkulator'};
-const DEF=[...main.children].map(p=>p.dataset.id);
-let lay=Object.assign({order:DEF,wide:['clock'],hidden:[]},ls('atmosLayout',{}));
-function applyLayout(){const ps=[...main.children],ids=ps.map(p=>p.dataset.id),all=[...lay.order.filter(id=>ids.includes(id)),...ids.filter(id=>!lay.order.includes(id))];all.forEach(id=>main.appendChild(ps.find(p=>p.dataset.id===id)));ps.forEach(p=>{p.classList.toggle('wide',lay.wide.includes(p.dataset.id));p.classList.toggle('off',lay.hidden.includes(p.dataset.id))});drawAdd()}
-function saveLayout(){const ps=[...main.children];lay={order:ps.map(p=>p.dataset.id),wide:ps.filter(p=>p.classList.contains('wide')).map(p=>p.dataset.id),hidden:ps.filter(p=>p.classList.contains('off')).map(p=>p.dataset.id)};sv('atmosLayout',lay);drawAdd()}
-function drawAdd(){const h=lay.hidden;$('addbar').innerHTML='<span class="muted">Dodaj widget:</span>'+(h.length?h.map(id=>`<button data-add="${id}">＋ ${NAMES[id]}</button>`).join(''):'<span class="muted">svi su prikazani</span>')}
-$('addbar').onclick=e=>{const id=e.target.dataset.add;if(!id)return;main.querySelector(`[data-id="${id}"]`).classList.remove('off');saveLayout()};
-const vis=(el,d)=>{while(el&&el.classList.contains('off'))el=d<0?el.previousElementSibling:el.nextElementSibling;return el};
-[...main.children].forEach(p=>{const t=document.createElement('div');t.className='tools';t.innerHTML='<button data-a="up" title="Ranije">◀</button><button data-a="down" title="Kasnije">▶</button><button data-a="wide" title="Cela širina">⤢</button><button data-a="hide" title="Ukloni widget">✕</button>';p.appendChild(t);t.onclick=e=>{const a=e.target.dataset.a;if(!a)return;if(a==='up'){const o=vis(p.previousElementSibling,-1);if(o)main.insertBefore(p,o)}if(a==='down'){const o=vis(p.nextElementSibling,1);if(o)o.after(p)}if(a==='wide')p.classList.toggle('wide');if(a==='hide')p.classList.add('off');saveLayout()}});
-applyLayout();
-let drag=null;
-main.addEventListener('dragstart',e=>{drag=e.target.closest('.panel');if(drag)drag.classList.add('dragging')});
-main.addEventListener('dragover',e=>{if(!drag)return;e.preventDefault();document.querySelectorAll('.dragover').forEach(x=>x.classList.remove('dragover'));const o=e.target.closest('.panel');if(o&&o!==drag)o.classList.add('dragover')});
-main.addEventListener('drop',e=>{e.preventDefault();const o=e.target.closest('.panel');if(drag&&o&&o!==drag){const ps=[...main.children];if(ps.indexOf(drag)<ps.indexOf(o))o.after(drag);else main.insertBefore(drag,o);saveLayout()}});
-main.addEventListener('dragend',()=>{document.querySelectorAll('.dragging,.dragover').forEach(x=>x.classList.remove('dragging','dragover'));drag=null});
-$('editlayout').onclick=()=>{const on=document.body.classList.toggle('editing');$('editlayout').classList.toggle('active',on);$('editlayout').textContent=on?'✓ Gotovo':'✥ Raspored';$('resetlayout').style.display=on?'':'none';$('addbar').style.display=on?'flex':'none';[...main.children].forEach(p=>p.draggable=on)};
-$('resetlayout').onclick=()=>{lay={order:DEF,wide:['clock'],hidden:[]};applyLayout();saveLayout()};
+function playStation(s){$('radioaudio').src=s.url;$('radioaudio').play();$('playing').textContent=s.name}
+$('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio').currentTime=0;$('playing').textContent='Izaberite radio stanicu'};
 
-/* ===== brzi linkovi ===== */
-let links=ls('atmosLinks',[{n:'Gmail',u:'https://mail.google.com'},{n:'YouTube',u:'https://www.youtube.com'},{n:'Google Maps',u:'https://maps.google.com'},{n:'Google Drive',u:'https://drive.google.com'}]);
-function normUrl(u){u=u.trim();return /^(https?:|mailto:|tel:|sms:|spotify:|[a-z][a-z0-9+.-]*:\/\/)/i.test(u)?u:'https://'+u}
-function drawLinks(){$('linkgrid').innerHTML=links.map((l,i)=>{let ico='<span class="em">📱</span>';try{const x=new URL(l.u);if(x.protocol.startsWith('http'))ico=`<img src="https://www.google.com/s2/favicons?domain=${x.hostname}&sz=64" alt="" onerror="this.outerHTML='<span class=&quot;em&quot;>🔗</span>'">`}catch{}const web=/^https?:/i.test(l.u);return `<a class="lnk" href="${esc(l.u)}"${web?' target="_blank" rel="noopener"':''}>${ico}<span>${esc(l.n)}</span><button class="x" data-x="${i}">×</button></a>`}).join('')}
-$('linkgrid').onclick=e=>{const x=e.target.dataset.x;if(x===undefined)return;e.preventDefault();links.splice(+x,1);sv('atmosLinks',links);drawLinks()};
-$('linkadd').onclick=()=>{const u=$('linkurl').value.trim();if(!u)return;const url=normUrl(u);let n=$('linkname').value.trim();if(!n){try{n=new URL(url).hostname.replace(/^www\./,'')}catch{n=u}}links.push({n,u:url});sv('atmosLinks',links);$('linkname').value=$('linkurl').value='';drawLinks()};
-$('linkurl').onkeydown=e=>{if(e.key==='Enter')$('linkadd').click()};
-drawLinks();
+/* ===== YouTube mini plejer sa stabilnom pretragom ===== */
+let ytFail=0,yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
+function drawYT(){$('ytlist').innerHTML=ytList.length?ytList.map((s,i)=>`<div class="ytrow${i===ytIdx?' on':''}" data-p="${i}"><span>🎵 ${s.title}</span><button data-d="${i}">×</button></div>`).join(''):'<div class="muted" style="font-size:13px">Lista je prazna.</div>'}
+function ytPlay(i){if(!ytReady||!ytList[i])return;ytIdx=i;const s=ytList[i];yt.loadVideoById(s.id);$('ytname').textContent=s.title;drawYT()}
+function ytStep(d){if(!ytList.length)return;ytPlay((ytIdx+d+ytList.length)%ytList.length)}
+window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{onReady:()=>{ytReady=true;ytNote()},onError:ytErr,onStateChange:e=>{if(e.data===1){ytFail=0;$('yterr').textContent=''}if(e.data===0)ytStep(1)}}})};
+{const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
 
-/* ===== pretraga ===== */
-$('qeng').value=ls('atmosEng',$('qeng').value);$('qeng').onchange=()=>sv('atmosEng',$('qeng').value);
-$('qgo').onclick=()=>{const q=$('qtext').value.trim();if(q)window.open($('qeng').value+encodeURIComponent(q),'_blank','noopener')};$('qtext').onkeydown=e=>{if(e.key==='Enter')$('qgo').click()};
-/* ===== zadaci ===== */
-let todos=ls('atmosTodo',[]);
-function drawTodo(){$('todolist').innerHTML=todos.map((x,i)=>`<div class="ytrow" style="cursor:default"><label style="display:flex;gap:8px;align-items:center;flex:1;min-width:0;cursor:pointer"><input type="checkbox" data-c="${i}"${x.d?' checked':''}><span style="${x.d?'text-decoration:line-through;opacity:.5':''}">${esc(x.t)}</span></label><button data-r="${i}">×</button></div>`).join('')||'<div class="muted" style="font-size:13px">Nema zadataka.</div>';$('todocount').textContent='· '+todos.filter(x=>!x.d).length+' preostalo'}
-function saveTodo(){sv('atmosTodo',todos);drawTodo()}
-$('todoadd').onclick=()=>{const t=$('todotext').value.trim();if(!t)return;todos.push({t,d:false});$('todotext').value='';saveTodo()};$('todotext').onkeydown=e=>{if(e.key==='Enter')$('todoadd').click()};
-$('todolist').onchange=e=>{const c=e.target.dataset.c;if(c!==undefined){todos[+c].d=e.target.checked;saveTodo()}};$('todolist').onclick=e=>{const r=e.target.dataset.r;if(r!==undefined){todos.splice(+r,1);saveTodo()}};
-$('todoclear').onclick=()=>{todos=todos.filter(x=>!x.d);saveTodo()};drawTodo();
-/* ===== beleške ===== */
-$('notes').value=ls('atmosNotes','');$('notes').oninput=()=>sv('atmosNotes',$('notes').value);
-/* ===== tajmer i štoperica ===== */
-function beep3(){try{const C=window.AudioContext||window.webkitAudioContext,a=new C();[0,.4,.8].forEach(t=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start(a.currentTime+t);o.stop(a.currentTime+t+.25)});setTimeout(()=>a.close(),1500)}catch{}}
-let tEnd=0,tLeft=0,tInt=null;
-function tShow(ms){const x=Math.max(0,Math.ceil(ms/1000));$('tdisp').textContent=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')}
-function tSet(min){clearInterval(tInt);tInt=null;tLeft=min*60000;tShow(tLeft);$('tstart').textContent='▶ Start'}
-$('tstart').onclick=()=>{if(tInt){tLeft=tEnd-Date.now();clearInterval(tInt);tInt=null;$('tstart').textContent='▶ Nastavi';return}if(tLeft<=0)tSet(+$('tmin').value||25);tEnd=Date.now()+tLeft;tInt=setInterval(()=>{const l=tEnd-Date.now();tShow(l);if(l<=0){clearInterval(tInt);tInt=null;tLeft=0;$('tstart').textContent='▶ Start';beep3()}},250);$('tstart').textContent='⏸ Pauza'};
-$('treset').onclick=()=>tSet(+$('tmin').value||25);$('tmin').onchange=()=>tSet(+$('tmin').value||25);
-document.querySelectorAll('[data-m]').forEach(b=>{if(b.closest('[data-id="timer"]'))b.onclick=()=>{$('tmin').value=b.dataset.m;tSet(+b.dataset.m)}});tSet(25);
-let swInt=null,swAcc=0,swT0=0;function swShow(ms){const t=Math.floor(ms/100);$('swdisp').textContent=String(Math.floor(t/600)).padStart(2,'0')+':'+String(Math.floor(t/10)%60).padStart(2,'0')+'.'+t%10}
-$('swstart').onclick=()=>{if(swInt){swAcc+=Date.now()-swT0;clearInterval(swInt);swInt=null;$('swstart').textContent='▶ Start';return}swT0=Date.now();swInt=setInterval(()=>swShow(swAcc+Date.now()-swT0),100);$('swstart').textContent='⏸ Stop'};
-$('swreset').onclick=()=>{clearInterval(swInt);swInt=null;swAcc=0;swShow(0);$('swstart').textContent='▶ Start'};
-/* ===== svetski satovi ===== */
-const TZ={'Njujork':'America/New_York','Los Anđeles':'America/Los_Angeles','Čikago':'America/Chicago','Sao Paulo':'America/Sao_Paulo','London':'Europe/London','Moskva':'Europe/Moscow','Istanbul':'Europe/Istanbul','Dubai':'Asia/Dubai','Delhi':'Asia/Kolkata','Singapur':'Asia/Singapore','Tokio':'Asia/Tokyo','Sidnej':'Australia/Sydney'};
-let wl=ls('atmosWorld',['Njujork','London','Tokio']);
-function drawWorld(){const d=new Date();$('worldlist').innerHTML=wl.map((n,i)=>{const z=TZ[n];return `<div class="station" style="margin-bottom:6px"><span>${n} <small class="muted">${d.toLocaleDateString('sr-RS',{timeZone:z,weekday:'short'})}</small></span><span><b style="font-size:18px">${d.toLocaleTimeString('sr-RS',{timeZone:z,hour:'2-digit',minute:'2-digit',hour12:set.h12})}</b> <button data-w="${i}" style="padding:2px 8px">×</button></span></div>`}).join('')||'<div class="muted" style="font-size:13px">Nema gradova.</div>'}
-function drawWorldSel(){$('worldsel').innerHTML=Object.keys(TZ).filter(n=>!wl.includes(n)).map(n=>`<option>${n}</option>`).join('')}
-$('worldlist').onclick=e=>{const w=e.target.dataset.w;if(w===undefined)return;wl.splice(+w,1);sv('atmosWorld',wl);drawWorld();drawWorldSel()};
-$('worldadd').onclick=()=>{const n=$('worldsel').value;if(!n)return;wl.push(n);sv('atmosWorld',wl);drawWorld();drawWorldSel()};
-drawWorld();drawWorldSel();setInterval(drawWorld,15000);
- /* ===== Vic dana widget sa online izvora ===== */
-async function loadJoke() {
-    $('joketxt').textContent = 'Učitavanje vica…';
-    try {
-        // Možemo povlačiti viceve sa javnog besplatnog API-ja (ili preko prilagođenog RSS/JSON izvora)
-        let res = await fetch('https://v2.jokeapi.dev/joke/Any?lang=en&type=single');
-        // Napomena: Pošto su besplatni javni API-ji uglavnom na engleskom, 
-        // možemo napraviti i bogatu domaću listu sa preko 50 viceva da uvek bude smešno na srpskom!
-        
-        if(!res.ok) throw new Error('Greška');
-        let data = await res.json();
-        $('joketxt').textContent = data.joke || 'Došlo je do greške pri učitavanju.';
-    } catch (err) {
-        // Rezervna (fallback) domaća lista ako API nije dostupan
-        const fallbackJokes = [
-            "Mujo: - Fato, bre, šta je ovo, nestalo struje, a ti sediš u mraku? Fato: - Pa čekam da se sijalica zagreje pa da čitam novine!",
-            "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
-            "Zašto Mujo drži računar ispod kreveta? Pa da spava na internetu!",
-            "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen..."
-        ];
-        $('joketxt').textContent = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
-    }
-}
+$('ytsearchbtn').onclick=()=>{
+    const q=$('ytquery').value.trim();
+    if(!q)return;
+    $('yterr').innerHTML=`Rezultati pretrage za "<b>${q}</b>": <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" style="color:#7dd3fc; font-weight:bold;">Otvori na YouTube-u ↗</a>`;
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank', 'noopener');
+};
+$('ytquery').onkeydown=e=>{if(e.key==='Enter')$('ytsearchbtn').click()};
 
-// Učitaj vic pri pokretanju
-loadJoke();
+$('ytlist').onclick=e=>{const d=e.target.dataset.d;if(d!==undefined){ytList.splice(+d,1);if(ytIdx>=+d)ytIdx--;sv('atmosYT',ytList);drawYT();return}const r=e.target.closest('[data-p]');if(r)ytPlay(+r.dataset.p)};
+$('ytprev').onclick=()=>ytStep(-1);$('ytnext').onclick=()=>ytStep(1);
+$('ytplay').onclick=()=>{if(!ytReady)return;if(ytIdx<0)return ytPlay(0);yt.getPlayerState()===1?yt.pauseVideo():yt.playVideo()};
+$('ytmini').onclick=()=>$('ytwrap').classList.toggle('mini');
+function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica je otvorena sa diska (file://) — YouTube odbija ugrađeni plejer (greška 153). Pokreni preko localhost/hostinga ili koristi „↗ YouTube".'}
+function ytErr(e){const m={2:'Neispravan link.',5:'Greška HTML5 plejera.',100:'Video nije dostupan.',101:'Vlasnik ne dozvoljava ugrađeni plejer.',150:'Vlasnik ne dozvoljava ugrađeni plejer.',153:'YouTube nije dobio adresu stranice.'};$('yterr').textContent='⚠ Greška '+e.data+': '+(m[e.data]||'nepoznata greška')}
+$('ytopen').onclick=()=>{const t=ytList[ytIdx];window.open(!t?'https://www.youtube.com':'https://www.youtube.com/watch?v='+t.id,'_blank','noopener')};
+drawYT();
 
-// Klik na dugme za novi vic
-$('newjoke').onclick = loadJoke;
-/* ===== teme, zalazak sunca i foto-slajder ===== */
-let solarRise='',solarSet='';function updateTheme(sunrise,sunset){if(sunrise)solarRise=sunrise;if(sunset)solarSet=sunset;sunrise=solarRise;sunset=solarSet;let mode=set.theme||'auto';if(mode==='auto'){const now=new Date(),mins=now.getHours()*60+now.getMinutes();let rise=7*60,down=19*60;try{if(sunrise)rise=new Date(sunrise).getHours()*60+new Date(sunrise).getMinutes();if(sunset)down=new Date(sunset).getHours()*60+new Date(sunset).getMinutes()}catch{}mode=(mins>=rise&&mins<down)?'light':'dark'}document.body.classList.toggle('theme-light',mode==='light');document.body.classList.remove('theme-ocean','theme-forest','theme-violet','theme-sunset','font-modern','font-rounded','font-serif','font-mono');document.body.classList.add('theme-'+(set.palette||'ocean'),'font-'+(set.font||'modern'));}
-let photoItems=[],slideIndex=0,photoTimer=null,photoRunning=false,photoDir=null,photoUrl=null,photoTok=0,photoScanT=null;
-try{localStorage.removeItem('atmosPhotos')}catch{}
-const PHOTO_OK='showDirectoryPicker' in window&&!/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
-const IMG=/\.(jpe?g|png|gif|webp|bmp|avif|svg)$/i;
-function hdb(){return new Promise((ok,no)=>{const r=indexedDB.open('atmosFS',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
-async function hGet(){try{const db=await hdb();return await new Promise(ok=>{const q=db.transaction('h').objectStore('h').get('photos');q.onsuccess=()=>ok(q.result||null);q.onerror=()=>ok(null)})}catch{return null}}
-async function hSet(v){try{const db=await hdb();db.transaction('h','readwrite').objectStore('h').put(v,'photos')}catch{}}
-async function scanDir(dir,path='',out=[]){for await(const [name,h] of dir.entries()){if(name.startsWith('.'))continue;if(h.kind==='file'&&IMG.test(name))out.push({name:path+name,h});else if(h.kind==='directory')await scanDir(h,path+name+'/',out)}return out}
-async function photoRescan(keep){if(!photoDir)return;try{const cur=photoItems[slideIndex]?.name;const list=(await scanDir(photoDir)).sort((x,y)=>x.name.localeCompare(y.name,undefined,{numeric:true}));photoItems=list;if(keep&&cur){const i=list.findIndex(x=>x.name===cur);slideIndex=i>=0?i:Math.min(slideIndex,Math.max(0,list.length-1))}else slideIndex=0;photoSchedule();if(!keep||!list.length||!cur||list[slideIndex]?.name!==cur)drawPhoto();else $('photoCount').textContent=(slideIndex+1)+' / '+list.length}catch{photoNeedGrant()}}
-async function drawPhoto(){const stage=$('photoStage'),tok=++photoTok;stage.className='photo-stage anim-'+$('photoAnim').value;if(!photoItems.length){stage.querySelectorAll('img').forEach(x=>x.remove());$('photoCaption').textContent=photoDir?'U folderu „'+photoDir.name+'“ nema slika':'Izaberite folder sa fotografijama';$('photoCount').textContent='0 / 0';return}slideIndex=(slideIndex+photoItems.length)%photoItems.length;const item=photoItems[slideIndex];let file;try{file=await item.h.getFile()}catch{photoRescan(true);return}if(tok!==photoTok)return;const url=URL.createObjectURL(file),img=document.createElement('img');img.alt=item.name;img.onload=()=>{if(tok!==photoTok){URL.revokeObjectURL(url);return}stage.querySelectorAll('img').forEach(x=>x.remove());stage.insertBefore(img,$('photoCaption'));requestAnimationFrame(()=>img.classList.add('show'));if(photoUrl)URL.revokeObjectURL(photoUrl);photoUrl=url};img.onerror=()=>URL.revokeObjectURL(url);img.src=url;$('photoCaption').textContent=photoDir.name+' / '+item.name;$('photoCount').textContent=(slideIndex+1)+' / '+photoItems.length}
-function photoStep(d){if(!photoItems.length)return;slideIndex=(slideIndex+d+photoItems.length)%photoItems.length;drawPhoto()}
-function photoSchedule(){clearInterval(photoTimer);if(photoRunning&&photoItems.length>1)photoTimer=setInterval(()=>photoStep(1),(+$('photoSpeed').value||5)*1000)}
-function photoNeedGrant(){photoItems=[];$('photoGrant').style.display='';$('photoCaption').textContent='Pregledač traži ponovnu dozvolu za folder „'+(photoDir?.name||'')+'“';$('photoCount').textContent='0 / 0';$('photoStage').querySelectorAll('img').forEach(x=>x.remove())}
-async function photoUse(dir){photoDir=dir;$('photoGrant').style.display='none';$('photoPick').textContent='📁 Promeni folder';await photoRescan(false);clearInterval(photoScanT);photoScanT=setInterval(()=>photoRescan(true),120000)}
-$('photoPrev').onclick=()=>photoStep(-1);$('photoNext').onclick=()=>photoStep(1);$('photoPlay').onclick=()=>{photoRunning=!photoRunning;$('photoPlay').textContent=photoRunning?'⏸ Pauza':'▶ Pokreni';photoSchedule()};$('photoAnim').onchange=drawPhoto;$('photoSpeed').onchange=photoSchedule;
-if(!PHOTO_OK){$('photoControls').style.display='none';$('photoCaption').textContent='Foto-slajder nije dostupan na ovom uređaju';$('photoNote').innerHTML='⚠ Foto-slajder čita slike direktno sa diska, a to podržavaju samo <b>Chrome i Edge na računaru</b>. Na telefonu, u Safariju i Firefoxu ova opcija nije dostupna. Widget možete sakriti preko „✥ Raspored“.'}
-else{
- $('photoPick').onclick=async()=>{try{const dir=await window.showDirectoryPicker({id:'atmos-photos',mode:'read',startIn:'pictures'});await hSet(dir);slideIndex=0;photoUse(dir)}catch(e){if(e.name!=='AbortError')alert('Folder nije moguće otvoriti: '+e.message)}};
- $('photoGrant').onclick=async()=>{try{if(await photoDir.requestPermission({mode:'read'})==='granted')photoUse(photoDir)}catch{}};
- (async()=>{const dir=await hGet();if(!dir){drawPhoto();return}photoDir=dir;$('photoPick').textContent='📁 Promeni folder';let p='prompt';try{p=await dir.queryPermission({mode:'read'})}catch{}if(p==='granted')photoUse(dir);else photoNeedGrant()})();
-}
-async function compressImage(file,max=1500){const raw=await new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.readAsDataURL(file)});return await new Promise(resolve=>{const im=new Image();im.onload=()=>{const scale=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.82))};im.onerror=()=>resolve(raw);im.src=raw})}
-function setCustomBackground(data){set.customBg=data;sv('atmosSet',set);if(data){document.body.style.backgroundImage=`url("${data}")`;document.body.style.backgroundSize='cover';document.body.style.backgroundPosition='center';$('bgstatus').textContent='Sopstvena pozadina'}else{document.body.style.backgroundImage='';changeBg()}}
-if(set.customBg){document.body.style.backgroundImage=`url("${set.customBg}")`;document.body.style.backgroundSize='cover';document.body.style.backgroundPosition='center'}
-$('s_custombg').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=async()=>setCustomBackground(await compressImage(f,1920));rd.readAsDataURL(f)};$('s_clearbg').onclick=()=>{setCustomBackground('');$('s_custombg').value=''};
-/* ===== podešavanja ===== */
-const sm=$('setmodal');
-function fillSet(){$('s_theme').value=set.theme||'auto';$('s_palette').value=set.palette||'ocean';$('s_font').value=set.font||'modern';$('s_name').value=set.name;$('s_h12').checked=set.h12;$('s_sec').checked=set.sec;$('s_bg').value=String(set.bgMin);$('s_nobg').checked=set.noBg;$('s_acc').value=set.acc;$('s_ga').value=set.ga;$('s_gb').value=set.gb}
-function afterSet(o){applySet();tick();drawWorld();if(o.noBg!==set.noBg&&!set.customBg)changeBg();if(o.noBg!==set.noBg||o.bgMin!==set.bgMin){bgSchedule();$('bgstatus').textContent=$('bgstatus').textContent.replace(/ · menja se.*$/,'')+(set.bgMin>0&&!set.noBg?' · menja se na '+set.bgMin+' min':'')}}
-$('settingsbtn').onclick=()=>{fillSet();sm.classList.add('open')};$('s_close').onclick=()=>sm.classList.remove('open');sm.onclick=e=>{if(e.target===sm)sm.classList.remove('open')};
-sm.oninput=sm.onchange=e=>{if(e.target.closest('.setcol'))return;const o={...set};set={...set,theme:$('s_theme').value,palette:$('s_palette').value,font:$('s_font').value,name:$('s_name').value.trim().slice(0,30),h12:$('s_h12').checked,sec:$('s_sec').checked,f:false,bgMin:+$('s_bg').value,noBg:$('s_nobg').checked,acc:$('s_acc').value,ga:+$('s_ga').value,gb:+$('s_gb').value};sv('atmosSet',set);applySet();updateTheme();afterSet(o)};
-$('s_reset').onclick=()=>{const o=set;set={...SDEF};sv('atmosSet',set);fillSet();applySet();updateTheme();afterSet(o)};
-
-/* ===== web aplikacija (PWA) ===== */
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-let installEvt=null;
-const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;
-const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(!isStandalone())$('installbtn').classList.add('show')});
-window.addEventListener('appinstalled',()=>{installEvt=null;$('installbtn').classList.remove('show')});
-if(isIOS&&!isStandalone()&&location.protocol.startsWith('http'))$('installbtn').classList.add('show');
-$('installbtn').onclick=async()=>{if(installEvt){installEvt.prompt();const r=await installEvt.userChoice;if(r.outcome==='accepted')$('installbtn').classList.remove('show');installEvt=null;return}if(isIOS)alert('Instalacija na iPhone/iPad:\n1. Dodirni dugme Deli (□↑) u Safariju\n2. Izaberi „Dodaj na početni ekran“\n3. Potvrdi sa „Dodaj“');else alert('Otvori meni pregledača (⋮) i izaberi „Instaliraj aplikaciju“ ili „Dodaj na početni ekran“.')};
-
-/* ===== misao dana ===== */
-const QUOTES=[
-['Ko rano rani, dve sreće grabi.','Narodna poslovica'],
-['Bez muke nema nauke.','Narodna poslovica'],
-['Kap po kap — eto mora.','Narodna poslovica'],
-['Pametan zna da ćuti.','Narodna poslovica'],
-['Dobra reč i gvozdena vrata otvara.','Narodna poslovica'],
-['Sporo, ali sigurno.','Narodna poslovica'],
-['Ko drugome jamu kopa, sam u nju pada.','Narodna poslovica'],
-['Zrno po zrno — pogača, kamen po kamen — palača.','Narodna poslovica'],
-['Ne odlaži za sutra ono što možeš danas.','Narodna poslovica'],
-['Bolje vrabac u ruci nego golub na grani.','Narodna poslovica'],
-['Ko pita, ne skita.','Narodna poslovica'],
-['Čuvaj se onoga koji te hvali u oči.','Narodna poslovica'],
-['Ne voli se ko je lep, nego je lep ko se voli.','Narodna poslovica'],
-['Poznaj samoga sebe.','Natpis u Delfima'],
-['Znam da ništa ne znam.','Sokrat'],
-['Sve teče, ništa ne miruje.','Heraklit'],
-['Mi smo ono što stalno činimo. Izvrsnost, dakle, nije čin nego navika.','Aristotel'],
-['Nije da imamo malo vremena, nego ga mnogo gubimo.','Seneka'],
-['Dok odlažemo, život prolazi.','Seneka'],
-['Sreća tvog života zavisi od kvaliteta tvojih misli.','Marko Aurelije'],
-['Ne gubi više vreme raspravljajući kakav treba da bude dobar čovek. Budi takav.','Marko Aurelije'],
-['Nije važno koliko sporo ideš, sve dok ne staneš.','Konfučije'],
-['Put od hiljadu milja počinje jednim korakom.','Lao Ce'],
-['Ko pobedi druge jak je; ko pobedi sebe, moćan je.','Lao Ce'],
-['Ljudi koje uznemiruju nisu stvari, već njihova mišljenja o stvarima.','Epiktet'],
-['Najbolja osveta je ne biti kao onaj koji ti je naudio.','Marko Aurelije'],
-['Znanje je moć.','Frensis Bekon'],
-['Mislim, dakle postojim.','Rene Dekart'],
-['Strpljenje je gorko, ali je njegov plod sladak.','Žan-Žak Ruso'],
-['Ko ima zašto da živi, podneće skoro svako kako.','Fridrih Niče'],
-['Sve što je veliko, jednostavno je.','Lav Tolstoj'],
-['Učenje je blago koje svuda prati svog vlasnika.','Kineska poslovica'],
-['Najbolje vreme da posadiš drvo bilo je pre dvadeset godina. Drugo najbolje je danas.','Kineska poslovica'],
-['Pao sedam puta, ustani osmi.','Japanska poslovica'],
-['Mirno more nikad nije stvorilo veštog mornara.','Engleska poslovica'],
-['Gde ima volje, ima i načina.','Engleska poslovica'],
-['Ni Rim nije sagrađen za jedan dan.','Latinska poslovica'],
-['Iskoristi dan.','Horacije'],
-['Kroz nevolje do zvezda.','Latinska izreka'],
-['Ponavljanje je majka znanja.','Latinska izreka'],
-['Nada umire poslednja.','Narodna izreka'],
-['Ko se poslednji smeje, najslađe se smeje.','Narodna poslovica']
+/* ===== Vic dana widget ===== */
+const jokes = [
+    "Mujo: - Fato, bre, šta je ovo, nestalo struje, a ti sediš u mraku? Fato: - Pa čekam da se sijalica zagreje pa da čitam novine!",
+    "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
+    "Zašto Mujo drži računar ispod kreveta? Pa da spava na internetu!",
+    "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen...",
+    "Ide Mujo ulicom i priča sam sa sobom. Prolazi komšija pa ga pita: - Mujo, što pričaš sam sa sobom? Mujo: - Pa volim da pričam sa pametnim čovekom, a i volim da slušam pametnog čoveka!",
+    "Došao Perica u restoran, pa zove konobara: - Konobaru, ovaj biftek je strašno tvrd! Konobaru, molim te, donesi mi testeru!"
 ];
-function showQuote(){const d=new Date(),doy=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5),q=QUOTES[(doy+d.getFullYear())%QUOTES.length];$('qtxt').textContent='„'+q[0]+'“';$('qauth').textContent='— '+q[1]}
-showQuote();setInterval(showQuote,600000);
+function loadJoke() {
+    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+    $('joketxt').textContent = randomJoke;
+}
+loadJoke();
+$('newjoke').onclick = loadJoke;
+</script>
+</body>
+</html>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atmos">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827"><title>Atmos — Smart Dashboard</title>
+<style>
+:root{--acc:#1686b8;--ga:.72;--gb:15px;--glass:rgba(12,20,34,var(--ga));--line:rgba(255,255,255,.16);--muted:#c4d0df;--white:#f7f9fc}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--white);min-height:100vh;background:#101827;background-size:cover;background-position:center;background-attachment:fixed;transition:background-image 1s ease}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(110deg,rgba(5,12,24,.86),rgba(5,12,24,.35));z-index:-1}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 3vw}.brand{font-size:20px;font-weight:800;letter-spacing:2px}.brand span{color:#7dd3fc}.topright{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px}
+#installbtn{display:none;background:var(--acc);border-color:var(--acc);font-weight:700}#installbtn.show{display:inline-block}
+#settingsbtn{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:20px;line-height:1;transition:transform .4s ease,background .2s}#settingsbtn:hover{transform:rotate(60deg)}
+button,input,select{font:inherit}button{border:1px solid var(--line);background:rgba(255,255,255,.1);color:white;padding:10px 14px;border-radius:12px;cursor:pointer}button:hover{background:rgba(255,255,255,.2)}button.primary{background:var(--acc);border-color:var(--acc)}button.active{background:var(--acc)}
+main{max-width:1500px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:20px;backdrop-filter:blur(var(--gb));box-shadow:0 12px 40px #0002;min-width:0}
+.clock{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 28px}
+.time{font-size:clamp(48px,8vw,100px);font-weight:250;letter-spacing:-4px;line-height:1}.date{font-size:clamp(16px,2vw,23px);color:#d4e0ed;margin-top:8px}.greeting{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#91cdec;margin-bottom:10px}
+.clockright{text-align:right}.clockright .location{font-size:20px;font-weight:600}.clockright .small{color:var(--muted);margin-top:6px}
+h2{font-size:16px;letter-spacing:.5px;margin:0 0 16px;display:flex;align-items:center;gap:9px}.muted{color:var(--muted)}.weather-now{display:flex;align-items:center;gap:18px}.weather-icon{font-size:58px}.temp{font-size:56px;font-weight:300}.weather-desc{font-size:18px}.weather-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:20px}.day{background:#ffffff0c;border-radius:14px;padding:10px 5px;text-align:center;font-size:12px}.day .ico{font-size:23px;margin:8px 0}.day b{display:block;font-size:14px}
+.radio-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:250px;overflow:auto}.station{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#ffffff0c;padding:10px;border-radius:12px;font-size:13px}.station button{padding:7px 10px;font-size:12px}.nowplaying{margin-top:14px;padding:12px;border-radius:14px;background:#0b1422;display:flex;justify-content:space-between;align-items:center;gap:10px}.nowplaying strong{display:block}.nowplaying small{color:var(--muted)}
+audio{width:100%;margin-top:12px;height:38px}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.month{font-size:18px;font-weight:650}.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calgrid div{text-align:center;padding:8px 2px;font-size:13px}.dow{color:#9fb3c8;font-size:11px!important}.calday{border-radius:9px;background:#ffffff09;cursor:pointer;min-height:34px}.calday.today{background:var(--acc);font-weight:bold}.calday.selected{outline:2px solid #7dd3fc}.calday.has{position:relative}.calday.has:after{content:"";width:4px;height:4px;border-radius:50%;background:#fbbf24;position:absolute;bottom:3px;left:calc(50% - 2px)}
+.eventarea{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}.eventrow{display:flex;gap:8px;margin-top:8px}.eventrow input{min-width:0;flex:1}.field{background:#ffffff12;border:1px solid var(--line);border-radius:10px;color:white;padding:10px}.field::placeholder{color:#b7c3d1}
+.alarmrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.alarmrow input{width:125px}.alarmnext{font-size:14px;margin-top:14px;color:#dce8f5}.alarmnext strong{color:#fff}
+.media-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.filelabel{display:inline-block;padding:10px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#ffffff12}.filelabel input{display:none}
 
-/* ===== kalkulator ===== */
-let cExpr='',cDone=false;
-const cPretty=e=>e.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−').replace(/\./g,',');
-function cShow(){$('cval').textContent=cExpr?cPretty(cExpr):'0'}
-function cEval(e){if(!/^[\d+\-*/().\s]+$/.test(e))throw 0;const r=Function('"use strict";return ('+e+')')();if(typeof r!=='number'||!isFinite(r))throw 0;return +r.toPrecision(12)}
-function cKey(k){
- const map={'×':'*','÷':'/','−':'-',',':'.','x':'*'};k=map[k]||k;
- if(k==='C'){cExpr='';$('cexpr').textContent='';cDone=false;return cShow()}
- if(k==='⌫'){cExpr=cDone?'':cExpr.slice(0,-1);cDone=false;return cShow()}
- if(k==='='){if(!cExpr)return;try{const r=cEval(cExpr);$('cexpr').textContent=cPretty(cExpr)+' =';cExpr=String(r);cDone=true;cShow()}catch{$('cexpr').textContent='Greška u izrazu'}return}
- if(!/^[\d+\-*/().]$/.test(k))return;
- if(cDone&&/[\d(.]/.test(k))cExpr='';cDone=false;
- if(/[+\-*/]/.test(k)&&/[+\-*/]$/.test(cExpr)&&!(k==='-'&&/[*/]$/.test(cExpr)))cExpr=cExpr.slice(0,-1);
- if(k==='.'){const last=cExpr.split(/[+\-*/()]/).pop();if(last.includes('.'))return;if(!last)cExpr+='0'}
- cExpr+=k;cShow()}
-$('calckeys').onclick=e=>{const k=e.target.dataset.k;if(k)cKey(k)};
-document.querySelector('[data-id="calc"]').addEventListener('keydown',e=>{const k=e.key;if(e.target.tagName==='INPUT')return;let m=k==='Enter'?'=':k==='Escape'?'C':k==='Backspace'?'⌫':k===','?',':/^[\d+\-*/().]$/.test(k)?k:null;if(m){e.preventDefault();cKey(m)}});
+.panel{position:relative}.panel.wide{grid-column:1/-1}
+.tools{display:none;position:absolute;top:-15px;right:16px;gap:4px;z-index:3;background:#101827;border:1px solid var(--line);border-radius:12px;padding:3px}
+.tools button{padding:3px 10px;font-size:13px;border-radius:9px}
+body.editing .tools{display:flex}body.editing .panel{outline:2px dashed #7dd3fc99;outline-offset:3px;cursor:grab}
+.panel.dragging{opacity:.35}.panel.dragover{outline:2px solid #fbbf24!important}
+.ytwrap{aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;transition:width .3s}.ytwrap.mini{width:200px}.ytwrap iframe{width:100%;height:100%;display:block}
+.ytlist{max-height:160px;overflow:auto;margin-top:10px}.ytrow{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 10px;border-radius:10px;font-size:13px;cursor:pointer}.ytrow:hover{background:#ffffff12}.ytrow.on{background:color-mix(in srgb,var(--acc) 35%,transparent)}.ytrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ytrow button{padding:2px 8px}
+.linkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:14px}.lnk{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:14px;background:#ffffff0c;color:#fff;text-decoration:none;font-size:12px;text-align:center;word-break:break-word}.lnk:hover{background:#ffffff1f}.lnk img{width:32px;height:32px;border-radius:8px}.lnk .em{font-size:28px;line-height:32px}.lnk .x{position:absolute;top:3px;right:3px;padding:0 6px;font-size:12px;border-radius:8px;opacity:.5}
+.panel.off{display:none!important}select.field option{color:#000}textarea.field{width:100%;min-height:150px;resize:vertical}
+#addbar{display:none;flex-wrap:wrap;gap:8px;align-items:center;max-width:1500px;margin:0 auto 18px;padding:0 3vw;font-size:13px}#addbar button{padding:6px 12px;font-size:13px}
+#setmodal{display:none;position:fixed;inset:0;z-index:50;background:#0009;align-items:center;justify-content:center;padding:16px}#setmodal.open{display:flex}.setbox{background:#0f1a2b;border:1px solid var(--line);border-radius:20px;padding:22px;max-width:440px;width:100%;max-height:90vh;overflow:auto}.setbox h2{margin-bottom:8px}.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff14;font-size:14px}.setrow input[type=range]{width:150px}.setrow input[type=color]{width:46px;height:30px;padding:0;border:0;background:none}
+.quote{max-width:420px;margin-top:10px;margin-left:auto;font-size:14px;line-height:1.45;color:var(--muted);font-style:italic}.quote b{display:block;font-style:normal;font-size:11px;letter-spacing:2px;color:#91cdec;margin-bottom:4px;font-weight:600}.quote span{display:block;font-style:normal;font-size:12px;margin-top:4px;opacity:.85}
+.calcdisp{background:#0b1422;border-radius:14px;padding:12px 16px;text-align:right;margin-bottom:12px;min-height:76px;overflow:hidden}#cexpr{font-size:13px;min-height:18px;word-break:break-all}#cval{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;word-break:break-all;line-height:1.2}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.calckeys button{padding:14px 0;font-size:18px}.calckeys .op{background:color-mix(in srgb,var(--acc) 30%,transparent)}.calckeys .eq{background:var(--acc);border-color:var(--acc)}
+.setsec{font-size:12px;letter-spacing:1.5px;color:#91cdec;margin:18px 0 2px;font-weight:700}.setcol{flex-direction:column;align-items:stretch}.setcol .btns{display:flex;gap:8px;flex-wrap:wrap}#b_status{font-size:12px;min-height:16px}
+body.theme-light .calcdisp{background:#e2eaf3}
+.omlink{margin-left:auto;font-size:12px;font-weight:500;color:#7dd3fc;text-decoration:none;letter-spacing:0}.omlink:hover{text-decoration:underline}.wclick{cursor:pointer;border-radius:14px;transition:background .2s}.wclick:hover{background:#ffffff0a}
+.bigtime{font-size:40px;font-weight:300;font-variant-numeric:tabular-nums;margin:6px 0}
+.author{font-size:10px;margin-top:4px;opacity:.75;letter-spacing:.5px}
+footer{text-align:center;color:#c2cfde99;font-size:11px;padding:5px 20px 20px}
+@media(max-width:850px){.quote{margin-left:0}main{grid-template-columns:1fr}.clock{grid-column:auto;align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){header{padding:14px 4vw}.topright span{display:none}main{padding:0 4vw 20px}.panel{padding:16px}.radio-list{grid-template-columns:1fr}.forecast{grid-template-columns:repeat(5,minmax(0,1fr))}.day{padding:8px 2px}.day .ico{font-size:19px}}
 
-/* ===== rezervna kopija: lokalno ===== */
-function backupData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k.startsWith('atmos'))continue;data[k]=localStorage.getItem(k)}return{app:'atmos',version:1,date:new Date().toISOString(),data}}
-function restoreData(o){if(!o||o.app!=='atmos'||typeof o.data!=='object')throw new Error('Ovo nije Atmos rezervna kopija.');for(const [k,v] of Object.entries(o.data))if(k.startsWith('atmos')&&typeof v==='string')localStorage.setItem(k,v)}
-$('b_export').onclick=()=>{const b=new Blob([JSON.stringify(backupData(),null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='atmos-podesavanja-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);$('b_status').textContent='✓ Fajl je preuzet.'};
-$('b_import').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const o=JSON.parse(await f.text());if(!confirm('Uvesti podešavanja iz „'+f.name+'“? Trenutna podešavanja biće zamenjena.'))return;restoreData(o);alert('Podešavanja su uvezena. Stranica će se osvežiti.');location.reload()}catch(err){$('b_status').textContent='⚠ '+(err.message||'Neispravan fajl.')}};
-
-</script></body></html>
+/* Atmos personalisation */
+body.theme-light{color:#172033;background-color:#e8eef5}body.theme-light:before{background:linear-gradient(110deg,rgba(235,242,250,.78),rgba(230,238,248,.42))}body.theme-light .panel{color:#172033;--muted:#536276;background:rgba(255,255,255,.76);border-color:rgba(20,40,70,.13)}body.theme-light .muted,body.theme-light .date,body.theme-light .weather-meta,body.theme-light .clockright .small{color:#536276}body.theme-light button,body.theme-light .field,body.theme-light .filelabel{color:#172033;background:rgba(20,40,70,.07);border-color:rgba(20,40,70,.18)}body.theme-light .field::placeholder{color:#66758a}body.theme-light .lnk{color:#172033;background:#1720330c}body.theme-light .station,body.theme-light .day,body.theme-light .ytrow{background:#1720
