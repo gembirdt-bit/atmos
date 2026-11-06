@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="sr">
 <head>
-<title>Atmos — Smart Dashboard </title>
+<title>Atmos — Smart Dashboard</title>
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -204,7 +204,8 @@ function applySet(){const r=document.documentElement.style;r.setProperty('--acc'
 const days=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
 const months=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
 function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit',second:set.sec?'2-digit':undefined,hour12:set.h12});$('date').textContent=days[d.getDay()]+', '+d.getDate()+'. '+months[d.getMonth()]+' '+d.getFullYear()+'.';$('greeting').textContent=(d.getHours()<11?'DOBRO JUTRO':d.getHours()<18?'DOBAR DAN':'DOBRO VEČE')+(set.name?', '+set.name.toUpperCase():'')}
-tick();setInterval(tick,1000);setInterval(()=>updateTheme(),60000);
+tick();setInterval(tick,1000);
+
 $('fullscreen').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
 const photos=['photo-1500530855697-b586d89ba3ee','photo-1470770841072-f978cf4d019e','photo-1501785888041-af3ef285b470','photo-1470252649378-9c29740c9fa8','photo-1472214103451-9374bd1c798e','photo-1441974231531-c6227db76b6e','photo-1507525428034-b723cf961d3e'];
 let photoIndex=-1,bgTimer=null;function changeBg(){if(set.customBg){document.body.style.backgroundImage=`url(\"${set.customBg}\")`;$('bgstatus').textContent='Sopstvena pozadina';return}if(set.noBg){document.body.style.backgroundImage='none';$('bgstatus').textContent='Pozadina: tamna';return}photoIndex=(photoIndex+1)%photos.length;document.body.style.backgroundImage=`url(https://images.unsplash.com/${photos[photoIndex]}?auto=format&fit=crop&w=2200&q=85)`;$('bgstatus').textContent='Pozadina '+(photoIndex+1)+' / '+photos.length+(set.bgMin>0?' · menja se na '+set.bgMin+' min':'')}
@@ -219,7 +220,6 @@ async function weather(){
         const r=await fetch(u);
         if(!r.ok)throw 0;
         const j=await r.json(),c=j.current,d=j.daily;
-        if(typeof updateTheme === 'function') updateTheme(d.sunrise?.[0],d.sunset?.[0]);
         let desc=wcodes[c.weather_code]||['Promenljivo','🌤️'];
         $('temp').textContent=Math.round(c.temperature_2m)+'°';
         $('wicon').textContent=desc[1];
@@ -239,22 +239,50 @@ document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUr
 function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
 function geolocate(){if(!navigator.geolocation){alert('Pregledač ne podržava lokaciju.');return}navigator.geolocation.getCurrentPosition(async p=>{lat=p.coords.latitude;lon=p.coords.longitude;try{let r=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=sr&format=json`);let j=await r.json();place=j.results?.[0]?.name||'Moja lokacija'}catch{place='Moja lokacija'}$('location').textContent=place;weather()},()=>alert('Dozvolite pristup lokaciji.'),{enableHighAccuracy:false,timeout:10000})}
 $('locate').onclick=geolocate;
-$('citybtn').onclick=async()=>{let q=$('city').value.trim();if(!q)return;try{let r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=sr&format=json');let j=await r.json();if(!j.results?.length)throw 0;let x=j.results[0];setLoc(x.latitude,x.longitude,[x.name,x.admin1].filter(Boolean).join(', '))}catch{alert('Grad nije pronađen.')}};
+$('citybtn').onclick=async()=>{
+    let q=$('city').value.trim();
+    if(!q)return;
+    try{
+        let r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=sr&format=json');
+        let j=await r.json();
+        if(!j.results?.length)throw 0;
+        let x=j.results[0];
+        setLoc(x.latitude,x.longitude,[x.name,x.admin1].filter(Boolean).join(', '));
+    }catch{
+        alert('Grad nije pronađen.');
+    }
+};
 setLoc(lat,lon,place);
 
 const stationNames=['Naxi Radio','Hit Music FM','Radio S1','Radio Karolina','Radio S Narodni','Play Radio','Cool Radio','Radio IN','OK Radio','Rock Radio','Radio 202','TDI Radio','Radio S2','Radio S3','JAT Radio','Radio Lola'];
-async function loadStations(){let list=$('stations');try{let urls=[];for(const name of stationNames){let r=await fetch('https://de1.api.radio-browser.info/json/stations/byname/'+encodeURIComponent(name)+'?limit=5&hidebroken=true');let a=await r.json();let exact=a.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(' radio',''))&&x.url_resolved?.startsWith('https://'))||a.find(x=>x.url_resolved?.startsWith('https://'));if(exact)urls.push({name,url:exact.url_resolved})}if(!urls.length)throw 0;list.innerHTML=urls.map((s,i)=>`<div class="station"><span>${s.name}</span><button data-i="${i}">▶ Pusti</button></div>`).join('');list.querySelectorAll('button').forEach(b=>b.onclick=()=>playStation(urls[+b.dataset.i]));}catch{list.innerHTML='<div class="muted">Radio stanice trenutno nisu dostupne.</div>'}}
+async function loadStations(){
+    let list=$('stations');
+    try{
+        let urls=[];
+        for(const name of stationNames){
+            let r=await fetch('https://de1.api.radio-browser.info/json/stations/byname/'+encodeURIComponent(name)+'?limit=5&hidebroken=true');
+            let a=await r.json();
+            let exact=a.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(' radio',''))&&x.url_resolved?.startsWith('https://'))||a.find(x=>x.url_resolved?.startsWith('https://'));
+            if(exact)urls.push({name,url:exact.url_resolved})
+        }
+        if(!urls.length)throw 0;
+        list.innerHTML=urls.map((s,i)=>`<div class="station"><span>${s.name}</span><button data-i="${i}">▶ Pusti</button></div>`).join('');
+        list.querySelectorAll('button').forEach(b=>b.onclick=()=>playStation(urls[+b.dataset.i]));
+    }catch{
+        list.innerHTML='<div class="muted">Radio stanice trenutno nisu dostupne.</div>';
+    }
+}
 loadStations();
 
 function playStation(s){$('radioaudio').src=s.url;$('radioaudio').play();$('playing').textContent=s.name}
 $('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio').currentTime=0;$('playing').textContent='Izaberite radio stanicu'};
 
 /* ===== YouTube mini plejer sa stabilnom pretragom ===== */
-let ytFail=0,yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
+let yt=null,ytReady=false,ytList=ls('atmosYT',[]),ytIdx=-1;
 function drawYT(){$('ytlist').innerHTML=ytList.length?ytList.map((s,i)=>`<div class="ytrow${i===ytIdx?' on':''}" data-p="${i}"><span>🎵 ${s.title}</span><button data-d="${i}">×</button></div>`).join(''):'<div class="muted" style="font-size:13px">Lista je prazna.</div>'}
 function ytPlay(i){if(!ytReady||!ytList[i])return;ytIdx=i;const s=ytList[i];yt.loadVideoById(s.id);$('ytname').textContent=s.title;drawYT()}
 function ytStep(d){if(!ytList.length)return;ytPlay((ytIdx+d+ytList.length)%ytList.length)}
-window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{onReady:()=>{ytReady=true;ytNote()},onError:ytErr,onStateChange:e=>{if(e.data===1){ytFail=0;$('yterr').textContent=''}if(e.data===0)ytStep(1)}}})};
+window.onYouTubeIframeAPIReady=()=>{yt=new YT.Player('ytplayer',{width:'100%',height:'100%',playerVars:{playsinline:1,rel:0},events:{onReady:()=>{ytReady=true;ytNote()},onError:ytErr,onStateChange:e=>{if(e.data===0)ytStep(1)}}})};
 {const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s)}
 
 $('ytsearchbtn').onclick=()=>{
@@ -269,94 +297,20 @@ $('ytlist').onclick=e=>{const d=e.target.dataset.d;if(d!==undefined){ytList.spli
 $('ytprev').onclick=()=>ytStep(-1);$('ytnext').onclick=()=>ytStep(1);
 $('ytplay').onclick=()=>{if(!ytReady)return;if(ytIdx<0)return ytPlay(0);yt.getPlayerState()===1?yt.pauseVideo():yt.playVideo()};
 $('ytmini').onclick=()=>$('ytwrap').classList.toggle('mini');
-function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica je otvorena sa diska (file://) — YouTube odbija ugrađeni plejer (greška 153). Pokreni preko localhost/hostinga ili koristi „↗ YouTube".'}
-function ytErr(e){const m={2:'Neispravan link.',5:'Greška HTML5 plejera.',100:'Video nije dostupan.',101:'Vlasnik ne dozvoljava ugrađeni plejer.',150:'Vlasnik ne dozvoljava ugrađeni plejer.',153:'YouTube nije dobio adresu stranice.'};$('yterr').textContent='⚠ Greška '+e.data+': '+(m[e.data]||'nepoznata greška')}
+function ytNote(){if(location.protocol==='file:'&&!$('yterr').textContent)$('yterr').textContent='⚠ Stranica otvorena sa diska (file://) — YouTube odbija ugrađeni plejer. Koristi „↗ YouTube".'}
+function ytErr(e){$('yterr').textContent='⚠ YouTube greška: '+e.data}
 $('ytopen').onclick=()=>{const t=ytList[ytIdx];window.open(!t?'https://www.youtube.com':'https://www.youtube.com/watch?v='+t.id,'_blank','noopener')};
 drawYT();
 
-/* ===== Vic dana widget sa 100+ viceva ===== */
+/* ===== Vic dana widget ===== */
 const jokes = [
     "Mujo: - Fato, bre, šta je ovo, nestalo struje, a ti sediš u mraku? Fato: - Pa čekam da se sijalica zagreje pa da čitam novine!",
     "Zašto Mujo drži računar ispod kreveta? Pa da spava na internetu!",
     "Ide Mujo ulicom i priča sam sa sobom. Prolazi komšija pa ga pita: - Mujo, što pričaš sam sa sobom? Mujo: - Pa volim da pričam sa pametnim čovekom, a i volim da slušam pametnog čoveka!",
-    "Pita Mujo Hasu: - Haso, bre, šta je to 'sudbina'? - E, moj Mujo, to ti je kad nemaš para, a oženiš se udovicom koja ima petoro dece!",
-    "Vraća se Mujo kući sa posla ranije i zatekne Hasu u krevetu sa Fatom. Gleda Mujo, pa kaže: - Dobro, bre, Haso, ja ti verujem, al' Fata pretera ga!",
-    "Pita Mujo sina: - Sine, šta si danas učio u školi? - Pa, tata, učili smo struju. - E, svaka čast, bar da je neko nešto naučio u ovoj kući, a ne samo računi da stižu!",
-    "Zašto Mujo otvara jogurt u prodavnici pre nego što ga plati? Piše na njemu: 'Otvoriti ovde'.",
-    "Pita Fata Muju: - Mujo, jel' bi ti mene prevario? - Pa, Fato, ne znam... Zavisi kakva je ponuda!",
-    "Sedi Mujo u kafani i pije pivo, pa govori konobaru: - Daj mi još jedno pivo! - A konobar će: - Pa već si popio deset! - E pa, vidiš, to ti je dokaz da slabo brojiš!",
-    "Pita Mujo Hasu: - Čuješ, Haso, jel' znaš ti razliku između zida i plavuše? - Ne znam. - E, ni ja, oboje odbijaju udarac!",
     "Pita učiteljica Ivicu: - Ivice, šta bi radio da imaš milion evra? Ivica: - Pa, učiteljice, kupio bih stan, kola, napravio bazen...",
-    "Došao Perica u restoran, pa zove konobara: - Konobaru, ovaj biftek je strašno tvrd! Konobaru, molim te, donesi mi testeru!",
-    "Pita učiteljica u školi: - Deco, ko mi navede primer jedne nepovratne radnje, dobiće peticu. Javlja se Perica: - Proliv, učiteljice!",
-    "Pita učiteljica: - Perice, ko je napisao 'Gorski vijenac'? - Pa, nisam ja, majke mi!",
-    "Pita učiteljica decu: - Ko zna šta znači reč 'alternativa'? Javlja se Perica: - To vam je, učiteljice, kad nemaš s kim da se svađaš, pa se posvađaš sam sa sobom.",
-    "Dobio Perica jedinicu iz matematike, pa mu tata govori: - Sram te bilo, ja sam u tvojim godinama uvek bio odličan đak! - E, tata, lako je tebi bilo, tebe je učio učitelj, a mene uči profesor.",
-    "Pita učiteljica: - Perice, navedi mi jedno domaću životinju koja daje mleko. - Krava, učiteljice. - Odlično. A koja daje vunu? - Ovca. - Bravo. A koja daje perje i jaja? - Jastuk, učiteljice!",
-    "Učiteljica pita: - Perice, šta misliš, od čega nam najviše koristi Sunce? - Pa, od toga što nam greje planetu. - A Mesec? - Pa, da nam sveti noću kad je mrak. - Vrlo dobro. A šta ti misliš, čemu služe zvezde? - Pa da nam ne bude mrak kad nema Meseca!",
-    "Pita tata Pericu: - Sine, kako je bilo na pismenom iz matematike? - Pa, tata, pola zadataka sam uradio tačno! - O, pa to je odlično! Čestitam! - Ma da, samo što su mi svi ti zadatci bili netačni.",
-    "Pita učiteljica: - Perice, zašto kasniš u školu? - Pa, učiteljice, sreo sam onog čoveka što deli novčanice na ulici. - Jao, divno! Pa koliko si dobio? - Pa, delio je 100 dinara svakome ko skoči sa 10 metara visine.",
     "Zašto plavuša nosi merdevine u supermarket? Čula je da su cene pale!",
-    "Zašto plavuša stavlja frižider na krevet? Da joj pivo bude pri ruci kad legne da spava.",
-    "Šta radi plavuša kad otvori jogurt? Baca poklopac jer misli da je dobitni kod u pitanju.",
-    "Pita plavuša drugaricu: - Čula sam da je ova godina prestupna. Šta to tačno znači? - Pa, to ti je ono kad svi prestupaju preko zakona.",
-    "Zašto plavuša drži zatvorene oči dok se ogleda? Da se ne iznenadi kad vidi sebe.",
-    "Ulazi plavuša u knjižaru i pita: - Imate li neku knjigu o muškarcima? Prodavac se nasmeje i kaže: - Imamo, na odeljenju naučne fantastike.",
-    "Zašto plavuša gura automobil oko zgrade? Pa, rekoše joj da napravi jedan krug oko bloka.",
-    "Šta radi plavuša na računaru? Traži dugme 'bilo koji taster' jer joj piše da pritisne 'Any key'.",
-    "Pita plavuša policajca: - Izvinite, zašto mi pišete kaznu kad sam parkirala na mestu za invalide?",
-    "Zašto plavuša plače u autobusu? Zato što je zaboravila kući kartu koju je kupila za tramvaj.",
-    "Ide vo vozom kroz tunel. Mrak, pa svetlost, pa mrak, pa svetlost... Kaže putnik preko puta: - Jao, al' se ispremetah od ovog puta!",
-    "Sede dva kostura u kafiću. Jedan naručuje: - Konobaru, daj mi jedno pivo i jednu metlu!",
-    "Zašto crnogorac drži jogurt na glavi? Zato što mu je lekar prepisao obloge za mozak.",
-    "Ide puž preko šine, naiđe voz i prepolovi ga. Posle pola sata proviri prednji deo iz trave i pita zadnji: - Čuješ, bre, jel' znaš ti gde smo mi to udarili?",
-    "Pita tip u apoteci: - Izvinite, imate li naočare za sunce? - Imamo, naravno. Kakve želite? - Pa, da izgledam pametnije kad ih stavim.",
-    "Sede dva mrava na grani, prolazi slon. Grana pukne, slon padne u blato, a mrav će drugom: - Jesi vid'o kako ga unakazismo? A nismo ni hteli!",
-    "Pita momak devojku: - Hoćeš li da se udaš za mene? - Pa, ne znam... A kolika ti je plata? - Pa, hiljadu evra. - E, za te pare mogu da nađem dvojicu po petsto!",
-    "Šeta frajer psa i sretne prijatelja. - Kakav ti je ovo pas, bre? Izgleda kao krokodil! - Pa, kupio sam ga na buvljaku za deset evra.",
-    "Zašto policajac nosi šargarepu u džepu kad ide na pecanje? Pa da hrani morske konjiće!",
-    "Sede dva policajca u autu i jedan kaže drugom: - Vidi onaj znak tamo, piše 'Oštra krivina'. A drugi će: - Ma nema šanse, pa nije to nož da se posečeš!",
-    "Žali se čovek prijatelju: - Jao, moja žena ima užasan hobi! Po ceo dan skuplja salvete iz restorana. - Pa dobro, to je slatko. - Jeste, al' ih skuplja dok ja sedim u kolima i čekam da platim račun!",
-    "Pita dete oca: - Tata, jel' istina da u Africi možeš da kupiš ženu za tri krave? - Jeste, sine, istina je. - Jao, jedva čekam da porastem pa da odem tamo! - Nemoj, sine, ošišaće te krava načisto.",
-    "Pita gazda radnika: - Pa dobro, bre, ti stalno kasniš na posao! Jel' znaš ti koliko je sati kad ti dolaziš? - Pa, ne znam tačno, gazda, uvek kasnim pre nego što saznam.",
-    "Kaže žena mužu: - Dragi, kupila sam novu haljinu, koštala je pravo bogatstvo! A muž će smireno: - Eto, vidiš, a ti si govorio da nemaš za hleb.",
-    "Pita učiteljica malog Ivicu: - Znaš li ti, Ivice, šta znači reč 'kolega'? - To vam je, učiteljice, onaj čovek koji radi isto što i ti, samo što ga manje plaćaju.",
-    "Pita pacijent doktora: - Doktore, jel' ova operacija opasna? - Ma ne brinite se ništa, stoput sam je dosad radio! - Uf, laknulo mi je. - Pa da, jednom mora da uspije!",
-    "Došao čovek kod vračare, a ona mu gleda u šolju i kaže: - Vidim veliku nesreću... Izgubićeš ženu uskoro... - Ma znam to, babi, nego reci ti meni jel' ću imati sreće u ljubavi posle toga?",
-    "Pita policajac vozača: - Gospodine, pa vi ste pijani ko majka! A vozač odgovara: - Bogami, gospodine policajče, laknulo mi je kad ste to rekli.",
-    "Kako se zove najkraći vic na svetu? - Crnogorac trči.",
-    "Zašto plavuša baca sat kroz prozor? Zato što želi da vidi kako vreme leti.",
-    "Sede dva penzionera na klupi u parku i gledaju devojke. Jedan uzdahne: - Eh, kad se setim, u moje vreme smo za takve noge išli u rat! A drugi odgovara: - Pa brate, i sad nam se ratuje, al' ne daju noge.",
-    "Pita momak devojku: - Da li veruješ u ljubav na prvi pogled? - Pa, verujem... Hoćeš da prođem još jednom?",
-    "Došao gastarbajter u rodno selo posle deset godina i pita komšiju: - Pa dobro, bre, šta se ovo promenilo? Gde su oni stari hrastovi?",
-    "Zašto policajac drži uši zatvorene dok spava? Da mu ne uđe promaja u mozak.",
-    "Pita sudija optuženog: - Zašto ste opljačkali banku? - Pa, gospodine sudija, tamo je bio novac, a ja sam bio u krizi.",
-    "Sastali se direktor i radnik, pa direktor kaže: - Slušaj, od sutra imaš smanjenu platu za 20 posto.",
-    "Koja je razlika između slona i komarca? - Pa, slon može da ima buve, ali komarac ne može da ima slona.",
-    "Šeta Mujo kroz šumu i sretne medveda. Medved će: - Sad ću da te pojedem!",
-    "Pita učiteljica: - Ivice, znaš li ti ko je bio Vuk Karadžić?",
-    "Razgovaraju dva puža: - Znaš li da je onaj komšija puž prodao kuću i kupio auto?",
-    "Zašto kornjače nose oklop na leđima? Zato što nemaju džepove za ključeve.",
-    "Pita otac sina: - Sine, kolika ti je bila ocena iz istorije?",
-    "Sede dva lava u kavezu u zoološkom vrtu i pričaju.",
-    "Zašto je lav kralj životinja? Zato što slon nema dovoljno glasnu riku.",
-    "Ide čovek ulicom, nosi frižider na glavi, pa ga pita prolaznik.",
-    "Pita Fata Muju: - Mujo, jel' znaš ti da kuvaš?",
-    "Kako se na engleskom kaže: 'Nemam pojma'?",
-    "Zašto zec trči kroz šumu sa povezom na očima?",
-    "Pita učiteljica malog Ivicu: - Ivice, reci mi tri reči koje se najčešće koriste u školi.",
-    "Pita momak devojku: - Jel' voliš muziku?",
-    "Pita učiteljica: - Perice, šta bi učinio da vidiš medveda u šumi?",
-    "Zašto se plavuša smeje kad grmi? Misli da je neko slika.",
-    "Pita otac sina: - Sine, zašto imaš keca iz vladanja?",
-    "Sede dva policajca u mraku i jedan pita drugog.",
-    "Kako se zove zec koji trenira boks?",
-    "Zašto fudbaleri nose kopačke sa kramponima?",
-    "Pita Mujo Hasu: - Haso, bre, zašto ti držiš zatvorene oči kad piješ lek?",
-    "Došao čovek kod psihijatra pa kaže: - Doktore, imam ozbiljan problem, stalno ummišljam da sam pas!",
-    "Šta radi Mujo na vrhu solitera sa bušilicom?"
+    "Došao Perica u restoran, pa zove konobara: - Konobaru, ovaj biftek je strašno tvrd! Konobaru, molim te, donesi mi testeru!"
 ];
-
 function loadJoke() {
     const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
     $('joketxt').textContent = randomJoke;
