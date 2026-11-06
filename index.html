@@ -30,4 +30,352 @@ audio{width:100%;margin-top:12px;height:38px}
 .calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.month{font-size:18px;font-weight:650}.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calgrid div{text-align:center;padding:8px 2px;font-size:13px}.dow{color:#9fb3c8;font-size:11px!important}.calday{border-radius:9px;background:#ffffff09;cursor:pointer;min-height:34px}.calday.today{background:var(--acc);font-weight:bold}.calday.selected{outline:2px solid #7dd3fc}.calday.has{position:relative}.calday.has:after{content:"";width:4px;height:4px;border-radius:50%;background:#fbbf24;position:absolute;bottom:3px;left:calc(50% - 2px)}
 .eventarea{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}.eventrow{display:flex;gap:8px;margin-top:8px}.eventrow input{min-width:0;flex:1}.field{background:#ffffff12;border:1px solid var(--line);border-radius:10px;color:white;padding:10px}.field::placeholder{color:#b7c3d1}
 .alarmrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.alarmrow input{width:125px}.alarmnext{font-size:14px;margin-top:14px;color:#dce8f5}.alarmnext strong{color:#fff}
-.
+.media-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.filelabel{display:inline-block;padding:10px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#ffffff12}.filelabel input{display:none}
+
+.panel{position:relative}.panel.wide{grid-column:1/-1}
+.tools{display:none;position:absolute;top:-15px;right:16px;gap:4px;z-index:3;background:#101827;border:1px solid var(--line);border-radius:12px;padding:3px}
+.tools button{padding:3px 10px;font-size:13px;border-radius:9px}
+body.editing .tools{display:flex}body.editing .panel{outline:2px dashed #7dd3fc99;outline-offset:3px;cursor:grab}
+.panel.dragging{opacity:.35}.panel.dragover{outline:2px solid #fbbf24!important}
+.linkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:14px}.lnk{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:14px;background:#ffffff0c;color:#fff;text-decoration:none;font-size:12px;text-align:center;word-break:break-word}.lnk:hover{background:#ffffff1f}.lnk img{width:32px;height:32px;border-radius:8px}.lnk .em{font-size:28px;line-height:32px}.lnk .x{position:absolute;top:3px;right:3px;padding:0 6px;font-size:12px;border-radius:8px;opacity:.5}
+.panel.off{display:none!important}select.field option{color:#000}textarea.field{width:100%;min-height:150px;resize:vertical}
+#addbar{display:none;flex-wrap:wrap;gap:8px;align-items:center;max-width:1500px;margin:0 auto 18px;padding:0 3vw;font-size:13px}#addbar button{padding:6px 12px;font-size:13px}
+#setmodal{display:none;position:fixed;inset:0;z-index:50;background:#0009;align-items:center;justify-content:center;padding:16px}#setmodal.open{display:flex}.setbox{background:#0f1a2b;border:1px solid var(--line);border-radius:20px;padding:22px;max-width:440px;width:100%;max-height:90vh;overflow:auto}.setbox h2{margin-bottom:8px}.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff14;font-size:14px}.setrow input[type=range]{width:150px}.setrow input[type=color]{width:46px;height:30px;padding:0;border:0;background:none}
+.quote{max-width:420px;margin-top:10px;margin-left:auto;font-size:14px;line-height:1.45;color:var(--muted);font-style:italic}.quote b{display:block;font-style:normal;font-size:11px;letter-spacing:2px;color:#91cdec;margin-bottom:4px;font-weight:600}.quote span{display:block;font-style:normal;font-size:12px;margin-top:4px;opacity:.85}
+.calcdisp{background:#0b1422;border-radius:14px;padding:12px 16px;text-align:right;margin-bottom:12px;min-height:76px;overflow:hidden}#cexpr{font-size:13px;min-height:18px;word-break:break-all}#cval{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;word-break:break-all;line-height:1.2}.calckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.calckeys button{padding:14px 0;font-size:18px}.calckeys .op{background:color-mix(in srgb,var(--acc) 30%,transparent)}.calckeys .eq{background:var(--acc);border-color:var(--acc)}
+.setsec{font-size:12px;letter-spacing:1.5px;color:#91cdec;margin:18px 0 2px;font-weight:700}.setcol{flex-direction:column;align-items:stretch}.setcol .btns{display:flex;gap:8px;flex-wrap:wrap}#b_status{font-size:12px;min-height:16px}
+body.theme-light .calcdisp{background:#e2eaf3}
+.omlink{margin-left:auto;font-size:12px;font-weight:500;color:#7dd3fc;text-decoration:none;letter-spacing:0}.omlink:hover{text-decoration:underline}.wclick{cursor:pointer;border-radius:14px;transition:background .2s}.wclick:hover{background:#ffffff0a}
+.bigtime{font-size:40px;font-weight:300;font-variant-numeric:tabular-nums;margin:6px 0}
+.author{font-size:10px;margin-top:4px;opacity:.75;letter-spacing:.5px}
+footer{text-align:center;color:#c2cfde99;font-size:11px;padding:5px 20px 20px}
+@media(max-width:850px){.quote{margin-left:0}main{grid-template-columns:1fr}.clock{grid-column:auto;align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){header{padding:14px 4vw}.topright span{display:none}main{padding:0 4vw 20px}.panel{padding:16px}.radio-list{grid-template-columns:1fr}.forecast{grid-template-columns:repeat(5,minmax(0,1fr))}.day{padding:8px 2px}.day .ico{font-size:19px}}
+
+/* Atmos personalisation */
+body.theme-light{color:#172033;background-color:#e8eef5}body.theme-light:before{background:linear-gradient(110deg,rgba(235,242,250,.78),rgba(230,238,248,.42))}body.theme-light .panel{color:#172033;--muted:#536276;background:rgba(255,255,255,.76);border-color:rgba(20,40,70,.13)}body.theme-light .muted,body.theme-light .date,body.theme-light .weather-meta,body.theme-light .clockright .small{color:#536276}body.theme-light button,body.theme-light .field,body.theme-light .filelabel{color:#172033;background:rgba(20,40,70,.07);border-color:rgba(20,40,70,.18)}body.theme-light .field::placeholder{color:#66758a}body.theme-light .lnk{color:#172033;background:#1720330c}body.theme-light .station,body.theme-light .day{background:#1720330a}body.theme-light .nowplaying{background:#e2eaf3;color:#172033}body.theme-light .tools{background:#e8eef5}body.theme-light .setbox{background:#f4f7fb;color:#172033}
+body.font-modern{font-family:Inter,Segoe UI,Arial,sans-serif}body.font-rounded{font-family:'Trebuchet MS',Arial,sans-serif}body.font-serif{font-family:Georgia,'Times New Roman',serif}body.font-mono{font-family:'Courier New',monospace}
+body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet{--acc:#8664d8}body.theme-sunset{--acc:#e07843}
+.photo-stage{position:relative;width:100%;height:clamp(180px,27vw,340px);overflow:hidden;border-radius:16px;background:#07111e}.photo-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease,transform 1.2s ease}.photo-stage img.show{opacity:1}.photo-stage.anim-slide img{transform:translateX(8%)}.photo-stage.anim-slide img.show{transform:translateX(0)}.photo-stage.anim-zoom img{transform:scale(1.12)}.photo-stage.anim-zoom img.show{transform:scale(1)}.photo-stage.anim-ken img{transform:scale(1.22)}.photo-stage.anim-ken img.show{transform:scale(1)}.photo-caption{position:absolute;bottom:0;left:0;right:0;padding:35px 14px 12px;background:linear-gradient(transparent,#0009);color:white;z-index:2;font-size:13px}.photo-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.photo-controls .field{min-width:100px;flex:1}.photo-count{font-size:12px;color:var(--muted);min-width:55px;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="brand">ATMOS<span>•</span></div><div class="topright"><span id="bgstatus">Pozadina se menja na 10 min</span><button id="resetlayout" style="display:none">↺ Reset</button><button id="installbtn" title="Instaliraj kao aplikaciju">⬇ Instaliraj</button><button id="editlayout">✥ Raspored</button><button id="fullscreen">⛶ Ekran</button><button id="settingsbtn" title="Podešavanja" aria-label="Podešavanja">⚙</button></div></header><div id="addbar"></div>
+<main id="main">
+<section class="panel clock wide" data-id="clock">
+ <div><div class="greeting" id="greeting">DOBRO DOŠLI</div><div class="time" id="clock">--:--:--</div><div class="date" id="date">Učitavanje datuma…</div></div>
+ <div class="clockright"><div class="location" id="location">Određivanje lokacije…</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
+</section>
+<section class="panel" data-id="search">
+ <h2>🔎 PRETRAGA</h2>
+ <div class="eventrow" style="flex-wrap:wrap"><input id="qtext" class="field" placeholder="Pretraži…" style="min-width:140px"><select id="qeng" class="field"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.youtube.com/results?search_query=">YouTube</option><option value="https://www.google.com/maps/search/">Mape</option><option value="https://sr.wikipedia.org/w/index.php?search=">Wikipedia</option></select><button id="qgo" class="primary">Traži</button></div>
+</section>
+<section class="panel" data-id="weather">
+ <h2>🌤 VREMENSKA PROGNOZA <span class="muted" id="weather-place" style="font-size:12px;font-weight:400"></span><a id="omlink" class="omlink" href="#" target="_blank" rel="noopener" title="Prognoza na Google-u">↗ Google Prognoza</a></h2>
+ <div class="weather-now wclick" title="Klikni za detaljnu prognozu"><div class="weather-icon" id="wicon">🌤️</div><div><div class="temp" id="temp">--°</div><div class="weather-desc" id="wdesc">Učitavanje prognoze…</div></div></div>
+ <div class="weather-meta"><span id="feels">Osećaj: --</span><span id="wind">Vetar: --</span><span id="humidity">Vlažnost: --</span></div>
+ <div class="forecast wclick" id="forecast" title="Klikni za detaljnu prognozu"></div>
+ <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button id="locate" class="primary">📍 Moja lokacija</button><input id="city" class="field" placeholder="Unesi grad (npr. Novi Sad)" style="flex:1;min-width:130px"><button id="citybtn">Prikaži</button></div>
+</section>
+<section class="panel" data-id="radio">
+ <h2>📻 RADIO STANICE SRBIJE</h2>
+ <div class="muted" style="font-size:12px;margin:-8px 0 12px">Izbor popularnih stanica · streamovi se učitavaju iz javnog radio direktorijuma</div>
+ <div class="radio-list" id="stations"><div class="muted">Učitavanje radio stanica…</div></div>
+ <div class="nowplaying"><div><small>SADA SE PUŠTA</small><strong id="playing">Izaberite radio stanicu</strong></div><button id="stopradio">■ Stop</button></div>
+ <audio id="radioaudio" controls></audio>
+ <div style="font-size:11px;color:#aebdce;margin-top:8px">Ako neka stanica ne radi, moguće je da je njen stream privremeno nedostupan ili ograničen od strane emitera.</div>
+</section>
+<section class="panel wide" data-id="photos">
+ <h2>🖼 FOTO-SLAJDER</h2>
+ <div class="photo-stage anim-fade" id="photoStage"><div class="photo-caption" id="photoCaption">Dodajte fotografije za prikaz</div></div>
+ <div class="photo-controls" id="photoControls"><button id="photoPrev">‹</button><button id="photoPlay" class="primary">▶ Pokreni</button><button id="photoNext">›</button><span class="photo-count" id="photoCount">0 / 0</span><select id="photoAnim" class="field"><option value="fade">Fade</option><option value="slide">Slide</option><option value="zoom">Zoom</option><option value="ken">Ken Burns</option></select><select id="photoSpeed" class="field"><option value="3">3 sek</option><option value="5" selected>5 sek</option><option value="8">8 sek</option><option value="12">12 sek</option></select><button id="photoPick">📁 Izaberi folder</button><button id="photoGrant" class="primary" style="display:none">🔓 Dozvoli pristup folderu</button></div>
+ <div class="muted" id="photoNote" style="font-size:11px;margin-top:8px">Slike se čitaju direktno iz izabranog foldera na disku — ništa se ne kopira niti otprema. Nove slike u folderu pojavljuju se same.</div>
+</section>
+<section class="panel" data-id="calendar">
+ <div class="calendar-head"><h2 style="margin:0">🗓 KALENDAR</h2><div style="display:flex;gap:6px"><button id="prev">‹</button><div class="month" id="month"></div><button id="next">›</button></div></div>
+ <div class="calgrid" id="cal"></div>
+ <div class="eventarea"><strong id="selectedlabel">Događaji</strong><div id="events" class="muted" style="font-size:13px;margin-top:7px">Nema dodatih događaja.</div>
+ <div class="eventrow"><input id="eventtext" class="field" placeholder="Novi događaj…"><button id="addevent" class="primary">Dodaj</button></div></div>
+</section>
+<section class="panel" data-id="alarm">
+ <h2>⏰ ALARM</h2><div class="alarmrow"><input id="alarmtime" class="field" type="time"><input id="alarmname" class="field" placeholder="Naziv alarma" style="flex:1;min-width:110px"><button id="setalarm" class="primary">Podesi alarm</button></div>
+ <div class="alarmnext" id="alarmnext">Sledeći alarm: <strong>nije podešen</strong></div><div style="display:flex;gap:8px;margin-top:12px"><button id="cancelalarm">Otkaži alarm</button><button id="silence" style="display:none">Isključi zvuk</button></div>
+ <div class="muted" style="font-size:11px;margin-top:12px">Alarm radi dok je ova stranica otvorena i uređaj nije u režimu spavanja. Ne čita alarme iz sistemske Clock aplikacije.</div>
+</section>
+<section class="panel" data-id="media">
+ <h2>🎵 MEDIA PLEJER</h2><div class="media-controls"><label class="filelabel">＋ Audio fajlovi<input type="file" id="musicfile" accept="audio/*" multiple></label><label class="filelabel">📁 Ceo folder<input type="file" id="musicfolder" webkitdirectory multiple></label></div><div class="muted" id="musicname" style="font-size:12px;margin-top:10px">Nije izabran fajl</div><audio id="musicaudio" controls></audio><div class="media-controls" style="margin-top:10px"><button id="mprev">⏮</button><button id="mnext">⏭</button><button id="mshuf" title="Nasumično">🔀</button><button id="mloop" title="Ponavljaj listu">🔁</button></div><div class="ytlist" id="musiclist" style="max-height:200px"></div><div class="muted" style="font-size:11px;margin-top:8px">Izaberi folder (računar) ili označi više fajlova odjednom (telefon). Podržani su MP3, WAV, OGG, M4A, FLAC i drugi formati koje pregledač može da reprodukuje.</div>
+</section>
+<section class="panel" data-id="links">
+ <h2>🔗 BRZI LINKOVI</h2>
+ <div class="linkgrid" id="linkgrid"></div>
+ <div class="eventrow" style="flex-wrap:wrap"><input id="linkname" class="field" placeholder="Naziv" style="max-width:130px"><input id="linkurl" class="field" placeholder="Sajt ili aplikacija (gmail.com, spotify:)" style="min-width:150px"><button id="linkadd" class="primary">Dodaj</button></div>
+ <div class="muted" style="font-size:11px;margin-top:8px">Za aplikacije koristi njihovu šemu: spotify:, viber://, tel:+381…, mailto:…</div>
+</section>
+<section class="panel" data-id="todo">
+ <h2>✅ ZADACI <span class="muted" id="todocount" style="font-size:12px;font-weight:400"></span></h2>
+ <div class="eventrow" style="margin:0 0 10px"><input id="todotext" class="field" placeholder="Novi zadatak…"><button id="todoadd" class="primary">Dodaj</button></div>
+ <div class="ytlist" id="todolist" style="margin:0;max-height:220px"></div>
+ <button id="todoclear" style="margin-top:10px;padding:6px 12px;font-size:12px">Obriši završene</button>
+</section>
+<section class="panel" data-id="notes">
+ <h2>📝 BELEŠKE</h2>
+ <textarea id="notes" class="field" placeholder="Brze beleške… čuvaju se automatski."></textarea>
+</section>
+<section class="panel" data-id="timer">
+ <h2>⏱ TAJMER I ŠTOPERICA</h2>
+ <div class="bigtime" id="tdisp">25:00</div>
+ <div class="media-controls"><input id="tmin" class="field" type="number" min="1" max="600" value="25" style="width:80px"><span class="muted">min</span><button data-m="5">5</button><button data-m="10">10</button><button data-m="25">🍅 25</button><button id="tstart" class="primary">▶ Start</button><button id="treset">↺</button></div>
+ <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:6px"><div class="bigtime" id="swdisp">00:00.0</div><div class="media-controls"><button id="swstart" class="primary">▶ Start</button><button id="swreset">↺</button></div></div>
+</section>
+<section class="panel" data-id="world">
+ <h2>🌍 SVETSKI SATOVI</h2>
+ <div id="worldlist"></div>
+ <div class="eventrow"><select id="worldsel" class="field" style="flex:1"></select><button id="worldadd" class="primary">Dodaj grad</button></div>
+</section>
+<section class="panel" data-id="calc" tabindex="0">
+ <h2>🧮 KALKULATOR</h2>
+ <div class="calcdisp"><div id="cexpr" class="muted"></div><div id="cval">0</div></div>
+ <div class="calckeys" id="calckeys"><button data-k="C">C</button><button data-k="(">(</button><button data-k=")">)</button><button data-k="÷" class="op">÷</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="×" class="op">×</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="−" class="op">−</button><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button><button data-k="⌫">⌫</button><button data-k="0">0</button><button data-k=",">,</button><button data-k="=" class="eq">=</button></div>
+ <div class="muted" style="font-size:11px;margin-top:8px">Klikni na kalkulator pa možeš da kucaš i sa tastature (Enter = rezultat, Esc = brisanje).</div>
+</section>
+<section class="panel" data-id="joke">
+ <h2>😂 VIC DANA</h2>
+ <div class="muted" id="joketxt" style="font-size:14px;line-height:1.5;margin-bottom:14px;min-height:50px;">Učitavanje vica…</div>
+ <div style="display:flex;gap:8px;">
+   <button id="newjoke" class="primary">🔄 Novi vic</button>
+ </div>
+</section>
+</main>
+
+<div id="setmodal"><div class="setbox">
+ <h2>⚙ PODEŠAVANJA</h2>
+ <div class="setrow"><span>Režim izgleda</span><select id="s_theme" class="field"><option value="auto">Automatski (izlazak/zalazak)</option><option value="dark">Tamna</option><option value="light">Svetla</option></select></div>
+  <div class="setrow"><span>Vizuelna tema</span><select id="s_palette" class="field"><option value="ocean">Ocean</option><option value="forest">Forest</option><option value="violet">Violet</option><option value="sunset">Sunset</option></select></div>
+  <div class="setrow"><span>Font</span><select id="s_font" class="field"><option value="modern">Modern</option><option value="rounded">Rounded</option><option value="serif">Serif</option><option value="mono">Monospace</option></select></div>
+  <div class="setrow"><span>Sopstvena pozadina</span><label class="filelabel">Izaberi sliku<input id="s_custombg" type="file" accept="image/*"></label></div>
+  <div class="setrow"><span>Ukloni sopstvenu pozadinu</span><button id="s_clearbg">Ukloni</button></div>
+  <div class="setrow"><span>Ime u pozdravu</span><input id="s_name" class="field" placeholder="npr. Marko" style="width:150px"></div>
+ <div class="setrow"><span>12-časovni format</span><input id="s_h12" type="checkbox"></div>
+ <div class="setrow"><span>Prikaži sekunde</span><input id="s_sec" type="checkbox"></div>
+ 
+ <div class="setrow"><span>Promena pozadine</span><select id="s_bg" class="field"><option value="0">Isključeno</option><option value="1">1 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="30">30 min</option></select></div>
+ <div class="setrow"><span>Bez fotografija (tamna)</span><input id="s_nobg" type="checkbox"></div>
+ <div class="setrow"><span>Akcentna boja</span><input id="s_acc" type="color"></div>
+ <div class="setrow"><span>Neprozirnost panela</span><input id="s_ga" type="range" min=".3" max=".95" step=".01"></div>
+ <div class="setrow"><span>Zamućenje panela</span><input id="s_gb" type="range" min="0" max="30" step="1"></div>
+ <div class="setsec">REZERVNA KOPIJA</div>
+ <div class="setrow setcol"><span>Sačuvaj sva podešavanja u fajl ili ih vrati iz fajla</span><div class="btns"><button id="b_export">⬇ Izvezi</button><label class="filelabel">⬆ Uvezi<input id="b_import" type="file" accept=".json,application/json"></label></div><small id="b_status" class="muted"></small></div>
+ <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end"><button id="s_reset">Vrati podrazumevano</button><button id="s_close" class="primary">Zatvori</button></div>
+</div></div>
+
+<footer>Atmos Dashboard · Vremenska prognoza: Open-Meteo · Radio: javni radio streamovi · Pozadine: Unsplash<div class="author">Autor: zeljkoracunariborca</div></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const ls=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const SDEF={name:'',h12:false,sec:true,f:false,bgMin:10,noBg:false,acc:'#1686b8',ga:.72,gb:15,theme:'auto',palette:'ocean',font:'modern',customBg:''};
+let set=Object.assign({},SDEF,ls('atmosSet',{}));
+
+function applySet(){
+    const r=document.documentElement.style;
+    r.setProperty('--acc',set.acc);
+    r.setProperty('--ga',set.ga);
+    r.setProperty('--gb',set.gb+'px');
+    
+    document.body.className=`theme-${set.palette} font-${set.font}`+(set.theme==='light'||(set.theme==='auto'&&isLightHour())?' theme-light':'');
+}
+applySet();
+
+function initSetInputs(){
+    $('s_name').value=set.name;
+    $('s_h12').checked=set.h12;
+    $('s_sec').checked=set.sec;
+    $('s_bg').value=set.bgMin;
+    $('s_nobg').checked=set.noBg;
+    $('s_acc').value=set.acc;
+    $('s_ga').value=set.ga;
+    $('s_gb').value=set.gb;
+    $('s_theme').value=set.theme;
+    $('s_palette').value=set.palette;
+    $('s_font').value=set.font;
+}
+
+function saveSet(){
+    set.name=$('s_name').value.trim();
+    set.h12=$('s_h12').checked;
+    set.sec=$('s_sec').checked;
+    set.bgMin=+$('s_bg').value;
+    set.noBg=$('s_nobg').checked;
+    set.acc=$('s_acc').value;
+    set.ga=+$('s_ga').value;
+    set.gb=+$('s_gb').value;
+    set.theme=$('s_theme').value;
+    set.palette=$('s_palette').value;
+    set.font=$('s_font').value;
+    sv('atmosSet',set);
+    applySet();
+    changeBg();
+    bgSchedule();
+}
+
+$('settingsbtn').onclick=()=>{initSetInputs();$('setmodal').classList.add('open')};
+$('s_close').onclick=()=>{saveSet();$('setmodal').classList.remove('open')};
+$('setmodal').onclick=e=>{if(e.target===$('setmodal')){saveSet();$('setmodal').classList.remove('open')}};
+$('s_reset').onclick=()=>{if(confirm('Vratiti podrazumevana podešavanja?')){set=Object.assign({},SDEF);sv('atmosSet',set);initSetInputs();applySet();changeBg();bgSchedule()}};
+
+$('s_custombg').onchange=e=>{const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{set.customBg=ev.target.result;sv('atmosSet',set);changeBg()};reader.readAsDataURL(f)};
+$('s_clearbg').onclick=()=>{set.customBg='';sv('atmosSet',set);changeBg()};
+
+['s_name','s_h12','s_sec','s_bg','s_nobg','s_acc','s_ga','s_gb','s_theme','s_palette','s_font'].forEach(id=>{
+    if($(id)){
+        $(id).oninput=saveSet;
+        $(id).onchange=saveSet;
+    }
+});
+
+function isLightHour(){const h=new Date().getHours();return h>=6&&h<20}
+function updateTheme(sr,ss){
+    if(set.theme==='auto'){
+        let light=isLightHour();
+        if(sr&&ss){const now=new Date(),s_rise=new Date(sr),s_set=new Date(ss);light=now>=s_rise&&now<s_set}
+        document.body.classList.toggle('theme-light',light);
+    }else{
+        document.body.classList.toggle('theme-light',set.theme==='light');
+    }
+}
+
+const days=['Nedelja','Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota'];
+const months=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
+function tick(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit',second:set.sec?'2-digit':undefined,hour12:set.h12});$('date').textContent=days[d.getDay()]+', '+d.getDate()+'. '+months[d.getMonth()]+' '+d.getFullYear()+'.';$('greeting').textContent=(d.getHours()<11?'DOBRO JUTRO':d.getHours()<18?'DOBAR DAN':'DOBRO VEČE')+(set.name?', '+set.name.toUpperCase():'')}
+tick();setInterval(tick,1000);setInterval(()=>updateTheme(),60000);
+
+$('fullscreen').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
+const photos=['photo-1500530855697-b586d89ba3ee','photo-1470770841072-f978cf4d019e','photo-1501785888041-af3ef285b470','photo-1470252649378-9c29740c9fa8','photo-1472214103451-9374bd1c798e','photo-1441974231531-c6227db76b6e','photo-1507525428034-b723cf961d3e'];
+let photoIndex=-1,bgTimer=null;function changeBg(){if(set.customBg){document.body.style.backgroundImage=`url("${set.customBg}")`;$('bgstatus').textContent='Sopstvena pozadina';return}if(set.noBg){document.body.style.backgroundImage='none';$('bgstatus').textContent='Pozadina: tamna';return}photoIndex=(photoIndex+1)%photos.length;document.body.style.backgroundImage=`url(https://images.unsplash.com/${photos[photoIndex]}?auto=format&fit=crop&w=2200&q=85)`;$('bgstatus').textContent='Pozadina '+(photoIndex+1)+' / '+photos.length+(set.bgMin>0?' · menja se na '+set.bgMin+' min':'')}
+function bgSchedule(){clearInterval(bgTimer);if(set.bgMin>0&&!set.noBg)bgTimer=setInterval(changeBg,set.bgMin*60000)}changeBg();bgSchedule();
+
+let lat=44.8176,lon=20.4569,place='Beograd';const wcodes={0:['Vedro','☀️'],1:['Pretežno vedro','🌤️'],2:['Delimično oblačno','⛅'],3:['Oblačno','☁️'],45:['Magla','🌫️'],48:['Magla','🌫️'],51:['Slaba rosulja','🌦️'],53:['Rosulja','🌦️'],55:['Jaka rosulja','🌧️'],61:['Slaba kiša','🌦️'],63:['Kiša','🌧️'],65:['Jaka kiša','🌧️'],71:['Slab sneg','🌨️'],73:['Sneg','❄️'],75:['Jak sneg','❄️'],80:['Pljuskovi','🌦️'],81:['Pljuskovi','🌧️'],82:['Jaki pljuskovi','⛈️'],95:['Grmljavina','⛈️'],96:['Grmljavina i grad','⛈️'],99:['Oluja sa gradom','⛈️']};
+
+async function weather(){
+    omUpdate();
+    try{
+        const u=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=5`;
+        const r=await fetch(u);
+        if(!r.ok)throw 0;
+        const j=await r.json(),c=j.current,d=j.daily;
+        updateTheme(d.sunrise?.[0],d.sunset?.[0]);
+        let desc=wcodes[c.weather_code]||['Promenljivo','🌤️'];
+        $('temp').textContent=Math.round(c.temperature_2m)+'°';
+        $('wicon').textContent=desc[1];
+        $('wdesc').textContent=desc[0];
+        $('feels').textContent='Osećaj: '+Math.round(c.apparent_temperature)+'°C';
+        $('wind').textContent='Vetar: '+Math.round(c.wind_speed_10m)+' km/h';
+        $('humidity').textContent='Vlažnost: '+c.relative_humidity_2m+'%';
+        $('weather-place').textContent='· '+place;
+        $('forecast').innerHTML=d.time.map((day,i)=>`<div class="day">${new Date(day+'T12:00:00').toLocaleDateString('sr-RS',{weekday:'short'})}<div class="ico">${(wcodes[d.weather_code[i]]||['','🌤️'])[1]}</div><b>${Math.round(d.temperature_2m_max[i])}°</b><span class="muted">${Math.round(d.temperature_2m_min[i])}°</span></div>`).join('');
+    }catch(e){
+        $('wdesc').textContent='Prognoza trenutno nije dostupna';
+    }
+}
+
+function omUrl(){
+    return 'https://www.google.com/search?q=vremenska+prognoza+' + encodeURIComponent(place);
+}
+function omUpdate(){
+    $('omlink').href = omUrl();
+    $('omlink').title = 'Prognoza za ' + place + ' na Google-u';
+}
+document.querySelectorAll('.wclick').forEach(el=>el.onclick=()=>window.open(omUrl(),'_blank','noopener'));
+
+function setLoc(a,b,n){lat=a;lon=b;place=n;$('location').textContent=n;weather()}
+
+/* DRAG & DROP LOGIKA ZA PROMENU RASPOREDA WIDGETA */
+const mainGrid = $('main');
+let isEditing = false;
+let draggedItem = null;
+
+function saveLayout(){
+    const order = Array.from(mainGrid.children).map(panel => panel.dataset.id).filter(Boolean);
+    sv('atmosLayout', order);
+}
+
+function loadLayout(){
+    const order = ls('atmosLayout', null);
+    if(!order || !Array.isArray(order)) return;
+    const panels = Array.from(mainGrid.children);
+    order.forEach(id => {
+        const panel = panels.find(p => p.dataset.id === id);
+        if(panel) mainGrid.appendChild(panel);
+    });
+}
+
+function initDragAndDrop(){
+    loadLayout();
+    const panels = mainGrid.querySelectorAll('.panel');
+    
+    panels.forEach(panel => {
+        panel.addEventListener('dragstart', (e) => {
+            if(!isEditing) return;
+            draggedItem = panel;
+            panel.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        panel.addEventListener('dragend', () => {
+            if(draggedItem) draggedItem.classList.remove('dragging');
+            panels.forEach(p => p.classList.remove('dragover'));
+            draggedItem = null;
+            saveLayout();
+        });
+
+        panel.addEventListener('dragover', (e) => {
+            if(!isEditing) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            panel.classList.add('dragover');
+        });
+
+        panel.addEventListener('dragleave', () => {
+            panel.classList.remove('dragover');
+        });
+
+        panel.addEventListener('drop', (e) => {
+            if(!isEditing || !draggedItem || draggedItem === panel) return;
+            e.preventDefault();
+            panel.classList.remove('dragover');
+            
+            const allPanels = Array.from(mainGrid.children);
+            const draggedIdx = allPanels.indexOf(draggedItem);
+            const targetIdx = allPanels.indexOf(panel);
+
+            if (draggedIdx < targetIdx) {
+                panel.after(draggedItem);
+            } else {
+                panel.before(draggedItem);
+            }
+            saveLayout();
+        });
+    });
+}
+
+$('editlayout').onclick = () => {
+    isEditing = !isEditing;
+    document.body.classList.toggle('editing', isEditing);
+    $('editlayout').classList.toggle('active', isEditing);
+    $('resetlayout').style.display = isEditing ? 'inline-block' : 'none';
+    
+    const panels = mainGrid.querySelectorAll('.panel');
+    panels.forEach(panel => panel.draggable = isEditing);
+};
+
+$('resetlayout').onclick = () => {
+    if(confirm('Želite li da vratite podrazumevani raspored widgeta?')){
+        localStorage.removeItem('atmosLayout');
+        location.reload();
+    }
+};
+
+initDragAndDrop();
+</script>
+</body>
+</html>
