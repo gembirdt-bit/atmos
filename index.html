@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="sr">
 <head>
-<title>Atmos — Smart Dashboard </title>
+<meta charset="utf-8">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Atmos">
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827"><title>Atmos — Smart Dashboard</title>
 <style>
 :root{--acc:#1686b8;--ga:.72;--gb:15px;--glass:rgba(12,20,34,var(--ga));--line:rgba(255,255,255,.16);--muted:#c4d0df;--white:#f7f9fc}
@@ -66,6 +66,19 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
 <section class="panel clock wide">
  <div><div class="greeting" id="greeting">DOBRO DOŠLI</div><div class="time" id="clock">--:--:--</div><div class="date" id="date">Učitavanje datuma…</div></div>
  <div class="clockright"><div class="location" id="location">Određivanje lokacije…</div><div class="quote" id="quote"><b>MISAO DANA</b><div id="qtxt"></div><span id="qauth"></span></div></div>
+</section>
+<section class="panel wide" data-id="photos">
+ <h2>🖼 FOTO-SLAJDER</h2>
+ <div class="photo-stage anim-slide" id="photoStage"><div class="photo-caption" id="photoCaption">Izaberite folder sa fotografijama</div></div>
+ <div class="photo-controls" id="photoControls">
+  <button id="photoPick" class="primary">📁 Izaberi folder</button>
+  <button id="photoGrant" style="display:none">🔓 Dozvoli pristup</button>
+  <button id="photoPrev">⏮</button><span class="photo-count" id="photoCount">0 / 0</span><button id="photoNext">⏭</button>
+  <button id="photoPlay">▶ Pokreni</button>
+  <select id="photoAnim" class="field"><option value="slide">Klizanje</option><option value="zoom">Zum</option><option value="ken">Ken Burns</option></select>
+  <select id="photoSpeed" class="field"><option value="3">3 s</option><option value="5" selected>5 s</option><option value="10">10 s</option><option value="30">30 s</option></select>
+ </div>
+ <div class="muted" id="photoNote" style="font-size:11px;margin-top:8px"></div>
 </section>
  <section class="panel" data-id="search">
  <h2>🔎 PRETRAGA</h2>
@@ -192,7 +205,7 @@ const stationNames=['Naxi Radio','Hit Music FM','Radio S1','Radio Karolina','Rad
 async function loadStations(){let list=$('stations');try{let urls=[];for(const name of stationNames){let r=await fetch('https://de1.api.radio-browser.info/json/stations/byname/'+encodeURIComponent(name)+'?limit=5&hidebroken=true');let a=await r.json();let exact=a.find(x=>x.name.toLowerCase().includes(name.toLowerCase().replace(' radio',''))&&x.url_resolved?.startsWith('https://'))||a.find(x=>x.url_resolved?.startsWith('https://'));if(exact)urls.push({name,url:exact.url_resolved})}if(!urls.length)throw 0;list.innerHTML=urls.map((s,i)=>`<div class="station"><span>${s.name}</span><button data-i="${i}">▶ Pusti</button></div>`).join('');list.querySelectorAll('button').forEach(b=>b.onclick=()=>playStation(urls[+b.dataset.i]));}catch{list.innerHTML=stationNames.map(n=>`<div class="station"><span>${n}</span><a href="https://www.radiofm.rs/" target="_blank" style="color:#7dd3fc">Otvori ↗</a></div>`).join('')}}
 function playStation(s){$('radioaudio').src=s.url;$('radioaudio').play().catch(()=>alert('Pregledač nije uspeo da pokrene ovaj stream. Probajte drugu stanicu.'));$('playing').textContent=s.name}
 $('stopradio').onclick=()=>{$('radioaudio').pause();$('radioaudio').removeAttribute('src');$('playing').textContent='Radio je zaustavljen'};loadStations();
-let view=new Date(),selected=new Date();let events=JSON.parse(localStorage.getItem('atmosEvents')||'{}');
+let view=new Date(new Date().getFullYear(),new Date().getMonth(),1),selected=new Date();let events=JSON.parse(localStorage.getItem('atmosEvents')||'{}');
 function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function drawCal(){let y=view.getFullYear(),m=view.getMonth(),first=new Date(y,m,1),offset=(first.getDay()+6)%7,count=new Date(y,m+1,0).getDate();$('month').textContent=months[m]+' '+y;$('cal').innerHTML=['PON','UTO','SRE','ČET','PET','SUB','NED'].map(x=>`<div class="dow">${x}</div>`).join('');for(let i=0;i<offset;i++)$('cal').innerHTML+='<div></div>';for(let n=1;n<=count;n++){let d=new Date(y,m,n),k=key(d),cl='calday'+(key(new Date())===k?' today':'')+(key(selected)===k?' selected':'')+(events[k]?.length?' has':'');$('cal').innerHTML+=`<div class="${cl}" data-day="${n}">${n}</div>`}document.querySelectorAll('[data-day]').forEach(el=>el.onclick=()=>{selected=new Date(y,m,+el.dataset.day);drawCal();drawEvents()});drawEvents()}
 function drawEvents(){let k=key(selected);$('selectedlabel').textContent=selected.toLocaleDateString('sr-RS',{day:'numeric',month:'long',year:'numeric'});let a=events[k]||[];$('events').innerHTML=a.length?a.map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:8px;margin:6px 0"><span>• ${esc(x)}</span><button data-del="${i}" style="padding:3px 8px">×</button></div>`).join(''):'Nema dodatih događaja.';document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{a.splice(+b.dataset.del,1);events[k]=a;saveEvents()})}
@@ -220,7 +233,7 @@ $('musiclist').onclick=e=>{const r=e.target.closest('[data-m]');if(r)mPlay(+r.da
 /* ===== helpers ===== */
 /* ===== raspored widgeta ===== */
 const main=document.querySelector('main');
-['clock','weather','radio','photos','calendar','alarm','media'].forEach((id,i)=>main.children[i].dataset.id=id);
+[[0,'clock'],[3,'weather'],[4,'radio'],[5,'calendar'],[6,'alarm'],[7,'media']].forEach(([i,id])=>main.children[i].dataset.id=id);
 const NAMES={photos:'Foto-slajder',clock:'Sat',weather:'Vreme',radio:'Radio',calendar:'Kalendar',alarm:'Alarm',media:'Media plejer',youtube:'YouTube',links:'Brzi linkovi',search:'Pretraga',todo:'Zadaci',notes:'Beleške',timer:'Tajmer i štoperica',world:'Svetski satovi',calc:'Kalkulator'};
 const DEF=[...main.children].map(p=>p.dataset.id);
 let lay=Object.assign({order:DEF,wide:['clock'],hidden:[]},ls('atmosLayout',{}));
@@ -329,7 +342,7 @@ function fillSet(){$('s_theme').value=set.theme||'auto';$('s_palette').value=set
 function afterSet(o){applySet();tick();drawWorld();if(o.noBg!==set.noBg&&!set.customBg)changeBg();if(o.noBg!==set.noBg||o.bgMin!==set.bgMin){bgSchedule();$('bgstatus').textContent=$('bgstatus').textContent.replace(/ · menja se.*$/,'')+(set.bgMin>0&&!set.noBg?' · menja se na '+set.bgMin+' min':'')}}
 $('settingsbtn').onclick=()=>{fillSet();sm.classList.add('open')};$('s_close').onclick=()=>sm.classList.remove('open');sm.onclick=e=>{if(e.target===sm)sm.classList.remove('open')};
 sm.oninput=sm.onchange=e=>{if(e.target.closest('.setcol'))return;const o={...set};set={...set,theme:$('s_theme').value,palette:$('s_palette').value,font:$('s_font').value,name:$('s_name').value.trim().slice(0,30),h12:$('s_h12').checked,sec:$('s_sec').checked,f:false,bgMin:+$('s_bg').value,noBg:$('s_nobg').checked,acc:$('s_acc').value,ga:+$('s_ga').value,gb:+$('s_gb').value};sv('atmosSet',set);applySet();updateTheme();afterSet(o)};
-$('s_reset').onclick=()=>{const o=set;set={...SDEF};sv('atmosSet',set);fillSet();applySet();updateTheme();afterSet(o)};
+$('s_reset').onclick=()=>{const o=set;set={...SDEF};sv('atmosSet',set);fillSet();applySet();updateTheme();afterSet(o);setCustomBackground('')};
 
 /* ===== web aplikacija (PWA) ===== */
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
