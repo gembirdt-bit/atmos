@@ -175,3 +175,7 @@ Atmos Dashboard koristi:
 - GitHub: https://github.com/gembirdt-bit
 - Repozitorijum: https://github.com/gembirdt-bit/atmos
 - Live Demo: https://gembirdt-bit.github.io/atmos/
+
+- ## Licenca
+
+Aplikaciju moižete slobodno koristiti uz uslov da ostavite credits link ka autoru - ako radite clone.
