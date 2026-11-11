@@ -49,6 +49,7 @@ body.editing .tools{display:flex}body.editing .panel{outline:2px dashed #7dd3fc9
 body.theme-light .calcdisp{background:#e2eaf3}
 .omlink{margin-left:auto;font-size:12px;font-weight:500;color:#7dd3fc;text-decoration:none;letter-spacing:0}.omlink:hover{text-decoration:underline}.wclick{cursor:pointer;border-radius:14px;transition:background .2s}.wclick:hover{background:#ffffff0a}
 .bigtime{font-size:40px;font-weight:300;font-variant-numeric:tabular-nums;margin:6px 0}
+.applinks{margin-top:8px;font-size:12px}.applinks a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.45);padding-bottom:1px}.applinks a:hover{border-bottom-color:#fff}
 .author{font-size:10px;margin-top:4px;opacity:.75;letter-spacing:.5px}
 footer{text-align:center;color:#c2cfde99;font-size:11px;padding:5px 20px 20px}
 @media(max-width:850px){.quote{margin-left:0}main{grid-template-columns:1fr}.clock{grid-column:auto;align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
@@ -181,7 +182,7 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="setrow setcol"><span>Sačuvaj sva podešavanja u fajl ili ih vrati iz fajla</span><div class="btns"><button id="b_export">⬇ Izvezi</button><label class="filelabel">⬆ Uvezi<input id="b_import" type="file" accept=".json,application/json"></label></div><small id="b_status" class="muted"></small></div>
  <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end"><button id="s_reset">Vrati podrazumevano</button><button id="s_close" class="primary">Zatvori</button></div>
 </div></div>
-<footer>Atmos Dashboard · Vremenska prognoza: Open-Meteo · Radio: javni radio streamovi · Pozadine: Unsplash<div class="author">Autor: zeljkoracunariborca</div></footer>
+<footer>Atmos Dashboard · Vremenska prognoza: Open-Meteo · Radio: javni radio streamovi · Pozadine: Unsplash<div class="applinks">Korisne aplikacije: <a href="https://gembirdt-bit.github.io/atmos-auto-servisna-knjizica/" target="_blank" rel="noopener">Atmos Auto — servisna knjižica</a> · <a href="https://gembirdt-bit.github.io/atmosdom/" target="_blank" rel="noopener">Atmos Dom — troškovi domaćinstva</a></div><div class="author">Autor: zeljkoracunariborca</div></footer>
 <script>
 const $=id=>document.getElementById(id);
 const ls=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
