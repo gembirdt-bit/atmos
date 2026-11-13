@@ -19,12 +19,10 @@ header{position:sticky;top:0;z-index:30;display:flex;justify-content:space-betwe
 #installbtn{display:none;background:var(--acc);border-color:var(--acc);font-weight:700}#installbtn.show{display:inline-block}
 #settingsbtn{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:20px;line-height:1;transition:transform .4s ease,background .2s}#settingsbtn:hover{transform:rotate(60deg)}
 button,input,select{font:inherit}button{border:1px solid var(--line);background:rgba(255,255,255,.1);color:white;padding:10px 14px;border-radius:12px;cursor:pointer}button:hover{background:rgba(255,255,255,.2)}button.primary{background:var(--acc);border-color:var(--acc)}button.active{background:var(--acc)}
-main{--cols:1;max-width:1680px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
-@media(min-width:760px){main{--cols:6;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:8px;grid-auto-flow:row dense}
- main>.panel{grid-column:span 3}main>.sz-xl,main>.sz-f{grid-column:span 6}}
-@media(min-width:760px) and (max-width:999px){.tools [data-sz=s],.tools [data-sz=m],.tools [data-sz=xl]{display:none}}
-@media(min-width:1000px){main{--cols:12;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
- main>.sz-s{grid-column:span 3}main>.sz-m{grid-column:span 4}main>.sz-l{grid-column:span 6}main>.sz-xl{grid-column:span 8}main>.sz-f{grid-column:span 12}}
+main{--cols:1;position:relative;max-width:1680px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:8px;gap:16px;align-items:start}
+@media(min-width:760px){main{--cols:2;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1000px){main{--cols:3;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}}
+#lghost{display:none;border:2px dashed var(--acc);border-radius:20px;background:color-mix(in srgb,var(--acc) 14%,transparent);pointer-events:none;align-self:stretch}
 .panel{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;backdrop-filter:blur(var(--gb));box-shadow:0 12px 40px #0002;min-width:0}
 .clock{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 28px}
 .time{font-size:clamp(48px,8vw,100px);font-weight:250;letter-spacing:-4px;line-height:1}.date{font-size:clamp(16px,2vw,23px);color:#d4e0ed;margin-top:8px}.greeting{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#91cdec;margin-bottom:10px}
@@ -52,7 +50,7 @@ body.editing main>.panel>*:not(.tools):not(.rsz){pointer-events:none;user-select
 @media(min-width:760px){body.editing .rsz{display:block}}
 @media(pointer:fine){body.editing main>.panel{cursor:grab}}
 body.dragging,body.dragging *{cursor:grabbing!important}
-.panel.lifting{z-index:20;outline:2px solid var(--acc)!important;box-shadow:0 24px 60px #0008;transform:scale(1.01)}
+.panel.lifting{z-index:40;outline:2px solid var(--acc)!important;box-shadow:0 24px 60px #0008;opacity:.92;transition:none}
 .panel.resizing{outline:2px solid var(--acc)!important}
 .ytwrap{aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;transition:width .3s}.ytwrap.mini{width:200px}.ytwrap iframe{width:100%;height:100%;display:block}
 .ytlist{max-height:160px;overflow:auto;margin-top:10px}.ytrow{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 10px;border-radius:10px;font-size:13px;cursor:pointer}.ytrow:hover{background:#ffffff12}.ytrow.on{background:color-mix(in srgb,var(--acc) 35%,transparent)}.ytrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ytrow button{padding:2px 8px}
@@ -269,71 +267,94 @@ $('mshuf').onclick=()=>{mShuf=!mShuf;$('mshuf').classList.toggle('active',mShuf)
 $('musiclist').onclick=e=>{const r=e.target.closest('[data-m]');if(r)mPlay(+r.dataset.m)};
 
 /* ===== helpers ===== */
-/* ===== raspored widgeta (v2): mreža od 12 kolona, gusto slaganje bez rupa, 5 veličina, prevlačenje mišem i prstom ===== */
+/* ===== raspored widgeta (v3): 3 veličine (⅓ ⅔ cela), prozori se lepe u mrežu, ostali se pomeraju naniže i popunjavaju prazno ===== */
 const main=document.querySelector('main');
 [[0,'clock'],[3,'weather'],[4,'radio'],[5,'calendar'],[6,'alarm'],[7,'media']].forEach(([i,id])=>main.children[i].dataset.id=id);
 const NAMES={photos:'Foto-slajder',clock:'Sat',weather:'Vreme',radio:'Radio',calendar:'Kalendar',alarm:'Alarm',media:'Media plejer',youtube:'YouTube',links:'Brzi linkovi',search:'Pretraga',todo:'Zadaci',notes:'Beleške',timer:'Tajmer i štoperica',world:'Svetski satovi',calc:'Kalkulator',joke:'Vic dana'};
 const DEF=[...main.children].map(p=>p.dataset.id);
-const SIZES=['s','m','l','xl','f'],SZL={s:'¼',m:'⅓',l:'½',xl:'⅔',f:'▭'},SZT={s:'Četvrtina širine',m:'Trećina širine',l:'Pola širine',xl:'Dve trećine',f:'Cela širina'},SPAN={s:3,m:4,l:6,xl:8,f:12};
-const DSIZE={clock:'f',photos:'xl',search:'m',weather:'m',radio:'xl',calendar:'m',alarm:'m',media:'m',youtube:'m',links:'xl',todo:'m',notes:'m',timer:'m',world:'m',calc:'m',joke:'m'};
-const DHIDE=['world'];
-const defLay=()=>({v:2,order:DEF.slice(),size:Object.assign({},DSIZE),hidden:DHIDE.slice(),h:{}});
-let lay=(()=>{const n=ls('atmosLayout2',null);if(n&&n.v===2)return Object.assign(defLay(),n,{size:Object.assign({},DSIZE,n.size||{}),h:n.h||{}});
-  const o=ls('atmosLayout',null),d=defLay();if(!o)return d;     /* prelazak sa starog rasporeda */
-  d.order=o.order||d.order;d.hidden=(o.hidden||[]).slice();(o.wide||[]).forEach(id=>d.size[id]='f');
-  const w=ls('atmosWorld',null);if((!w||JSON.stringify(w)===JSON.stringify(['Njujork','London','Tokio']))&&!d.hidden.includes('world'))d.hidden.push('world');
-  return d})();
+const DW={clock:3,photos:2,search:1,weather:1,radio:2,calendar:1,alarm:1,media:1,youtube:1,links:2,todo:1,notes:1,timer:1,world:1,calc:1,joke:1};
+const DHIDE=['world'],ROW=8;
 const panels=()=>[...main.children].filter(p=>p.classList.contains('panel'));
-function cols(){return parseInt(getComputedStyle(main).getPropertyValue('--cols'))||1}
-/* gusto slaganje: visina svake kartice → broj redova od 8 px */
-const ROW=8;let gapPx=16;
-function fit(p){if(cols()<2||p.classList.contains('off')){p.style.gridRowEnd='';return}
-  const inner=p.scrollHeight&&p.getBoundingClientRect().height;p.style.gridRowEnd='span '+Math.max(1,Math.ceil((inner+gapPx)/(ROW+gapPx)))}
-const ro=new ResizeObserver(es=>es.forEach(e=>fit(e.target)));
-function fitAll(){gapPx=parseFloat(getComputedStyle(main).rowGap)||16;panels().forEach(fit)}
-addEventListener('resize',()=>{clearTimeout(fitAll.t);fitAll.t=setTimeout(fitAll,80)});
-function applyLayout(){const ps=panels(),ids=ps.map(p=>p.dataset.id),all=[...lay.order.filter(id=>ids.includes(id)),...ids.filter(id=>!lay.order.includes(id))];
-  all.forEach(id=>main.appendChild(ps.find(p=>p.dataset.id===id)));
-  ps.forEach(p=>{const id=p.dataset.id,s=lay.size[id]||DSIZE[id]||'m';p.classList.remove('wide',...SIZES.map(x=>'sz-'+x));p.classList.add('sz-'+s);p.classList.toggle('off',lay.hidden.includes(id));
-    const hh=cols()>1&&lay.h&&lay.h[id];p.style.height=hh?hh+'px':'';p.classList.toggle('fixh',!!hh);
-    const t=p.querySelector('.tools');if(t){t.querySelectorAll('[data-sz]').forEach(b=>b.classList.toggle('on',b.dataset.sz===s||(cols()===6&&((['s','m','l'].includes(s)&&b.dataset.sz==='l')||(s==='xl'&&b.dataset.sz==='f')))));const ah=t.querySelector('[data-a=autoh]');if(ah)ah.style.display=hh?'':'none'}});
-  drawAdd();requestAnimationFrame(fitAll)}
-function saveLayout(){const ps=panels();lay={v:2,order:ps.map(p=>p.dataset.id),size:Object.fromEntries(ps.map(p=>[p.dataset.id,SIZES.find(s=>p.classList.contains('sz-'+s))||'m'])),hidden:ps.filter(p=>p.classList.contains('off')).map(p=>p.dataset.id),h:lay.h||{}};sv('atmosLayout2',lay);drawAdd()}
+const cols=()=>parseInt(getComputedStyle(main).getPropertyValue('--cols'))||1;
+let gapPx=18;
+function defLay(order,ws,hidden,hh){const it={};(order||DEF).forEach((id,i)=>it[id]={x:0,y:i*1000,w:(ws&&ws[id])||DW[id]||1,auto:1});return{v:3,it,hidden:(hidden||DHIDE).slice(),h:hh||{},o:{}}}
+let lay=(()=>{const n=ls('atmosLayout3',null);if(n&&n.v===3)return Object.assign({it:{},hidden:[],h:{},o:{}},n);
+  const v2=ls('atmosLayout2',null);if(v2&&v2.v===2){const m={s:1,m:1,l:1,xl:2,f:3},ws={};Object.entries(v2.size||{}).forEach(([k,s])=>ws[k]=m[s]||1);return defLay(v2.order,ws,v2.hidden,v2.h)}
+  const o=ls('atmosLayout',null);if(o){const ws={};(o.wide||[]).forEach(id=>ws[id]=3);const hd=(o.hidden||[]).slice(),w=ls('atmosWorld',null);if((!w||JSON.stringify(w)===JSON.stringify(['Njujork','London','Tokio']))&&!hd.includes('world'))hd.push('world');return defLay(o.order,ws,hd)}
+  return defLay()})();
+DEF.forEach((id,i)=>{if(!lay.it[id])lay.it[id]={x:0,y:1e6+i,w:DW[id]||1,auto:1}});
+const persist=()=>sv('atmosLayout3',lay);
+/* širina i kolona za trenutni ekran (3 kolone računar, 2 tablet, 1 telefon) */
+function mw(it,C){return C===3?it.w:C===2?(it.w>=2?2:1):1}
+function mx(it,C,w){if(C===3)return Math.min(it.x,3-w);if(C===2)return w===2?0:(it.x>=1?1:0);return 0}
+function hu(p){if(p.classList.contains('off'))return 0;const hh=lay.h&&lay.h[p.dataset.id];const px=hh&&cols()>1?hh:p.getBoundingClientRect().height;return Math.max(1,Math.ceil((px+gapPx)/(ROW+gapPx)))}
+let cur={};   /* izračunate pozicije za trenutni ekran */
+/* raspoređivanje: redom odozgo, svaki prozor u svoje kolone, na najvišu slobodnu visinu */
+function compute(C,drag){const ps=panels().filter(p=>!p.classList.contains('off')),ids=ps.map(p=>p.dataset.id),H={};ps.forEach(p=>H[p.dataset.id]=hu(p));
+  const key=id=>drag&&drag.id===id?[drag.y-.5,drag.x]:(C<3&&cur[id]&&cur[id].C===C?[cur[id].y,cur[id].x]:[lay.it[id].y,lay.it[id].x]);
+  const order=!drag&&C<3&&lay.o[C]?[...lay.o[C].filter(i=>ids.includes(i)),...ids.filter(i=>!lay.o[C].includes(i))]:ids.slice().sort((a,b)=>{const A=key(a),B=key(b);return A[0]-B[0]||A[1]-B[1]});
+  const top=new Array(C).fill(0),res={};
+  order.forEach(id=>{const it=lay.it[id],w=mw(it,C);let x=drag&&drag.id===id?Math.min(drag.x,C-w):mx(it,C,w);
+    if(it.auto&&!(drag&&drag.id===id)){let by=1e9;for(let c=0;c+w<=C;c++){const yy=Math.max(...top.slice(c,c+w));if(yy<by){by=yy;x=c}}}   /* početno slaganje: kolona sa najviše mesta */const y=Math.max(...top.slice(x,x+w));res[id]={x,y,w,h:H[id],C};for(let c=x;c<x+w;c++)top[c]=y+H[id]});
+  return{res,order}}
+function paint(res){panels().forEach(p=>{const r=res[p.dataset.id];if(!r){p.style.gridColumn=p.style.gridRow='';return}p.style.gridColumn=(r.x+1)+' / span '+r.w;p.style.gridRow=(r.y+1)+' / span '+r.h})}
+function layout(anim){gapPx=parseFloat(getComputedStyle(main).rowGap)||18;const C=cols(),f=()=>{const {res}=compute(C,dr&&dr.target);cur=res;paint(res);if(C===3&&!dr)Object.entries(res).forEach(([id,r])=>{lay.it[id].y=r.y;lay.it[id].x=r.x;delete lay.it[id].auto})};anim?flip(f):f()}
+let lt=0;const ro=new ResizeObserver(()=>{if(lt)return;lt=requestAnimationFrame(()=>{lt=0;if(!dr)layout()})});
+addEventListener('resize',()=>{clearTimeout(layout.t);layout.t=setTimeout(()=>{refreshTools();layout()},80)});
+const SZL={3:{1:'⅓',2:'⅔',3:'▭'},2:{1:'½',3:'▭'}},SZT={1:'Uska (⅓ širine)',2:'Široka (⅔ širine)',3:'Cela širina'};
+function refreshTools(){const C=cols();panels().forEach(p=>{const it=lay.it[p.dataset.id],t=p.querySelector('.tools');if(!t)return;
+  t.querySelectorAll('[data-w]').forEach(b=>{const w=+b.dataset.w,l=(SZL[C]||{})[w];b.style.display=l&&C>1?'':'none';b.textContent=l||'';b.classList.toggle('on',C===2?(w===1?it.w===1:it.w>=2):it.w===w)});
+  const ah=t.querySelector('[data-a=autoh]');if(ah)ah.style.display=lay.h[p.dataset.id]&&C>1?'':'none';
+  const hh=C>1&&lay.h[p.dataset.id];p.style.height=hh?hh+'px':'';p.classList.toggle('fixh',!!hh)})}
+function applyLayout(){panels().forEach(p=>p.classList.toggle('off',lay.hidden.includes(p.dataset.id)));refreshTools();drawAdd();requestAnimationFrame(()=>layout())}
 function drawAdd(){$('addbar').innerHTML='<span class="muted">Widgeti:</span>'+DEF.filter(id=>id!=='clock').map(id=>`<button class="chip ${lay.hidden.includes(id)?'':'on'}" data-add="${id}" title="${lay.hidden.includes(id)?'Prikaži':'Sakrij'}">${lay.hidden.includes(id)?'＋':'✓'} ${NAMES[id]}</button>`).join('')+'<span class="grow"></span><button id="resetlayout2" title="Vrati podrazumevani raspored">↺ Podrazumevano</button><button class="primary" id="donelayout">✓ Gotovo</button>'}
-$('addbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='donelayout'){setEdit(false);return}if(b.id==='resetlayout2'){if(confirm('Vratiti podrazumevani raspored i veličine widgeta?')){lay=defLay();applyLayout();saveLayout()}return}
-  const id=b.dataset.add;if(!id)return;const p=main.querySelector(`[data-id="${id}"]`);p.classList.toggle('off');saveLayout();requestAnimationFrame(fitAll);if(!p.classList.contains('off'))p.scrollIntoView({behavior:'smooth',block:'center'})};
+$('addbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='donelayout'){setEdit(false);return}
+  if(b.id==='resetlayout2'){if(confirm('Vratiti podrazumevani raspored i veličine widgeta?')){lay=defLay();persist();applyLayout()}return}
+  const id=b.dataset.add;if(!id)return;const p=main.querySelector(`[data-id="${id}"]`);const on=lay.hidden.includes(id);
+  lay.hidden=on?lay.hidden.filter(x=>x!==id):[...lay.hidden,id];if(on)lay.it[id].y=-1;   /* uključen widget ide na vrh */
+  p.classList.toggle('off',!on);persist();drawAdd();layout(true);if(on)setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),250)};
 panels().forEach(p=>{const id=p.dataset.id;const t=document.createElement('div');t.className='tools';
-  t.innerHTML=`<span class="tname">${NAMES[id]||''}</span><button data-a="drag" class="hdl" title="Prevuci da pomeriš">⠿</button>${SIZES.map(s=>`<button data-sz="${s}" title="${SZT[s]}">${SZL[s]}</button>`).join('')}<button data-a="autoh" title="Automatska visina">↕</button>${id==='clock'?'':'<button data-a="hide" title="Sakrij widget">✕</button>'}`;
+  t.innerHTML=`<span class="tname">${NAMES[id]||''}</span><button data-a="drag" class="hdl" title="Prevuci da pomeriš">⠿</button>${[1,2,3].map(w=>`<button data-w="${w}" title="${SZT[w]}"></button>`).join('')}<button data-a="autoh" title="Automatska visina">↕</button>${id==='clock'?'':'<button data-a="hide" title="Sakrij widget">✕</button>'}`;
   p.appendChild(t);const r=document.createElement('div');r.className='rsz';r.title='Povuci za veličinu';p.appendChild(r);
-  t.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.sz){SIZES.forEach(s=>p.classList.toggle('sz-'+s,s===b.dataset.sz));saveLayout();applyLayout()}if(b.dataset.a==='hide'){p.classList.add('off');saveLayout();requestAnimationFrame(fitAll)}if(b.dataset.a==='autoh'){delete lay.h[id];saveLayout();applyLayout()}});
+  t.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const it=lay.it[id];
+    if(b.dataset.w){it.w=+b.dataset.w;if(it.x+it.w>3)it.x=3-it.w;persist();refreshTools();layout(true)}
+    if(b.dataset.a==='hide'){lay.hidden.push(id);p.classList.add('off');persist();drawAdd();layout(true)}
+    if(b.dataset.a==='autoh'){delete lay.h[id];persist();refreshTools();layout(true)}});
   ro.observe(p)});
+const ghost=document.createElement('div');ghost.id='lghost';main.appendChild(ghost);
 applyLayout();
-/* prevlačenje (miš: bilo gde na kartici, dodir: ručica ⠿) */
+/* glatko pomeranje (FLIP) */
+function flip(fn){const ps=panels().filter(p=>!p.classList.contains('off')&&!(dr&&p===dr.p)),r0=new Map(ps.map(p=>[p,p.getBoundingClientRect()]));fn();
+  ps.forEach(p=>{const a=r0.get(p),b=p.getBoundingClientRect(),dx=a.left-b.left,dy=a.top-b.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;p.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:240,easing:'cubic-bezier(.2,.8,.2,1)'})})}
+/* prevlačenje: prozor prati pokazivač, isprekidani okvir pokazuje gde će se zalepiti */
 let dr=null;
-function setEdit(on){document.body.classList.toggle('editing',on);$('editlayout').classList.toggle('active',on);$('editlayout').innerHTML=on?'✓ Gotovo':'✥ <span class="lbl">Raspored</span>';$('addbar').style.display=on?'flex':'none';requestAnimationFrame(fitAll)}
-main.addEventListener('pointerdown',e=>{if(!document.body.classList.contains('editing')||e.button>0)return;const p=e.target.closest('.panel');if(!p)return;
+function setEdit(on){document.body.classList.toggle('editing',on);$('editlayout').classList.toggle('active',on);$('editlayout').innerHTML=on?'✓ Gotovo':'✥ <span class="lbl">Raspored</span>';$('addbar').style.display=on?'flex':'none';if(!on)ghost.style.display='none';requestAnimationFrame(()=>layout())}
+function grid(){const s=getComputedStyle(main),pl=parseFloat(s.paddingLeft),pr=parseFloat(s.paddingRight),r=main.getBoundingClientRect(),C=cols(),cw=(main.clientWidth-pl-pr-gapPx*(C-1))/C;return{left:r.left+pl,top:r.top+parseFloat(s.paddingTop),cw,C,unit:ROW+gapPx}}
+main.addEventListener('pointerdown',e=>{if(!document.body.classList.contains('editing')||e.button>0)return;const p=e.target.closest('main>.panel');if(!p)return;
   if(e.target.closest('.rsz')){startResize(e,p);return}
   const onHdl=e.target.closest('.hdl');if(e.target.closest('.tools button')&&!onHdl)return;if(e.pointerType!=='mouse'&&!onHdl)return;
-  e.preventDefault();dr={p,last:null,x:e.clientX,y:e.clientY,moved:false};p.setPointerCapture(e.pointerId)});
+  e.preventDefault();const r=p.getBoundingClientRect();dr={p,id:p.dataset.id,gx:e.clientX-r.left,gy:e.clientY-r.top,x0:e.clientX,y0:e.clientY,moved:false,target:null};p.setPointerCapture(e.pointerId)});
 main.addEventListener('pointermove',e=>{if(!dr)return;if(dr.rs){doResize(e);return}
-  if(!dr.moved&&Math.hypot(e.clientX-dr.x,e.clientY-dr.y)<6)return;if(!dr.moved){dr.moved=true;dr.p.classList.add('lifting');document.body.classList.add('dragging')}
-  dr.p.style.pointerEvents='none';const el=document.elementFromPoint(e.clientX,e.clientY);dr.p.style.pointerEvents='';
-  const o=el&&el.closest('main>.panel'),now=Date.now();
-  /* posle zamene kartice se preslažu — kratka pauza i pomeranje pokazivača sprečavaju „skakanje“ napred-nazad */
-  if(o&&o!==dr.p&&o!==dr.last&&now>(dr.lock||0)&&(!dr.sx||Math.hypot(e.clientX-dr.sx,e.clientY-dr.sy)>28)){const ps=panels();flip(()=>{if(ps.indexOf(dr.p)<ps.indexOf(o))o.after(dr.p);else main.insertBefore(dr.p,o)});dr.last=o;dr.lock=now+260;dr.sx=e.clientX;dr.sy=e.clientY}
-  else if(!o&&now>(dr.lock||0))dr.last=null;
-  const m=60;if(e.clientY<m)scrollBy(0,-14);else if(e.clientY>innerHeight-m)scrollBy(0,14)});
-function endDrag(){if(!dr)return;if(dr.rs){dr.p.classList.remove('resizing');saveLayout();applyLayout()}else if(dr.moved){dr.p.classList.remove('lifting');saveLayout()}document.body.classList.remove('dragging');dr=null}
+  if(!dr.moved&&Math.hypot(e.clientX-dr.x0,e.clientY-dr.y0)<5)return;
+  if(!dr.moved){dr.moved=true;dr.p.classList.add('lifting');document.body.classList.add('dragging');ghost.style.display='block'}
+  const g=grid(),c=cur[dr.id],w=c?c.w:1;
+  const tx=Math.max(0,Math.min(g.C-w,Math.round((e.clientX-dr.gx-g.left)/(g.cw+gapPx)))),ty=Math.max(0,Math.round((e.clientY-dr.gy-g.top)/g.unit));
+  if(!dr.target||dr.target.x!==tx||Math.abs(dr.target.y-ty)>=2){dr.target={id:dr.id,x:tx,y:ty};flip(()=>{const {res}=compute(g.C,dr.target);cur=res;paint(res)})}
+  const s=cur[dr.id];ghost.style.gridColumn=(s.x+1)+' / span '+s.w;ghost.style.gridRow=(s.y+1)+' / span '+s.h;
+  dr.p.style.transform='';const nr=dr.p.getBoundingClientRect();dr.p.style.transform=`translate(${e.clientX-dr.gx-nr.left}px,${e.clientY-dr.gy-nr.top}px)`;
+  const m=70;if(e.clientY<m)scrollBy(0,-16);else if(e.clientY>innerHeight-m)scrollBy(0,16)});
+function endDrag(){if(!dr)return;const d=dr;dr=null;ghost.style.display='none';document.body.classList.remove('dragging');
+  if(d.rs){d.p.classList.remove('resizing');persist();refreshTools();layout(true);return}
+  if(!d.moved)return;const C=cols(),{res,order}=compute(C,d.target);
+  if(C===3)Object.entries(res).forEach(([id,r])=>{lay.it[id].y=r.y;lay.it[id].x=r.x;delete lay.it[id].auto});
+  else{delete lay.it[d.id].auto;lay.o[C]=order;if(C===2){const r=res[d.id];if(lay.it[d.id].w===1)lay.it[d.id].x=r.x===0?0:2}}
+  cur=res;paint(res);const t=d.p.style.transform;d.p.style.transform='';d.p.classList.remove('lifting');if(t)d.p.animate([{transform:t},{transform:'none'}],{duration:200,easing:'ease-out'});persist()}
 main.addEventListener('pointerup',endDrag);main.addEventListener('pointercancel',endDrag);
-/* glatko pomeranje ostalih kartica (FLIP) */
-function flip(fn){const ps=panels().filter(p=>!p.classList.contains('off')),r0=new Map(ps.map(p=>[p,p.getBoundingClientRect()]));fn();fitAll();
-  ps.forEach(p=>{if(dr&&p===dr.p)return;const a=r0.get(p),b=p.getBoundingClientRect(),dx=a.left-b.left,dy=a.top-b.top;if(!dx&&!dy)return;
-    p.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'})})}
-/* promena veličine povlačenjem ugla */
-function startResize(e,p){e.preventDefault();const r=p.getBoundingClientRect(),c=cols();if(c<2)return;dr={p,rs:true,x:e.clientX,y:e.clientY,h:r.height,w:r.width,colw:(main.clientWidth-parseFloat(getComputedStyle(main).paddingLeft)-parseFloat(getComputedStyle(main).paddingRight)+gapPx)/c};p.classList.add('resizing');p.setPointerCapture(e.pointerId)}
-function doResize(e){const c=cols(),want=(dr.w+(e.clientX-dr.x)+gapPx)/dr.colw*(12/c);let best='m',bd=1e9;(c===6?['l','f']:SIZES).forEach(s=>{const d=Math.abs((c===6?{l:6,f:12}[s]:SPAN[s])-want);if(d<bd){bd=d;best=s}});
-  const nh=Math.max(110,Math.round(dr.h+(e.clientY-dr.y)));if(Math.abs(e.clientY-dr.y)>6||dr.hset){dr.hset=true;dr.p.style.height=nh+'px';dr.p.classList.add('fixh');lay.h[dr.p.dataset.id]=nh;fit(dr.p)}
-  if(!dr.p.classList.contains('sz-'+best)){flip(()=>SIZES.forEach(s=>dr.p.classList.toggle('sz-'+s,s===best)));dr.p.querySelectorAll('.tools [data-sz]').forEach(b=>b.classList.toggle('on',b.dataset.sz===best))}}
+/* veličina povlačenjem ugla: širina se lepi na ⅓ / ⅔ / celu, visina slobodno */
+function startResize(e,p){e.preventDefault();if(cols()<2)return;const r=p.getBoundingClientRect();dr={p,id:p.dataset.id,rs:true,x0:e.clientX,y0:e.clientY,w:r.width,h:r.height};p.classList.add('resizing');p.setPointerCapture(e.pointerId)}
+function doResize(e){const g=grid(),it=lay.it[dr.id],want=(dr.w+(e.clientX-dr.x0)+gapPx)/(g.cw+gapPx);let w=Math.max(1,Math.min(g.C,Math.round(want)));if(g.C===2)w=w>=2?3:1;
+  if(w!==mw(it,3)&&(g.C===3?w!==it.w:(w>=2)!==(it.w>=2))){it.w=w;if(it.x+it.w>3)it.x=3-it.w;refreshTools();layout(true)}
+  if(Math.abs(e.clientY-dr.y0)>6||dr.hset){dr.hset=true;const nh=Math.max(110,Math.round(dr.h+(e.clientY-dr.y0)));lay.h[dr.id]=nh;dr.p.style.height=nh+'px';dr.p.classList.add('fixh');layout()}}
 $('editlayout').onclick=()=>setEdit(!document.body.classList.contains('editing'));
 addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('editing'))setEdit(false)});
 /* ===== YouTube mini plejer ===== */
