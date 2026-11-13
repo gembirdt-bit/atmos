@@ -21,11 +21,15 @@ header{position:sticky;top:0;z-index:30;display:flex;justify-content:space-betwe
 button,input,select{font:inherit}button{border:1px solid var(--line);background:rgba(255,255,255,.1);color:white;padding:10px 14px;border-radius:12px;cursor:pointer}button:hover{background:rgba(255,255,255,.2)}button.primary{background:var(--acc);border-color:var(--acc)}button.active{background:var(--acc)}
 main{--cols:1;position:relative;max-width:1680px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:8px;gap:16px;align-items:start}
 @media(min-width:760px){main{--cols:2;grid-template-columns:repeat(2,minmax(0,1fr))}}
-main.free{display:block}main.free>.panel{position:absolute;overflow:auto;margin:0}
+main.free{display:block}main.free>.panel{position:absolute;overflow:hidden;margin:0}
+.pin{min-width:0}
+/* pretraga: jedan uredan red */
+[data-id=search] h2{margin-bottom:10px}[data-id=search] .eventrow{flex-wrap:nowrap;gap:8px;margin:0}#qtext{flex:1;min-width:0;padding-left:38px;background:#ffffff14 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23b9c7d8' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m13 13 4 4'/%3E%3C/svg%3E") no-repeat 13px 50%}#qeng{flex:none;width:auto;max-width:130px}#qgo{flex:none}
+@media(max-width:480px){[data-id=search] .eventrow{flex-wrap:wrap}#qeng{flex:1;max-width:none}}
 main.free>.panel::-webkit-scrollbar{width:8px}main.free>.panel::-webkit-scrollbar-thumb{background:#ffffff30;border-radius:8px}
 #lghost{display:none;z-index:1;border:2px dashed var(--acc);border-radius:20px;background:color-mix(in srgb,var(--acc) 14%,transparent);pointer-events:none;align-self:stretch}
 .panel{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;backdrop-filter:blur(var(--gb));box-shadow:0 12px 40px #0002;min-width:0}
-.clock{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 28px}
+.clock{padding:24px 28px}.clock>.pin{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .time{font-size:clamp(48px,8vw,100px);font-weight:250;letter-spacing:-4px;line-height:1}.date{font-size:clamp(16px,2vw,23px);color:#d4e0ed;margin-top:8px}.greeting{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#91cdec;margin-bottom:10px}
 .clockright{text-align:right}.clockright .location{font-size:20px;font-weight:600}.clockright .small{color:var(--muted);margin-top:6px}
 h2{font-size:15px;font-weight:650;letter-spacing:.2px;margin:0 0 14px;display:flex;align-items:center;gap:9px}.muted{color:var(--muted)}.weather-now{display:flex;align-items:center;gap:18px}.weather-icon{font-size:58px}.temp{font-size:56px;font-weight:300}.weather-desc{font-size:18px}.weather-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:20px}.day{background:#ffffff0c;border-radius:14px;padding:10px 5px;text-align:center;font-size:12px}.day .ico{font-size:23px;margin:8px 0}.day b{display:block;font-size:14px}
@@ -75,7 +79,7 @@ footer{text-align:center;color:#c2cfde99;font-size:11px;padding:5px 20px 20px}
 body.theme-light #homebox{background:#f4f7fb;color:#172033}
 #syncbar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:61;background:rgba(12,20,34,.97);border:1px solid var(--acc);border-radius:14px;padding:10px 14px;display:none;gap:10px;align-items:center;font-size:13px;box-shadow:0 12px 40px #0009}
 @media(max-width:759px){.topright .lbl{display:none}}
-@media(max-width:850px){.quote{margin-left:0}.clock{align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
+@media(max-width:850px){.quote{margin-left:0}.clock>.pin{align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){header{padding:14px 4vw}.topright span{display:none}main{padding:0 4vw 20px}.panel{padding:16px}.radio-list{grid-template-columns:1fr}.forecast{grid-template-columns:repeat(5,minmax(0,1fr))}.day{padding:8px 2px}.day .ico{font-size:19px}}
 
 /* Atmos personalisation */
@@ -286,45 +290,55 @@ const main=document.querySelector('main');
 [[0,'clock'],[3,'weather'],[4,'radio'],[5,'calendar'],[6,'alarm'],[7,'media']].forEach(([i,id])=>main.children[i].dataset.id=id);
 const NAMES={photos:'Foto-slajder',clock:'Sat',weather:'Vreme',radio:'Radio',calendar:'Kalendar',alarm:'Alarm',media:'Media plejer',youtube:'YouTube',links:'Brzi linkovi',search:'Pretraga',todo:'Zadaci',notes:'Beleške',timer:'Tajmer i štoperica',world:'Svetski satovi',calc:'Kalkulator',joke:'Vic dana'};
 const DEF=[...main.children].map(p=>p.dataset.id);
-/* veličine u „ćelijama“ (širina ekrana = 4 ćelije) */
-const SZ={w:{w:2,h:.75,l:'▬',t:'Duguljasta (za pretragu, sat, linkove)'},s:{w:1,h:1,l:'◻',t:'Mala kockica'},b:{w:2,h:2,l:'⬛',t:'Velika kockica'}};
-const DS={clock:'w',search:'w',links:'w',photos:'b',radio:'b',calendar:'b',youtube:'b',weather:'s',alarm:'s',media:'s',todo:'s',notes:'s',timer:'s',world:'s',calc:'s',joke:'s'};
+/* Dve veličine: normalna i velika. Širina je u kolonama (ekran = 6 kolona), visina se sama prilagođava sadržaju,
+   pa se ništa ne seče. U velikoj veličini se uvećava i sam sadržaj (zoom), ne samo okvir. */
+const COLS=6;
+const WS={clock:[3,6],search:[3,6],photos:[3,4],links:[3,6],radio:[2,4],youtube:[2,4],weather:[2,3],calendar:[2,3],alarm:[2,3],media:[2,3],todo:[2,3],notes:[2,3],timer:[2,3],world:[2,3],calc:[2,3],joke:[2,3]};
+const ZOOM={clock:1.5,search:1.25,weather:1.35,calendar:1.4,alarm:1.3,timer:1.4,world:1.35,calc:1.4,joke:1.35,media:1.2,todo:1.25,notes:1.25,radio:1.15,youtube:1.1,photos:1.1,links:1.2};
+const SZ={n:{l:'◻',t:'Normalna veličina'},v:{l:'⬛',t:'Velika — veći prozor i veći sadržaj'}};
 const DHIDE=['world'],ROW=8,GAP=18;
 const panels=()=>[...main.children].filter(p=>p.classList.contains('panel'));
 const free=()=>innerWidth>=1000;
 const cols=()=>free()?3:innerWidth>=760?2:1;
-let gapPx=16;
-function defLay(hidden){const it={};DEF.forEach((id,i)=>it[id]={x:0,y:i,s:DS[id]||'s',auto:1});return{v:4,it,hidden:(hidden||DHIDE).slice(),o:{}}}
-let lay=(()=>{const n=ls('atmosLayout4',null);if(n&&n.v===4)return Object.assign({it:{},hidden:[],o:{}},n);
+let gapPx=16;const hc={};
+const wOf=id=>(WS[id]||[2,3])[lay.it[id]&&lay.it[id].s==='v'?1:0];
+const kOf=id=>lay.it[id]&&lay.it[id].s==='v'?(ZOOM[id]||1.2):1;
+function defLay(hidden){const it={};DEF.forEach((id,i)=>it[id]={x:0,y:i,s:'n',auto:1});return{v:5,it,hidden:(hidden||DHIDE).slice(),o:{}}}
+let lay=(()=>{const n=ls('atmosLayout5',null);if(n&&n.v===5)return Object.assign({it:{},hidden:[],o:{}},n);
+  const o4=ls('atmosLayout4',null);if(o4&&o4.v===4){const it={};Object.entries(o4.it||{}).forEach(([k,v])=>{it[k]={x:Math.round((v.x||0)*1.5),y:(v.y||0)*1.5,s:v.s==='b'?'v':'n'};if(v.auto)it[k].auto=1});return{v:5,it,hidden:(o4.hidden||DHIDE).slice(),o:{}}}
   const old=ls('atmosLayout3',null)||ls('atmosLayout2',null)||ls('atmosLayout',null);let hd=old&&old.hidden?old.hidden.slice():DHIDE.slice();
-  if(old&&!ls('atmosLayout3',null)&&!ls('atmosLayout2',null)){const w=ls('atmosWorld',null);if((!w||JSON.stringify(w)===JSON.stringify(['Njujork','London','Tokio']))&&!hd.includes('world'))hd.push('world')}
   return defLay(hd)})();
-DEF.forEach((id,i)=>{if(!lay.it[id])lay.it[id]={x:0,y:999+i,s:DS[id]||'s',auto:1}});
-const persist=()=>sv('atmosLayout4',lay);
+DEF.forEach((id,i)=>{if(!lay.it[id])lay.it[id]={x:0,y:999+i,s:'n',auto:1};if(lay.it[id].s!=='v')lay.it[id].s='n'});
+const persist=()=>sv('atmosLayout5',lay);
 /* ---- geometrija slobodnog rasporeda ---- */
-function geo(){const s=getComputedStyle(main),pl=parseFloat(s.paddingLeft),pr=parseFloat(s.paddingRight),W=main.clientWidth-pl-pr,G=(W+GAP)/4;return{pl,W,G}}
-function rectOf(id,g,x,y){const it=lay.it[id],z=SZ[it.s]||SZ.s;return{x:x??it.x,y:y??it.y,w:z.w,h:z.h}}   /* u ćelijama */
-const EPS=GAP/2;
-function hits(a,b,G){return a.x*G<(b.x+b.w)*G-GAP+EPS-EPS&&b.x*G<(a.x+a.w)*G-GAP&&a.y*G<(b.y+b.h)*G-GAP&&b.y*G<(a.y+a.h)*G-GAP}
-function freeSpot(id,want,others,g){const r0=rectOf(id,g,want.x,want.y),mxX=4-r0.w;let best=null,bd=1e9;
+function geo(){const s=getComputedStyle(main),pl=parseFloat(s.paddingLeft),pr=parseFloat(s.paddingRight),W=main.clientWidth-pl-pr,G=(W+GAP)/COLS;return{pl,W,G}}
+function rectOf(id,g,x,y){const it=lay.it[id];return{x:x??it.x,y:y??it.y,w:wOf(id),h:hc[id]||1}}   /* u kolonama */
+function hits(a,b,G){return a.x*G<(b.x+b.w)*G-GAP&&b.x*G<(a.x+a.w)*G-GAP&&a.y*G<(b.y+b.h)*G-GAP&&b.y*G<(a.y+a.h)*G-GAP}
+function freeSpot(id,want,others,g){const r0=rectOf(id,g,want.x,want.y),mxX=COLS-r0.w;let best=null,bd=1e9;
   const ok=(x,y)=>{const r={x,y,w:r0.w,h:r0.h};return!others.some(o=>hits(r,o,g.G))};
-  const cx=Math.min(Math.max(want.x,0),mxX),cy=Math.max(want.y,0);if(ok(cx,cy))return{x:cx,y:cy};
-  /* kandidati: uz ivice drugih prozora + fina mreža oko željenog mesta */
-  const xs=new Set([0,mxX,cx]),ys=new Set([0,cy]);others.forEach(o=>{xs.add(o.x+o.w);xs.add(o.x-r0.w);ys.add(o.y+o.h);ys.add(o.y-r0.h);ys.add(o.y)});
-  for(let d=-3;d<=3;d+=.125){xs.add(cx+d);ys.add(cy+d)}
-  for(const x0 of xs){const x=Math.round(x0*1000)/1000;if(x<-.001||x>mxX+.001)continue;for(const y0 of ys){const y=Math.round(y0*1000)/1000;if(y<-.001)continue;const dd=(x-cx)**2+(y-cy)**2;if(dd<bd&&ok(x,y)){bd=dd;best={x,y}}}}
+  const cx=Math.min(Math.max(Math.round(want.x),0),mxX),cy=Math.max(want.y,0);if(ok(cx,cy))return{x:cx,y:cy};
+  const ys=new Set([0,cy]);others.forEach(o=>{ys.add(o.y+o.h);ys.add(o.y-r0.h);ys.add(o.y)});for(let d=-4;d<=4;d+=.125)ys.add(cy+d);
+  for(let x=0;x<=mxX;x++)for(const y0 of ys){const y=Math.round(y0*1000)/1000;if(y<-.001)continue;const dd=((x-cx)*1.6)**2+(y-cy)**2;if(dd<bd&&ok(x,y)){bd=dd;best={x,y}}}
   if(!best){let y=Math.max(0,...others.map(o=>o.y+o.h));best={x:cx,y}}return best}
 /* početno slaganje: redom, prvo slobodno mesto odozgo */
 function autoPack(g){const vis=DEF.filter(id=>!lay.hidden.includes(id)),placed=vis.filter(id=>!lay.it[id].auto).map(id=>rectOf(id,g));
-  vis.filter(id=>lay.it[id].auto).forEach(id=>{const r=rectOf(id,g);let done=null;
-    for(let y=0;y<200&&!done;y+=.25)for(let x=0;x<=4-r.w&&!done;x+=1){const c={x,y,w:r.w,h:r.h};if(!placed.some(o=>hits(c,o,g.G)))done=c}
+  vis.filter(id=>lay.it[id].auto).sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x).forEach(id=>{const r=rectOf(id,g);let done=null;
+    for(let y=0;y<400&&!done;y+=.125)for(let x=0;x<=COLS-r.w&&!done;x++){const c={x,y,w:r.w,h:r.h};if(!placed.some(o=>hits(c,o,g.G)))done=c}
     lay.it[id].x=done.x;lay.it[id].y=done.y;delete lay.it[id].auto;placed.push(done)})}
-/* razreši preklapanja (npr. posle promene veličine): prozori se pomeraju na najbliže slobodno mesto */
-function resolve(g,fixed){const vis=DEF.filter(id=>!lay.hidden.includes(id));const order=[...(fixed?[fixed]:[]),...vis.filter(i=>i!==fixed).sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x)];const placed=[];
-  order.forEach(id=>{const it=lay.it[id],r=rectOf(id,g);if(r.x+r.w>4)it.x=4-r.w;if(placed.some(o=>hits(rectOf(id,g),o,g.G))){const s=freeSpot(id,it,placed,g);it.x=s.x;it.y=s.y}placed.push(rectOf(id,g))})}
-function paintFree(anim){const g=geo();main.classList.add('free');autoPack(g);let maxB=0;const ps=panels(),r0=anim?new Map(ps.map(p=>[p,p.getBoundingClientRect()])):null;
-  ps.forEach(p=>{const id=p.dataset.id,it=lay.it[id],z=SZ[it.s]||SZ.s;p.style.gridColumn=p.style.gridRow='';if(p.classList.contains('off'))return;
-    if(dr&&dr.p===p)return;p.style.left=(g.pl+it.x*g.G)+'px';p.style.top=(it.y*g.G)+'px';p.style.width=(z.w*g.G-GAP)+'px';p.style.height=(z.h*g.G-GAP)+'px';maxB=Math.max(maxB,(it.y+z.h)*g.G)});
+/* bez preklapanja: prozor koji bi se preklopio spušta se ispod (kolona ostaje ista) */
+function resolve(g,fixed){const vis=DEF.filter(id=>!lay.hidden.includes(id));const order=[...(fixed&&vis.includes(fixed)?[fixed]:[]),...vis.filter(i=>i!==fixed).sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x)];const placed=[];
+  order.forEach(id=>{const it=lay.it[id];if(it.x+wOf(id)>COLS)it.x=COLS-wOf(id);if(it.x<0)it.x=0;
+    for(let k=0;k<60;k++){const r=rectOf(id,g),o=placed.filter(q=>hits(r,q,g.G));if(!o.length)break;it.y=Math.max(...o.map(q=>q.y+q.h))}placed.push(rectOf(id,g))})}
+/* sabijanje naviše (posle promene veličine): svaki prozor ide gore koliko može, u istoj koloni — bez rupa */
+function gravity(g){const vis=DEF.filter(id=>!lay.hidden.includes(id)).sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x),placed=[];
+  vis.forEach(id=>{const it=lay.it[id],r=rectOf(id,g);let y=0;placed.forEach(o=>{if(r.x<o.x+o.w&&o.x<r.x+r.w&&o.y<it.y+1e-6)y=Math.max(y,o.y+o.h)});
+    if(y<it.y){const test={x:it.x,y,w:r.w,h:r.h};if(!placed.some(o=>hits(test,o,g.G)))it.y=y}placed.push(rectOf(id,g))})}
+function measure(g){panels().forEach(p=>{const id=p.dataset.id;if(p.classList.contains('off'))return;if(dr&&dr.p===p&&hc[id])return;
+  p.style.width=(wOf(id)*g.G-GAP)+'px';p.style.height='';const pin=p.querySelector('.pin');if(pin)pin.style.zoom=kOf(id);hc[id]=(p.offsetHeight+GAP)/g.G})}
+function paintFree(anim,fixed){const g=geo();main.classList.add('free');const ps=panels(),r0=anim?new Map(ps.map(p=>[p,p.getBoundingClientRect()])):null;
+  ps.forEach(p=>{p.style.gridColumn=p.style.gridRow=''});measure(g);autoPack(g);if(!dr)resolve(g,fixed);let maxB=0;
+  ps.forEach(p=>{const id=p.dataset.id,it=lay.it[id];if(p.classList.contains('off'))return;
+    if(dr&&dr.p===p)return;p.style.left=(g.pl+it.x*g.G)+'px';p.style.top=(it.y*g.G)+'px';maxB=Math.max(maxB,(it.y+hc[id])*g.G)});
   main.style.height=(maxB+30)+'px';
   if(anim)ps.forEach(p=>{if(dr&&p===dr.p)return;const a=r0.get(p),b=p.getBoundingClientRect();const dx=a.left-b.left,dy=a.top-b.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;p.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:260,easing:'cubic-bezier(.2,.8,.2,1)'})})}
 /* ---- telefon / tablet: uredna lista ---- */
@@ -332,11 +346,11 @@ function hu(p){return Math.max(1,Math.ceil((p.getBoundingClientRect().height+gap
 function flowOrder(C){const ids=panels().filter(p=>!p.classList.contains('off')).map(p=>p.dataset.id);const o=lay.o[C];
   return o?[...o.filter(i=>ids.includes(i)),...ids.filter(i=>!o.includes(i))]:ids.sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x)}
 function paintFlow(order,C){main.classList.remove('free');main.style.height='';const top=new Array(C).fill(0);
-  panels().forEach(p=>{p.style.left=p.style.top=p.style.width=p.style.height=''});
-  order.forEach(id=>{const p=main.querySelector(`[data-id="${id}"]`),w=C===2&&lay.it[id].s!=='s'?2:1;let x=0;if(w===1&&C===2)x=top[1]<top[0]?1:0;const y=Math.max(...top.slice(x,x+w)),hh=hu(p);
+  panels().forEach(p=>{p.style.left=p.style.top=p.style.width=p.style.height='';const pin=p.querySelector('.pin');if(pin)pin.style.zoom=''});
+  order.forEach(id=>{const p=main.querySelector(`[data-id="${id}"]`),w=C===2&&(lay.it[id].s==='v'||(WS[id]||[2])[0]>=3)?2:1;let x=0;if(w===1&&C===2)x=top[1]<top[0]?1:0;const y=Math.max(...top.slice(x,x+w)),hh=hu(p);
     p.style.gridColumn=(x+1)+' / span '+w;p.style.gridRow=(y+1)+' / span '+hh;for(let c=x;c<x+w;c++)top[c]=y+hh})}
-function layout(anim){gapPx=parseFloat(getComputedStyle(main).rowGap)||16;if(free())paintFree(anim);else{const C=cols();paintFlow(flowOrder(C),C)}}
-let lt=0;const ro=new ResizeObserver(()=>{if(lt||free())return;lt=requestAnimationFrame(()=>{lt=0;if(!dr)layout()})});
+function layout(anim,fixed){gapPx=parseFloat(getComputedStyle(main).rowGap)||16;if(free())paintFree(anim,fixed);else{const C=cols();paintFlow(flowOrder(C),C)}}
+let lt=0,painting=false;const ro=new ResizeObserver(()=>{if(lt||painting)return;lt=requestAnimationFrame(()=>{lt=0;if(!dr){painting=true;layout();requestAnimationFrame(()=>painting=false)}})});
 addEventListener('resize',()=>{clearTimeout(layout.t);layout.t=setTimeout(()=>{refreshTools();layout()},80)});
 function refreshTools(){const f=free();panels().forEach(p=>{const it=lay.it[p.dataset.id],t=p.querySelector('.tools');if(!t)return;t.querySelectorAll('[data-s]').forEach(b=>{b.style.display=f?'':'none';b.classList.toggle('on',it.s===b.dataset.s)})})}
 function applyLayout(){panels().forEach(p=>p.classList.toggle('off',lay.hidden.includes(p.dataset.id)));refreshTools();drawAdd();requestAnimationFrame(()=>layout())}
@@ -347,11 +361,11 @@ $('addbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id=
   lay.hidden=on?lay.hidden.filter(x=>x!==id):[...lay.hidden,id];p.classList.toggle('off',!on);
   if(on){lay.it[id].auto=1;Object.values(lay.o).forEach(o=>{const i=o.indexOf(id);if(i>=0)o.splice(i,1)})}
   persist();drawAdd();layout(true);if(on)setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),300)};
-panels().forEach(p=>{const id=p.dataset.id;const t=document.createElement('div');t.className='tools';
+panels().forEach(p=>{const id=p.dataset.id;const pin=document.createElement('div');pin.className='pin';while(p.firstChild)pin.appendChild(p.firstChild);p.appendChild(pin);const t=document.createElement('div');t.className='tools';
   t.innerHTML=`<span class="tname">${NAMES[id]||''}</span><button data-a="drag" class="hdl" title="Prevuci da pomeriš">⠿</button>${Object.entries(SZ).map(([k,z])=>`<button data-s="${k}" title="${z.t}">${z.l}</button>`).join('')}${id==='clock'?'':'<button data-a="hide" title="Sakrij widget">✕</button>'}`;
   p.appendChild(t);
   t.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const it=lay.it[id];
-    if(b.dataset.s){it.s=b.dataset.s;const g=geo();resolve(g,id);persist();refreshTools();layout(true)}
+    if(b.dataset.s){it.s=b.dataset.s;if(free())DEF.forEach(i=>{if(!lay.hidden.includes(i))lay.it[i].auto=1});/* ponovo uredno složi sve, istim redosledom */persist();refreshTools();layout(true);persist()}
     if(b.dataset.a==='hide'){lay.hidden.push(id);p.classList.add('off');persist();drawAdd();layout(true)}});
   ro.observe(p)});
 const ghost=document.createElement('div');ghost.id='lghost';main.appendChild(ghost);
@@ -365,9 +379,9 @@ main.addEventListener('pointerdown',e=>{if(!document.body.classList.contains('ed
 main.addEventListener('pointermove',e=>{if(!dr)return;if(!dr.moved&&Math.hypot(e.clientX-dr.x0,e.clientY-dr.y0)<5)return;
   if(!dr.moved){dr.moved=true;dr.p.classList.add('lifting');document.body.classList.add('dragging')}
   const mr=main.getBoundingClientRect();
-  if(free()){const g=geo(),it=lay.it[dr.id],z=SZ[it.s];
+  if(free()){const g=geo(),it=lay.it[dr.id],z={w:wOf(dr.id),h:hc[dr.id]||1};
     /* prozor slobodno prati miš */
-    let L=e.clientX-dr.gx-mr.left,T=e.clientY-dr.gy-mr.top;L=Math.max(g.pl,Math.min(g.pl+(4-z.w)*g.G,L));T=Math.max(0,T);dr.p.style.left=L+'px';dr.p.style.top=T+'px';
+    let L=e.clientX-dr.gx-mr.left,T=e.clientY-dr.gy-mr.top;L=Math.max(g.pl,Math.min(g.pl+(COLS-z.w)*g.G,L));T=Math.max(0,T);dr.p.style.left=L+'px';dr.p.style.top=T+'px';
     const want={x:(L-g.pl)/g.G,y:T/g.G},others=DEF.filter(i=>i!==dr.id&&!lay.hidden.includes(i)).map(i=>rectOf(i,g));
     const now=performance.now();if(!dr.tc||now-dr.tc>40){dr.tc=now;dr.spot=freeSpot(dr.id,want,others,g)}
     const s=dr.spot;ghost.style.cssText=`display:block;position:absolute;left:${g.pl+s.x*g.G}px;top:${s.y*g.G}px;width:${z.w*g.G-GAP}px;height:${z.h*g.G-GAP}px`;
@@ -381,7 +395,7 @@ main.addEventListener('pointermove',e=>{if(!dr)return;if(!dr.moved&&Math.hypot(e
   const m=70;if(e.clientY<m)scrollBy(0,-16);else if(e.clientY>innerHeight-m)scrollBy(0,16)});
 function endDrag(){if(!dr)return;const d=dr;dr=null;ghost.style.display='none';document.body.classList.remove('dragging');d.p.classList.remove('lifting');if(!d.moved)return;
   if(free()&&d.spot){const it=lay.it[d.id];it.x=d.spot.x;it.y=d.spot.y;delete it.auto;
-    const from=d.p.getBoundingClientRect();layout();const to=d.p.getBoundingClientRect();d.p.animate([{transform:`translate(${from.left-to.left}px,${from.top-to.top}px)`},{transform:'none'}],{duration:200,easing:'ease-out'})}
+    const from=d.p.getBoundingClientRect();layout(false,d.id);const to=d.p.getBoundingClientRect();d.p.animate([{transform:`translate(${from.left-to.left}px,${from.top-to.top}px)`},{transform:'none'}],{duration:200,easing:'ease-out'})}
   else layout();persist()}
 main.addEventListener('pointerup',endDrag);main.addEventListener('pointercancel',endDrag);
 $('editlayout').onclick=()=>setEdit(!document.body.classList.contains('editing'));
@@ -713,7 +727,7 @@ setInterval(()=>{if(document.visibilityState!=='visible')return;const u=ls('atmo
    Sinhronizuje se svaki zapis posebno (linkovi, zadaci, beleške, događaji, YouTube, svetski satovi, podešavanja, raspored); kod sukoba pobeđuje novija izmena. */
 const GD_CLIENT='867108184410-ctavf0871su36rju6n465rd0149ps2mu.apps.googleusercontent.com';
 const GD_SCOPE='https://www.googleapis.com/auth/drive.file',GD_NAME='Atmos Dashboard — podaci.json',GD_KEY='atmosGD';
-const GD_KEYS=['atmosLinks','atmosTodo','atmosNotes','atmosEvents','atmosYT','atmosWorld','atmosEng','atmosSet','atmosLayout4'];
+const GD_KEYS=['atmosLinks','atmosTodo','atmosNotes','atmosEvents','atmosYT','atmosWorld','atmosEng','atmosSet','atmosLayout5'];
 let gd=(()=>{try{const x=JSON.parse(localStorage.getItem(GD_KEY));if(x&&x.h)return x}catch{}return{on:false,fileId:'',h:{},mt:{},last:0,err:'',email:''}})();if(!gd.mt)gd.mt={};
 let gdTok=(()=>{try{const t=JSON.parse(sessionStorage.getItem(GD_KEY+'_t'));if(t&&t.exp>Date.now()+60000)return t}catch{}return null})();
 let gdClient=null,gdBusy=false,gdT=null;
