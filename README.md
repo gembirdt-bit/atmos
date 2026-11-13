@@ -188,8 +188,13 @@ Hvala!
 
 ## Raspored widgeta
 
-- Na računaru su 3 kolone, na tabletu 2, na telefonu jedna
-- **✥ Raspored** → prevuci prozor gde hoćeš (mišem bilo gde po prozoru, prstom za ručicu ⠿); isprekidani okvir pokazuje gde će se zalepiti, prozori ispod se pomere naniže, a prazan prostor iznad se sam popuni
-- Tri veličine: **⅓**, **⅔** i **▭ cela širina** (dugmići ili povlačenje ugla); povlačenjem ugla nadole menja se i visina, **↕** vraća automatsku visinu
+- **Računar:** ✥ Raspored → prozore slobodno pomeraš mišem gde hoćeš; nikad se ne preklapaju — ako pustiš prozor preko drugog, ide na najbliže slobodno mesto (isprekidani okvir pokazuje gde)
+- Tri veličine: **▬ duguljasta** (pretraga, sat, linkovi), **◻ mala kockica**, **⬛ velika kockica**
+- **Telefon i tablet:** uredna lista — prozor se prevlači ručicom ⠿ i zamenjuje mesto sa drugim
 - Traka „Widgeti“ — uključi / isključi bilo koji widget; **↺ Podrazumevano** vraća početni raspored
 - Svetski satovi su podrazumevano isključeni
+
+## Google Drive i početna strana
+
+- ⚙ Podešavanja → **Google Drive**: linkovi, zadaci, beleške, kalendar, YouTube lista, podešavanja i raspored isti na svim uređajima (sopstvena slika pozadine ostaje samo na uređaju)
+- Posle par minuta korišćenja Atmos predloži da ga postaviš za početnu stranu pretraživača, sa uputstvom za tvoj pretraživač (⚙ Podešavanja → Početna strana → Kako?)
