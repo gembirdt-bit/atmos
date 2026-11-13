@@ -21,8 +21,9 @@ header{position:sticky;top:0;z-index:30;display:flex;justify-content:space-betwe
 button,input,select{font:inherit}button{border:1px solid var(--line);background:rgba(255,255,255,.1);color:white;padding:10px 14px;border-radius:12px;cursor:pointer}button:hover{background:rgba(255,255,255,.2)}button.primary{background:var(--acc);border-color:var(--acc)}button.active{background:var(--acc)}
 main{--cols:1;position:relative;max-width:1680px;margin:auto;padding:0 3vw 30px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:8px;gap:16px;align-items:start}
 @media(min-width:760px){main{--cols:2;grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1000px){main{--cols:3;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}}
-#lghost{display:none;border:2px dashed var(--acc);border-radius:20px;background:color-mix(in srgb,var(--acc) 14%,transparent);pointer-events:none;align-self:stretch}
+main.free{display:block}main.free>.panel{position:absolute;overflow:auto;margin:0}
+main.free>.panel::-webkit-scrollbar{width:8px}main.free>.panel::-webkit-scrollbar-thumb{background:#ffffff30;border-radius:8px}
+#lghost{display:none;z-index:1;border:2px dashed var(--acc);border-radius:20px;background:color-mix(in srgb,var(--acc) 14%,transparent);pointer-events:none;align-self:stretch}
 .panel{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;backdrop-filter:blur(var(--gb));box-shadow:0 12px 40px #0002;min-width:0}
 .clock{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 28px}
 .time{font-size:clamp(48px,8vw,100px);font-weight:250;letter-spacing:-4px;line-height:1}.date{font-size:clamp(16px,2vw,23px);color:#d4e0ed;margin-top:8px}.greeting{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#91cdec;margin-bottom:10px}
@@ -44,8 +45,7 @@ audio{width:100%;margin-top:12px;height:38px}
 .tools .hdl{cursor:grab;touch-action:none;font-size:16px;padding:3px 10px}
 .rsz{display:none;position:absolute;right:3px;bottom:3px;width:30px;height:30px;cursor:nwse-resize;z-index:6;border-radius:6px;touch-action:none;
  background:linear-gradient(135deg,transparent 45%,var(--acc) 45%,var(--acc) 55%,transparent 55%,transparent 65%,var(--acc) 65%,var(--acc) 75%,transparent 75%)}
-main>.panel.fixh{overflow:auto}body.editing main>.panel.fixh{overflow:hidden}
-body.editing .tools{display:flex}body.editing main>.panel{padding-top:52px}body.editing .panel{outline:2px dashed color-mix(in srgb,var(--acc) 70%,transparent);outline-offset:2px}
+body.editing .tools{display:flex}body.editing main>.panel{padding-top:52px}body.editing main.free>.panel{overflow:hidden}body.editing .panel{outline:2px dashed color-mix(in srgb,var(--acc) 70%,transparent);outline-offset:2px}
 body.editing main>.panel>*:not(.tools):not(.rsz){pointer-events:none;user-select:none;opacity:.55}
 @media(min-width:760px){body.editing .rsz{display:block}}
 @media(pointer:fine){body.editing main>.panel{cursor:grab}}
@@ -279,94 +279,111 @@ $('mshuf').onclick=()=>{mShuf=!mShuf;$('mshuf').classList.toggle('active',mShuf)
 $('musiclist').onclick=e=>{const r=e.target.closest('[data-m]');if(r)mPlay(+r.dataset.m)};
 
 /* ===== helpers ===== */
-/* ===== raspored widgeta (v3): 3 veličine (⅓ ⅔ cela), prozori se lepe u mrežu, ostali se pomeraju naniže i popunjavaju prazno ===== */
+/* ===== raspored widgeta (v4)
+   Računar (≥1000 px): prozori se slobodno pomeraju mišem i nikad se ne preklapaju — ako se pusti preko drugog, ide na najbliže slobodno mesto.
+   Tri veličine: duguljasta (pretraga, sat), mala kockica, velika kockica. Telefon i tablet: uredna lista (lepljenje). ===== */
 const main=document.querySelector('main');
 [[0,'clock'],[3,'weather'],[4,'radio'],[5,'calendar'],[6,'alarm'],[7,'media']].forEach(([i,id])=>main.children[i].dataset.id=id);
 const NAMES={photos:'Foto-slajder',clock:'Sat',weather:'Vreme',radio:'Radio',calendar:'Kalendar',alarm:'Alarm',media:'Media plejer',youtube:'YouTube',links:'Brzi linkovi',search:'Pretraga',todo:'Zadaci',notes:'Beleške',timer:'Tajmer i štoperica',world:'Svetski satovi',calc:'Kalkulator',joke:'Vic dana'};
 const DEF=[...main.children].map(p=>p.dataset.id);
-const DW={clock:3,photos:2,search:1,weather:1,radio:2,calendar:1,alarm:1,media:1,youtube:1,links:2,todo:1,notes:1,timer:1,world:1,calc:1,joke:1};
-const DHIDE=['world'],ROW=8;
+/* veličine u „ćelijama“ (širina ekrana = 4 ćelije) */
+const SZ={w:{w:2,h:.75,l:'▬',t:'Duguljasta (za pretragu, sat, linkove)'},s:{w:1,h:1,l:'◻',t:'Mala kockica'},b:{w:2,h:2,l:'⬛',t:'Velika kockica'}};
+const DS={clock:'w',search:'w',links:'w',photos:'b',radio:'b',calendar:'b',youtube:'b',weather:'s',alarm:'s',media:'s',todo:'s',notes:'s',timer:'s',world:'s',calc:'s',joke:'s'};
+const DHIDE=['world'],ROW=8,GAP=18;
 const panels=()=>[...main.children].filter(p=>p.classList.contains('panel'));
-const cols=()=>parseInt(getComputedStyle(main).getPropertyValue('--cols'))||1;
-let gapPx=18;
-function defLay(order,ws,hidden,hh){const it={};(order||DEF).forEach((id,i)=>it[id]={x:0,y:i*1000,w:(ws&&ws[id])||DW[id]||1,auto:1});return{v:3,it,hidden:(hidden||DHIDE).slice(),h:hh||{},o:{}}}
-let lay=(()=>{const n=ls('atmosLayout3',null);if(n&&n.v===3)return Object.assign({it:{},hidden:[],h:{},o:{}},n);
-  const v2=ls('atmosLayout2',null);if(v2&&v2.v===2){const m={s:1,m:1,l:1,xl:2,f:3},ws={};Object.entries(v2.size||{}).forEach(([k,s])=>ws[k]=m[s]||1);return defLay(v2.order,ws,v2.hidden,v2.h)}
-  const o=ls('atmosLayout',null);if(o){const ws={};(o.wide||[]).forEach(id=>ws[id]=3);const hd=(o.hidden||[]).slice(),w=ls('atmosWorld',null);if((!w||JSON.stringify(w)===JSON.stringify(['Njujork','London','Tokio']))&&!hd.includes('world'))hd.push('world');return defLay(o.order,ws,hd)}
-  return defLay()})();
-DEF.forEach((id,i)=>{if(!lay.it[id])lay.it[id]={x:0,y:1e6+i,w:DW[id]||1,auto:1}});
-const persist=()=>sv('atmosLayout3',lay);
-/* širina i kolona za trenutni ekran (3 kolone računar, 2 tablet, 1 telefon) */
-function mw(it,C){return C===3?it.w:C===2?(it.w>=2?2:1):1}
-function mx(it,C,w){if(C===3)return Math.min(it.x,3-w);if(C===2)return w===2?0:(it.x>=1?1:0);return 0}
-function hu(p){if(p.classList.contains('off'))return 0;const hh=lay.h&&lay.h[p.dataset.id];const px=hh&&cols()>1?hh:p.getBoundingClientRect().height;return Math.max(1,Math.ceil((px+gapPx)/(ROW+gapPx)))}
-let cur={};   /* izračunate pozicije za trenutni ekran */
-/* raspoređivanje: redom odozgo, svaki prozor u svoje kolone, na najvišu slobodnu visinu */
-function compute(C,drag){const ps=panels().filter(p=>!p.classList.contains('off')),ids=ps.map(p=>p.dataset.id),H={};ps.forEach(p=>H[p.dataset.id]=hu(p));
-  const key=id=>drag&&drag.id===id?[drag.y-.5,drag.x]:(C<3&&cur[id]&&cur[id].C===C?[cur[id].y,cur[id].x]:[lay.it[id].y,lay.it[id].x]);
-  const order=!drag&&C<3&&lay.o[C]?[...lay.o[C].filter(i=>ids.includes(i)),...ids.filter(i=>!lay.o[C].includes(i))]:ids.slice().sort((a,b)=>{const A=key(a),B=key(b);return A[0]-B[0]||A[1]-B[1]});
-  const top=new Array(C).fill(0),res={};
-  order.forEach(id=>{const it=lay.it[id],w=mw(it,C);let x=drag&&drag.id===id?Math.min(drag.x,C-w):mx(it,C,w);
-    if(it.auto&&!(drag&&drag.id===id)){let by=1e9;for(let c=0;c+w<=C;c++){const yy=Math.max(...top.slice(c,c+w));if(yy<by){by=yy;x=c}}}   /* početno slaganje: kolona sa najviše mesta */const y=Math.max(...top.slice(x,x+w));res[id]={x,y,w,h:H[id],C};for(let c=x;c<x+w;c++)top[c]=y+H[id]});
-  return{res,order}}
-function paint(res){panels().forEach(p=>{const r=res[p.dataset.id];if(!r){p.style.gridColumn=p.style.gridRow='';return}p.style.gridColumn=(r.x+1)+' / span '+r.w;p.style.gridRow=(r.y+1)+' / span '+r.h})}
-function layout(anim){gapPx=parseFloat(getComputedStyle(main).rowGap)||18;const C=cols(),f=()=>{const {res}=compute(C,dr&&dr.target);cur=res;paint(res);if(C===3&&!dr)Object.entries(res).forEach(([id,r])=>{lay.it[id].y=r.y;lay.it[id].x=r.x;delete lay.it[id].auto})};anim?flip(f):f()}
-let lt=0;const ro=new ResizeObserver(()=>{if(lt)return;lt=requestAnimationFrame(()=>{lt=0;if(!dr)layout()})});
+const free=()=>innerWidth>=1000;
+const cols=()=>free()?3:innerWidth>=760?2:1;
+let gapPx=16;
+function defLay(hidden){const it={};DEF.forEach((id,i)=>it[id]={x:0,y:i,s:DS[id]||'s',auto:1});return{v:4,it,hidden:(hidden||DHIDE).slice(),o:{}}}
+let lay=(()=>{const n=ls('atmosLayout4',null);if(n&&n.v===4)return Object.assign({it:{},hidden:[],o:{}},n);
+  const old=ls('atmosLayout3',null)||ls('atmosLayout2',null)||ls('atmosLayout',null);let hd=old&&old.hidden?old.hidden.slice():DHIDE.slice();
+  if(old&&!ls('atmosLayout3',null)&&!ls('atmosLayout2',null)){const w=ls('atmosWorld',null);if((!w||JSON.stringify(w)===JSON.stringify(['Njujork','London','Tokio']))&&!hd.includes('world'))hd.push('world')}
+  return defLay(hd)})();
+DEF.forEach((id,i)=>{if(!lay.it[id])lay.it[id]={x:0,y:999+i,s:DS[id]||'s',auto:1}});
+const persist=()=>sv('atmosLayout4',lay);
+/* ---- geometrija slobodnog rasporeda ---- */
+function geo(){const s=getComputedStyle(main),pl=parseFloat(s.paddingLeft),pr=parseFloat(s.paddingRight),W=main.clientWidth-pl-pr,G=(W+GAP)/4;return{pl,W,G}}
+function rectOf(id,g,x,y){const it=lay.it[id],z=SZ[it.s]||SZ.s;return{x:x??it.x,y:y??it.y,w:z.w,h:z.h}}   /* u ćelijama */
+const EPS=GAP/2;
+function hits(a,b,G){return a.x*G<(b.x+b.w)*G-GAP+EPS-EPS&&b.x*G<(a.x+a.w)*G-GAP&&a.y*G<(b.y+b.h)*G-GAP&&b.y*G<(a.y+a.h)*G-GAP}
+function freeSpot(id,want,others,g){const r0=rectOf(id,g,want.x,want.y),mxX=4-r0.w;let best=null,bd=1e9;
+  const ok=(x,y)=>{const r={x,y,w:r0.w,h:r0.h};return!others.some(o=>hits(r,o,g.G))};
+  const cx=Math.min(Math.max(want.x,0),mxX),cy=Math.max(want.y,0);if(ok(cx,cy))return{x:cx,y:cy};
+  /* kandidati: uz ivice drugih prozora + fina mreža oko željenog mesta */
+  const xs=new Set([0,mxX,cx]),ys=new Set([0,cy]);others.forEach(o=>{xs.add(o.x+o.w);xs.add(o.x-r0.w);ys.add(o.y+o.h);ys.add(o.y-r0.h);ys.add(o.y)});
+  for(let d=-3;d<=3;d+=.125){xs.add(cx+d);ys.add(cy+d)}
+  for(const x0 of xs){const x=Math.round(x0*1000)/1000;if(x<-.001||x>mxX+.001)continue;for(const y0 of ys){const y=Math.round(y0*1000)/1000;if(y<-.001)continue;const dd=(x-cx)**2+(y-cy)**2;if(dd<bd&&ok(x,y)){bd=dd;best={x,y}}}}
+  if(!best){let y=Math.max(0,...others.map(o=>o.y+o.h));best={x:cx,y}}return best}
+/* početno slaganje: redom, prvo slobodno mesto odozgo */
+function autoPack(g){const vis=DEF.filter(id=>!lay.hidden.includes(id)),placed=vis.filter(id=>!lay.it[id].auto).map(id=>rectOf(id,g));
+  vis.filter(id=>lay.it[id].auto).forEach(id=>{const r=rectOf(id,g);let done=null;
+    for(let y=0;y<200&&!done;y+=.25)for(let x=0;x<=4-r.w&&!done;x+=1){const c={x,y,w:r.w,h:r.h};if(!placed.some(o=>hits(c,o,g.G)))done=c}
+    lay.it[id].x=done.x;lay.it[id].y=done.y;delete lay.it[id].auto;placed.push(done)})}
+/* razreši preklapanja (npr. posle promene veličine): prozori se pomeraju na najbliže slobodno mesto */
+function resolve(g,fixed){const vis=DEF.filter(id=>!lay.hidden.includes(id));const order=[...(fixed?[fixed]:[]),...vis.filter(i=>i!==fixed).sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x)];const placed=[];
+  order.forEach(id=>{const it=lay.it[id],r=rectOf(id,g);if(r.x+r.w>4)it.x=4-r.w;if(placed.some(o=>hits(rectOf(id,g),o,g.G))){const s=freeSpot(id,it,placed,g);it.x=s.x;it.y=s.y}placed.push(rectOf(id,g))})}
+function paintFree(anim){const g=geo();main.classList.add('free');autoPack(g);let maxB=0;const ps=panels(),r0=anim?new Map(ps.map(p=>[p,p.getBoundingClientRect()])):null;
+  ps.forEach(p=>{const id=p.dataset.id,it=lay.it[id],z=SZ[it.s]||SZ.s;p.style.gridColumn=p.style.gridRow='';if(p.classList.contains('off'))return;
+    if(dr&&dr.p===p)return;p.style.left=(g.pl+it.x*g.G)+'px';p.style.top=(it.y*g.G)+'px';p.style.width=(z.w*g.G-GAP)+'px';p.style.height=(z.h*g.G-GAP)+'px';maxB=Math.max(maxB,(it.y+z.h)*g.G)});
+  main.style.height=(maxB+30)+'px';
+  if(anim)ps.forEach(p=>{if(dr&&p===dr.p)return;const a=r0.get(p),b=p.getBoundingClientRect();const dx=a.left-b.left,dy=a.top-b.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;p.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:260,easing:'cubic-bezier(.2,.8,.2,1)'})})}
+/* ---- telefon / tablet: uredna lista ---- */
+function hu(p){return Math.max(1,Math.ceil((p.getBoundingClientRect().height+gapPx)/(ROW+gapPx)))}
+function flowOrder(C){const ids=panels().filter(p=>!p.classList.contains('off')).map(p=>p.dataset.id);const o=lay.o[C];
+  return o?[...o.filter(i=>ids.includes(i)),...ids.filter(i=>!o.includes(i))]:ids.sort((a,b)=>lay.it[a].y-lay.it[b].y||lay.it[a].x-lay.it[b].x)}
+function paintFlow(order,C){main.classList.remove('free');main.style.height='';const top=new Array(C).fill(0);
+  panels().forEach(p=>{p.style.left=p.style.top=p.style.width=p.style.height=''});
+  order.forEach(id=>{const p=main.querySelector(`[data-id="${id}"]`),w=C===2&&lay.it[id].s!=='s'?2:1;let x=0;if(w===1&&C===2)x=top[1]<top[0]?1:0;const y=Math.max(...top.slice(x,x+w)),hh=hu(p);
+    p.style.gridColumn=(x+1)+' / span '+w;p.style.gridRow=(y+1)+' / span '+hh;for(let c=x;c<x+w;c++)top[c]=y+hh})}
+function layout(anim){gapPx=parseFloat(getComputedStyle(main).rowGap)||16;if(free())paintFree(anim);else{const C=cols();paintFlow(flowOrder(C),C)}}
+let lt=0;const ro=new ResizeObserver(()=>{if(lt||free())return;lt=requestAnimationFrame(()=>{lt=0;if(!dr)layout()})});
 addEventListener('resize',()=>{clearTimeout(layout.t);layout.t=setTimeout(()=>{refreshTools();layout()},80)});
-const SZL={3:{1:'⅓',2:'⅔',3:'▭'},2:{1:'½',3:'▭'}},SZT={1:'Uska (⅓ širine)',2:'Široka (⅔ širine)',3:'Cela širina'};
-function refreshTools(){const C=cols();panels().forEach(p=>{const it=lay.it[p.dataset.id],t=p.querySelector('.tools');if(!t)return;
-  t.querySelectorAll('[data-w]').forEach(b=>{const w=+b.dataset.w,l=(SZL[C]||{})[w];b.style.display=l&&C>1?'':'none';b.textContent=l||'';b.classList.toggle('on',C===2?(w===1?it.w===1:it.w>=2):it.w===w)});
-  const ah=t.querySelector('[data-a=autoh]');if(ah)ah.style.display=lay.h[p.dataset.id]&&C>1?'':'none';
-  const hh=C>1&&lay.h[p.dataset.id];p.style.height=hh?hh+'px':'';p.classList.toggle('fixh',!!hh)})}
+function refreshTools(){const f=free();panels().forEach(p=>{const it=lay.it[p.dataset.id],t=p.querySelector('.tools');if(!t)return;t.querySelectorAll('[data-s]').forEach(b=>{b.style.display=f?'':'none';b.classList.toggle('on',it.s===b.dataset.s)})})}
 function applyLayout(){panels().forEach(p=>p.classList.toggle('off',lay.hidden.includes(p.dataset.id)));refreshTools();drawAdd();requestAnimationFrame(()=>layout())}
 function drawAdd(){$('addbar').innerHTML='<span class="muted">Widgeti:</span>'+DEF.filter(id=>id!=='clock').map(id=>`<button class="chip ${lay.hidden.includes(id)?'':'on'}" data-add="${id}" title="${lay.hidden.includes(id)?'Prikaži':'Sakrij'}">${lay.hidden.includes(id)?'＋':'✓'} ${NAMES[id]}</button>`).join('')+'<span class="grow"></span><button id="resetlayout2" title="Vrati podrazumevani raspored">↺ Podrazumevano</button><button class="primary" id="donelayout">✓ Gotovo</button>'}
 $('addbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='donelayout'){setEdit(false);return}
   if(b.id==='resetlayout2'){if(confirm('Vratiti podrazumevani raspored i veličine widgeta?')){lay=defLay();persist();applyLayout()}return}
-  const id=b.dataset.add;if(!id)return;const p=main.querySelector(`[data-id="${id}"]`);const on=lay.hidden.includes(id);
-  lay.hidden=on?lay.hidden.filter(x=>x!==id):[...lay.hidden,id];if(on)lay.it[id].y=-1;   /* uključen widget ide na vrh */
-  p.classList.toggle('off',!on);persist();drawAdd();layout(true);if(on)setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),250)};
+  const id=b.dataset.add;if(!id)return;const p=main.querySelector(`[data-id="${id}"]`),on=lay.hidden.includes(id);
+  lay.hidden=on?lay.hidden.filter(x=>x!==id):[...lay.hidden,id];p.classList.toggle('off',!on);
+  if(on){lay.it[id].auto=1;Object.values(lay.o).forEach(o=>{const i=o.indexOf(id);if(i>=0)o.splice(i,1)})}
+  persist();drawAdd();layout(true);if(on)setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'center'}),300)};
 panels().forEach(p=>{const id=p.dataset.id;const t=document.createElement('div');t.className='tools';
-  t.innerHTML=`<span class="tname">${NAMES[id]||''}</span><button data-a="drag" class="hdl" title="Prevuci da pomeriš">⠿</button>${[1,2,3].map(w=>`<button data-w="${w}" title="${SZT[w]}"></button>`).join('')}<button data-a="autoh" title="Automatska visina">↕</button>${id==='clock'?'':'<button data-a="hide" title="Sakrij widget">✕</button>'}`;
-  p.appendChild(t);const r=document.createElement('div');r.className='rsz';r.title='Povuci za veličinu';p.appendChild(r);
+  t.innerHTML=`<span class="tname">${NAMES[id]||''}</span><button data-a="drag" class="hdl" title="Prevuci da pomeriš">⠿</button>${Object.entries(SZ).map(([k,z])=>`<button data-s="${k}" title="${z.t}">${z.l}</button>`).join('')}${id==='clock'?'':'<button data-a="hide" title="Sakrij widget">✕</button>'}`;
+  p.appendChild(t);
   t.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const it=lay.it[id];
-    if(b.dataset.w){it.w=+b.dataset.w;if(it.x+it.w>3)it.x=3-it.w;persist();refreshTools();layout(true)}
-    if(b.dataset.a==='hide'){lay.hidden.push(id);p.classList.add('off');persist();drawAdd();layout(true)}
-    if(b.dataset.a==='autoh'){delete lay.h[id];persist();refreshTools();layout(true)}});
+    if(b.dataset.s){it.s=b.dataset.s;const g=geo();resolve(g,id);persist();refreshTools();layout(true)}
+    if(b.dataset.a==='hide'){lay.hidden.push(id);p.classList.add('off');persist();drawAdd();layout(true)}});
   ro.observe(p)});
 const ghost=document.createElement('div');ghost.id='lghost';main.appendChild(ghost);
 applyLayout();
-/* glatko pomeranje (FLIP) */
-function flip(fn){const ps=panels().filter(p=>!p.classList.contains('off')&&!(dr&&p===dr.p)),r0=new Map(ps.map(p=>[p,p.getBoundingClientRect()]));fn();
-  ps.forEach(p=>{const a=r0.get(p),b=p.getBoundingClientRect(),dx=a.left-b.left,dy=a.top-b.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;p.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:240,easing:'cubic-bezier(.2,.8,.2,1)'})})}
-/* prevlačenje: prozor prati pokazivač, isprekidani okvir pokazuje gde će se zalepiti */
+/* ---- prevlačenje ---- */
 let dr=null;
-function setEdit(on){document.body.classList.toggle('editing',on);$('editlayout').classList.toggle('active',on);$('editlayout').innerHTML=on?'✓ Gotovo':'✥ <span class="lbl">Raspored</span>';$('addbar').style.display=on?'flex':'none';if(!on)ghost.style.display='none';requestAnimationFrame(()=>layout())}
-function grid(){const s=getComputedStyle(main),pl=parseFloat(s.paddingLeft),pr=parseFloat(s.paddingRight),r=main.getBoundingClientRect(),C=cols(),cw=(main.clientWidth-pl-pr-gapPx*(C-1))/C;return{left:r.left+pl,top:r.top+parseFloat(s.paddingTop),cw,C,unit:ROW+gapPx}}
+function setEdit(on){document.body.classList.toggle('editing',on);$('editlayout').classList.toggle('active',on);$('editlayout').innerHTML=on?'✓ Gotovo':'✥ <span class="lbl">Raspored</span>';$('addbar').style.display=on?'flex':'none';ghost.style.display='none';requestAnimationFrame(()=>layout())}
 main.addEventListener('pointerdown',e=>{if(!document.body.classList.contains('editing')||e.button>0)return;const p=e.target.closest('main>.panel');if(!p)return;
-  if(e.target.closest('.rsz')){startResize(e,p);return}
   const onHdl=e.target.closest('.hdl');if(e.target.closest('.tools button')&&!onHdl)return;if(e.pointerType!=='mouse'&&!onHdl)return;
-  e.preventDefault();const r=p.getBoundingClientRect();dr={p,id:p.dataset.id,gx:e.clientX-r.left,gy:e.clientY-r.top,x0:e.clientX,y0:e.clientY,moved:false,target:null};p.setPointerCapture(e.pointerId)});
-main.addEventListener('pointermove',e=>{if(!dr)return;if(dr.rs){doResize(e);return}
-  if(!dr.moved&&Math.hypot(e.clientX-dr.x0,e.clientY-dr.y0)<5)return;
-  if(!dr.moved){dr.moved=true;dr.p.classList.add('lifting');document.body.classList.add('dragging');ghost.style.display='block'}
-  const g=grid(),c=cur[dr.id],w=c?c.w:1;
-  const tx=Math.max(0,Math.min(g.C-w,Math.round((e.clientX-dr.gx-g.left)/(g.cw+gapPx)))),ty=Math.max(0,Math.round((e.clientY-dr.gy-g.top)/g.unit));
-  if(!dr.target||dr.target.x!==tx||Math.abs(dr.target.y-ty)>=2){dr.target={id:dr.id,x:tx,y:ty};flip(()=>{const {res}=compute(g.C,dr.target);cur=res;paint(res)})}
-  const s=cur[dr.id];ghost.style.gridColumn=(s.x+1)+' / span '+s.w;ghost.style.gridRow=(s.y+1)+' / span '+s.h;
-  dr.p.style.transform='';const nr=dr.p.getBoundingClientRect();dr.p.style.transform=`translate(${e.clientX-dr.gx-nr.left}px,${e.clientY-dr.gy-nr.top}px)`;
+  e.preventDefault();const r=p.getBoundingClientRect();dr={p,id:p.dataset.id,gx:e.clientX-r.left,gy:e.clientY-r.top,x0:e.clientX,y0:e.clientY,moved:false};p.setPointerCapture(e.pointerId)});
+main.addEventListener('pointermove',e=>{if(!dr)return;if(!dr.moved&&Math.hypot(e.clientX-dr.x0,e.clientY-dr.y0)<5)return;
+  if(!dr.moved){dr.moved=true;dr.p.classList.add('lifting');document.body.classList.add('dragging')}
+  const mr=main.getBoundingClientRect();
+  if(free()){const g=geo(),it=lay.it[dr.id],z=SZ[it.s];
+    /* prozor slobodno prati miš */
+    let L=e.clientX-dr.gx-mr.left,T=e.clientY-dr.gy-mr.top;L=Math.max(g.pl,Math.min(g.pl+(4-z.w)*g.G,L));T=Math.max(0,T);dr.p.style.left=L+'px';dr.p.style.top=T+'px';
+    const want={x:(L-g.pl)/g.G,y:T/g.G},others=DEF.filter(i=>i!==dr.id&&!lay.hidden.includes(i)).map(i=>rectOf(i,g));
+    const now=performance.now();if(!dr.tc||now-dr.tc>40){dr.tc=now;dr.spot=freeSpot(dr.id,want,others,g)}
+    const s=dr.spot;ghost.style.cssText=`display:block;position:absolute;left:${g.pl+s.x*g.G}px;top:${s.y*g.G}px;width:${z.w*g.G-GAP}px;height:${z.h*g.G-GAP}px`;
+    const need=(s.y+z.h)*g.G+30;if(parseFloat(main.style.height)<need+200)main.style.height=(need+200)+'px'}
+  else{/* lista: zamena mesta sa prozorom ispod pokazivača */
+    dr.p.style.pointerEvents='none';const el=document.elementFromPoint(e.clientX,e.clientY);dr.p.style.pointerEvents='';const o=el&&el.closest('main>.panel'),now=Date.now();
+    if(o&&o!==dr.p&&o!==dr.last&&now>(dr.lock||0)){const C=cols(),ord=flowOrder(C),i=ord.indexOf(dr.id),j=ord.indexOf(o.dataset.id);ord.splice(i,1);ord.splice(j,0,dr.id);lay.o[C]=ord;
+      const ps=panels().filter(p=>!p.classList.contains('off')&&p!==dr.p),r0=new Map(ps.map(p=>[p,p.getBoundingClientRect()]));paintFlow(ord,C);
+      ps.forEach(p=>{const a=r0.get(p),b=p.getBoundingClientRect();if(Math.abs(a.top-b.top)>1||Math.abs(a.left-b.left)>1)p.animate([{transform:`translate(${a.left-b.left}px,${a.top-b.top}px)`},{transform:'none'}],{duration:220})});
+      dr.last=o;dr.lock=now+260}else if(!o)dr.last=null}
   const m=70;if(e.clientY<m)scrollBy(0,-16);else if(e.clientY>innerHeight-m)scrollBy(0,16)});
-function endDrag(){if(!dr)return;const d=dr;dr=null;ghost.style.display='none';document.body.classList.remove('dragging');
-  if(d.rs){d.p.classList.remove('resizing');persist();refreshTools();layout(true);return}
-  if(!d.moved)return;const C=cols(),{res,order}=compute(C,d.target);
-  if(C===3)Object.entries(res).forEach(([id,r])=>{lay.it[id].y=r.y;lay.it[id].x=r.x;delete lay.it[id].auto});
-  else{delete lay.it[d.id].auto;lay.o[C]=order;if(C===2){const r=res[d.id];if(lay.it[d.id].w===1)lay.it[d.id].x=r.x===0?0:2}}
-  cur=res;paint(res);const t=d.p.style.transform;d.p.style.transform='';d.p.classList.remove('lifting');if(t)d.p.animate([{transform:t},{transform:'none'}],{duration:200,easing:'ease-out'});persist()}
+function endDrag(){if(!dr)return;const d=dr;dr=null;ghost.style.display='none';document.body.classList.remove('dragging');d.p.classList.remove('lifting');if(!d.moved)return;
+  if(free()&&d.spot){const it=lay.it[d.id];it.x=d.spot.x;it.y=d.spot.y;delete it.auto;
+    const from=d.p.getBoundingClientRect();layout();const to=d.p.getBoundingClientRect();d.p.animate([{transform:`translate(${from.left-to.left}px,${from.top-to.top}px)`},{transform:'none'}],{duration:200,easing:'ease-out'})}
+  else layout();persist()}
 main.addEventListener('pointerup',endDrag);main.addEventListener('pointercancel',endDrag);
-/* veličina povlačenjem ugla: širina se lepi na ⅓ / ⅔ / celu, visina slobodno */
-function startResize(e,p){e.preventDefault();if(cols()<2)return;const r=p.getBoundingClientRect();dr={p,id:p.dataset.id,rs:true,x0:e.clientX,y0:e.clientY,w:r.width,h:r.height};p.classList.add('resizing');p.setPointerCapture(e.pointerId)}
-function doResize(e){const g=grid(),it=lay.it[dr.id],want=(dr.w+(e.clientX-dr.x0)+gapPx)/(g.cw+gapPx);let w=Math.max(1,Math.min(g.C,Math.round(want)));if(g.C===2)w=w>=2?3:1;
-  if(w!==mw(it,3)&&(g.C===3?w!==it.w:(w>=2)!==(it.w>=2))){it.w=w;if(it.x+it.w>3)it.x=3-it.w;refreshTools();layout(true)}
-  if(Math.abs(e.clientY-dr.y0)>6||dr.hset){dr.hset=true;const nh=Math.max(110,Math.round(dr.h+(e.clientY-dr.y0)));lay.h[dr.id]=nh;dr.p.style.height=nh+'px';dr.p.classList.add('fixh');layout()}}
 $('editlayout').onclick=()=>setEdit(!document.body.classList.contains('editing'));
 addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('editing'))setEdit(false)});
 /* ===== YouTube mini plejer ===== */
@@ -696,7 +713,7 @@ setInterval(()=>{if(document.visibilityState!=='visible')return;const u=ls('atmo
    Sinhronizuje se svaki zapis posebno (linkovi, zadaci, beleške, događaji, YouTube, svetski satovi, podešavanja, raspored); kod sukoba pobeđuje novija izmena. */
 const GD_CLIENT='867108184410-ctavf0871su36rju6n465rd0149ps2mu.apps.googleusercontent.com';
 const GD_SCOPE='https://www.googleapis.com/auth/drive.file',GD_NAME='Atmos Dashboard — podaci.json',GD_KEY='atmosGD';
-const GD_KEYS=['atmosLinks','atmosTodo','atmosNotes','atmosEvents','atmosYT','atmosWorld','atmosEng','atmosSet','atmosLayout3'];
+const GD_KEYS=['atmosLinks','atmosTodo','atmosNotes','atmosEvents','atmosYT','atmosWorld','atmosEng','atmosSet','atmosLayout4'];
 let gd=(()=>{try{const x=JSON.parse(localStorage.getItem(GD_KEY));if(x&&x.h)return x}catch{}return{on:false,fileId:'',h:{},mt:{},last:0,err:'',email:''}})();if(!gd.mt)gd.mt={};
 let gdTok=(()=>{try{const t=JSON.parse(sessionStorage.getItem(GD_KEY+'_t'));if(t&&t.exp>Date.now()+60000)return t}catch{}return null})();
 let gdClient=null,gdBusy=false,gdT=null;
