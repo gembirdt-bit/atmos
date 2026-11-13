@@ -189,7 +189,7 @@ Hvala!
 ## Raspored widgeta
 
 - **Računar:** ✥ Raspored → prozore slobodno pomeraš mišem gde hoćeš; nikad se ne preklapaju — ako pustiš prozor preko drugog, ide na najbliže slobodno mesto (isprekidani okvir pokazuje gde)
-- Tri veličine: **▬ duguljasta** (pretraga, sat, linkovi), **◻ mala kockica**, **⬛ velika kockica**
+- Dve veličine: **◻ normalna** i **⬛ velika** — u velikoj se uvećava i sadržaj (brojevi, tasteri, kalendar), ne samo okvir; visina prozora se sama prilagođava sadržaju, pa se ništa ne seče
 - **Telefon i tablet:** uredna lista — prozor se prevlači ručicom ⠿ i zamenjuje mesto sa drugim
 - Traka „Widgeti“ — uključi / isključi bilo koji widget; **↺ Podrazumevano** vraća početni raspored
 - Svetski satovi su podrazumevano isključeni
