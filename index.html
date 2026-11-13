@@ -68,6 +68,12 @@ body.theme-light .calcdisp{background:#e2eaf3}
 .applinks{margin-top:8px;font-size:12px;line-height:2}.applinks a.allapps{display:inline-block;margin-bottom:2px;padding:6px 16px;border:1px solid rgba(255,255,255,.35);border-radius:20px;background:rgba(255,255,255,.1);font-weight:600;font-size:13px}.applinks a.allapps:hover{background:rgba(255,255,255,.22)}.applinks a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.45);padding-bottom:1px}.applinks a:hover{border-bottom-color:#fff}
 .author{font-size:10px;margin-top:4px;opacity:.75;letter-spacing:.5px}
 footer{text-align:center;color:#c2cfde99;font-size:11px;padding:5px 20px 20px}
+#homebox{position:fixed;right:18px;bottom:18px;z-index:60;max-width:400px;width:calc(100% - 36px);background:rgba(12,20,34,.97);border:1px solid var(--acc);border-radius:18px;padding:18px;box-shadow:0 20px 60px #000a;font-size:14px;line-height:1.5;display:none}
+#homebox.open{display:block;animation:hbin .35s ease}@keyframes hbin{from{transform:translateY(20px);opacity:0}}
+#homebox h3{margin:0 0 6px;font-size:16px}#homebox ol{margin:8px 0;padding-left:20px}#homebox li{margin:3px 0}#homebox code{background:#ffffff1a;padding:1px 6px;border-radius:6px;font-size:12px;word-break:break-all}
+#homebox .hbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#homebox .hx{position:absolute;top:6px;right:10px;background:none;border:0;font-size:22px;padding:4px}
+body.theme-light #homebox{background:#f4f7fb;color:#172033}
+#syncbar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:61;background:rgba(12,20,34,.97);border:1px solid var(--acc);border-radius:14px;padding:10px 14px;display:none;gap:10px;align-items:center;font-size:13px;box-shadow:0 12px 40px #0009}
 @media(max-width:759px){.topright .lbl{display:none}}
 @media(max-width:850px){.quote{margin-left:0}.clock{align-items:flex-start;flex-direction:column}.clockright{text-align:left}.time{letter-spacing:-2px}.radio-list{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){header{padding:14px 4vw}.topright span{display:none}main{padding:0 4vw 20px}.panel{padding:16px}.radio-list{grid-template-columns:1fr}.forecast{grid-template-columns:repeat(5,minmax(0,1fr))}.day{padding:8px 2px}.day .ico{font-size:19px}}
@@ -189,6 +195,8 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="media-controls" style="margin-top:12px"><button id="jprev">⏮</button><button id="jplay">⏸ Pauza</button><button id="jnext">⏭</button><button id="jrand" title="Nasumičan vic">🎲</button><select id="jspeed" class="field"><option value="10">10 s</option><option value="20" selected>20 s</option><option value="30">30 s</option><option value="60">60 s</option></select></div>
 </section>
 </main>
+<div id="homebox" role="dialog" aria-label="Početna strana"><button class="hx" id="hb_x" aria-label="Zatvori">×</button><div id="hb_body"></div></div>
+<div id="syncbar"><span>☁️ Stigle su izmene sa drugog uređaja</span><button class="primary" onclick="location.reload()">Osveži</button></div>
 <div id="setmodal"><div class="setbox">
  <h2>⚙ PODEŠAVANJA</h2>
  <div class="setrow"><span>Režim izgleda</span><select id="s_theme" class="field"><option value="auto">Automatski (izlazak/zalazak)</option><option value="dark">Tamna</option><option value="light">Svetla</option></select></div>
@@ -205,6 +213,10 @@ body.theme-ocean{--acc:#0891b2}body.theme-forest{--acc:#25865a}body.theme-violet
  <div class="setrow"><span>Akcentna boja</span><input id="s_acc" type="color"></div>
  <div class="setrow"><span>Neprozirnost panela</span><input id="s_ga" type="range" min=".3" max=".95" step=".01"></div>
  <div class="setrow"><span>Zamućenje panela</span><input id="s_gb" type="range" min="0" max="30" step="1"></div>
+ <div class="setsec">GOOGLE DRIVE</div>
+ <div class="setrow setcol"><span id="gd_info" class="muted" style="font-size:13px">Sinhronizuj linkove, zadatke, beleške, kalendar, YouTube listu, podešavanja i raspored između računara, telefona i tableta. Aplikacija vidi samo svoj fajl na tvom Drive-u.</span><div class="btns" id="gd_btns"></div><small id="gd_status" class="muted"></small></div>
+ <div class="setsec">POČETNA STRANA</div>
+ <div class="setrow"><span>Postavi Atmos kao početnu stranu pretraživača</span><button id="homehow">Kako?</button></div>
  <div class="setsec">REZERVNA KOPIJA</div>
  <div class="setrow setcol"><span>Sačuvaj sva podešavanja u fajl ili ih vrati iz fajla</span><div class="btns"><button id="b_export">⬇ Izvezi</button><label class="filelabel">⬆ Uvezi<input id="b_import" type="file" accept=".json,application/json"></label></div><small id="b_status" class="muted"></small></div>
  <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end"><button id="s_reset">Vrati podrazumevano</button><button id="s_close" class="primary">Zatvori</button></div>
@@ -652,4 +664,94 @@ function restoreData(o){if(!o||o.app!=='atmos'||typeof o.data!=='object')throw n
 $('b_export').onclick=()=>{const b=new Blob([JSON.stringify(backupData(),null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='atmos-podesavanja-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);$('b_status').textContent='✓ Fajl je preuzet.'};
 $('b_import').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const o=JSON.parse(await f.text());if(!confirm('Uvesti podešavanja iz „'+f.name+'“? Trenutna podešavanja biće zamenjena.'))return;restoreData(o);alert('Podešavanja su uvezena. Stranica će se osvežiti.');location.reload()}catch(err){$('b_status').textContent='⚠ '+(err.message||'Neispravan fajl.')}};
 
+
+/* ===== predlog: početna strana pretraživača (stranica ne može sama da se postavi — prikazujemo uputstvo) ===== */
+const HOME_URL='https://gembirdt-bit.github.io/atmos/';
+function browserName(){const u=navigator.userAgent;if(/Edg\//.test(u))return'edge';if(/OPR\/|Opera/.test(u))return'opera';if(/SamsungBrowser/.test(u))return'samsung';if(/Firefox\//.test(u))return'firefox';if(/Chrome\//.test(u))return'chrome';if(/Safari\//.test(u))return'safari';return'other'}
+function homeSteps(){const b=browserName(),mob=/Android|iPhone|iPad/i.test(navigator.userAgent),u=`<code>${HOME_URL}</code>`;
+  const S={chrome:mob?['Dodirni meni <b>⋮</b> → <b>Podešavanja</b>','<b>Početna stranica</b> → uključi je','Izaberi <b>Unesite prilagođenu veb-adresu</b> i nalepi '+u]:['Otvori meni <b>⋮</b> → <b>Podešavanja</b> → <b>Pri pokretanju</b>','Izaberi <b>Otvori određenu stranicu ili skup stranica</b> → <b>Dodaj novu stranicu</b>','Nalepi '+u+' i sačuvaj','(Opciono) <b>Izgled</b> → <b>Prikaži dugme Početna</b> → nalepi istu adresu'],
+   edge:mob?['Meni <b>…</b> → <b>Podešavanja</b> → <b>Opšte</b> → <b>Početna stranica</b>','Izaberi <b>Određena stranica</b> i nalepi '+u]:['Meni <b>…</b> → <b>Podešavanja</b> → <b>Start, početak i nove kartice</b>','Kod <b>Kada se Edge pokrene</b> izaberi <b>Otvori ove stranice</b> → <b>Dodaj novu stranicu</b>','Nalepi '+u],
+   firefox:mob?['Meni <b>⋮</b> → <b>Podešavanja</b> → <b>Početna</b>','Izaberi prilagođenu stranicu i nalepi '+u]:['Meni <b>☰</b> → <b>Podešavanja</b> → <b>Početna</b>','Kod <b>Početna stranica i novi prozori</b> izaberi <b>Prilagođeni URL-ovi</b>','Nalepi '+u],
+   opera:['Meni → <b>Podešavanja</b> → <b>Pri pokretanju</b>','Izaberi <b>Otvori određenu stranicu ili skup stranica</b> → <b>Dodaj novu stranicu</b>','Nalepi '+u],
+   samsung:['Meni <b>☰</b> → <b>Podešavanja</b> → <b>Početna stranica</b>','Izaberi <b>Prilagođena stranica</b> i nalepi '+u],
+   safari:mob?['Na iPhone-u Safari nema početnu stranu — dodaj Atmos na <b>početni ekran</b>: dugme <b>Deli</b> → <b>Dodaj na početni ekran</b>']:['<b>Safari</b> → <b>Podešavanja</b> → <b>Opšte</b>','Kod <b>Početna stranica</b> nalepi '+u,'Kod <b>Novi prozori otvaraju se sa</b> izaberi <b>Početna stranica</b>'],
+   other:['Otvori podešavanja pretraživača i pronađi <b>Početna stranica</b> / <b>Pri pokretanju</b>','Nalepi '+u]};
+  const nm={chrome:'Chrome',edge:'Edge',firefox:'Firefox',opera:'Opera',samsung:'Samsung Internet',safari:'Safari',other:'pretraživač'}[b];
+  return`<h3>🏠 Neka Atmos bude početna strana</h3><div class="muted" style="font-size:13px">Svaki put kad otvoriš ${nm}, odmah vidiš sat, prognozu, kalendar i svoje linkove. Pretraživač ne dozvoljava da to uradimo automatski, ali traje pola minuta:</div><ol>${S[b].map(x=>`<li>${x}</li>`).join('')}</ol>
+   <div class="hbtns"><button class="primary" id="hb_copy">📋 Kopiraj adresu</button>${installEvt?'<button id="hb_inst">⬇ Instaliraj kao aplikaciju</button>':''}<button id="hb_later">Kasnije</button><button id="hb_never">Ne pitaj više</button></div>`}
+function homeOpen(){const b=$('homebox');$('hb_body').innerHTML=homeSteps();b.classList.add('open');
+  $('hb_copy').onclick=async()=>{try{await navigator.clipboard.writeText(HOME_URL);$('hb_copy').textContent='✓ Kopirano'}catch{prompt('Kopiraj adresu:',HOME_URL)}};
+  $('hb_later').onclick=()=>{const u=ls('atmosUse',{});u.next=Date.now()+3*864e5;sv('atmosUse',u);b.classList.remove('open')};
+  $('hb_never').onclick=()=>{const u=ls('atmosUse',{});u.never=1;sv('atmosUse',u);b.classList.remove('open')};
+  const ib=$('hb_inst');if(ib)ib.onclick=()=>{installEvt.prompt();installEvt=null;b.classList.remove('open')}}
+$('hb_x').onclick=()=>{const u=ls('atmosUse',{});u.next=Date.now()+3*864e5;sv('atmosUse',u);$('homebox').classList.remove('open')};
+$('homehow').onclick=()=>{$('setmodal').classList.remove('open');homeOpen()};
+/* posle ~3 minuta korišćenja (ne u instaliranoj aplikaciji i ne ako je odbijeno) */
+setInterval(()=>{if(document.visibilityState!=='visible')return;const u=ls('atmosUse',{});u.sec=(u.sec||0)+15;sv('atmosUse',u);
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(!u.never&&!standalone&&u.sec>=180&&(!u.next||Date.now()>u.next)&&!u.shownNow&&!$('setmodal').classList.contains('open')&&!document.body.classList.contains('editing')){u.next=Date.now()+3*864e5;sv('atmosUse',u);homeOpen()}},15000);
+
+/* ===== GOOGLE DRIVE SINHRONIZACIJA =====
+   Fajl „Atmos Dashboard — podaci.json“ na korisnikovom Drive-u (dozvola drive.file: aplikacija vidi samo svoje fajlove).
+   Sinhronizuje se svaki zapis posebno (linkovi, zadaci, beleške, događaji, YouTube, svetski satovi, podešavanja, raspored); kod sukoba pobeđuje novija izmena. */
+const GD_CLIENT='867108184410-ctavf0871su36rju6n465rd0149ps2mu.apps.googleusercontent.com';
+const GD_SCOPE='https://www.googleapis.com/auth/drive.file',GD_NAME='Atmos Dashboard — podaci.json',GD_KEY='atmosGD';
+const GD_KEYS=['atmosLinks','atmosTodo','atmosNotes','atmosEvents','atmosYT','atmosWorld','atmosEng','atmosSet','atmosLayout3'];
+let gd=(()=>{try{const x=JSON.parse(localStorage.getItem(GD_KEY));if(x&&x.h)return x}catch{}return{on:false,fileId:'',h:{},mt:{},last:0,err:'',email:''}})();if(!gd.mt)gd.mt={};
+let gdTok=(()=>{try{const t=JSON.parse(sessionStorage.getItem(GD_KEY+'_t'));if(t&&t.exp>Date.now()+60000)return t}catch{}return null})();
+let gdClient=null,gdBusy=false,gdT=null;
+const gdStore=()=>{try{localStorage.setItem(GD_KEY,JSON.stringify(gd))}catch{}};
+const gdValid=()=>!!(gdTok&&gdTok.exp>Date.now()+60000);
+function gdHash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)+s.length.toString(36)}
+/* lokalna vrednost zapisa (sopstvena pozadina-slika ostaje samo na uređaju) */
+function gdGet(k){const v=localStorage.getItem(k);if(v==null)return null;if(k==='atmosSet'){try{const o=JSON.parse(v);delete o.customBg;return JSON.stringify(o)}catch{return v}}return v}
+function gdPut(k,v){if(k==='atmosSet'){try{const o=JSON.parse(v),c=ls('atmosSet',{});if(c.customBg)o.customBg=c.customBg;v=JSON.stringify(o)}catch{}}if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v)}
+/* beleži kada je zapis izmenjen ovde (za rešavanje sukoba) */
+function gdWatch(){if(!gd.on)return;let ch=false;GD_KEYS.forEach(k=>{const v=gdGet(k),hh=v==null?null:gdHash(v);if(hh!==(gd.h[k]||null)&&!gd.mt[k]){gd.mt[k]=Date.now();ch=true}});if(ch){gdStore();gdSoon(4000)}}
+setInterval(gdWatch,5000);
+function gdLoadLib(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=()=>res();s.onerror=()=>rej(new Error('Google biblioteka nije učitana (internet?)'));document.head.appendChild(s)})}
+async function gdAuth(consent){await gdLoadLib();return new Promise((res,rej)=>{
+  if(!gdClient)gdClient=google.accounts.oauth2.initTokenClient({client_id:GD_CLIENT,scope:GD_SCOPE,callback:()=>{},error_callback:()=>{}});
+  gdClient.callback=r=>{if(r&&r.access_token){gdTok={t:r.access_token,exp:Date.now()+(Number(r.expires_in)||3600)*1000};try{sessionStorage.setItem(GD_KEY+'_t',JSON.stringify(gdTok))}catch{}res()}else rej(new Error((r&&r.error)||'Dozvola nije data'))};
+  gdClient.error_callback=e=>rej(new Error(e&&e.type==='popup_closed'?'Prozor za prijavu je zatvoren':'Prijava na Google nije uspela'));
+  gdClient.requestAccessToken({prompt:consent?'consent':'',hint:gd.email||undefined})})}
+async function gdApi(url,opt){const r=await fetch(url,Object.assign({},opt,{headers:Object.assign({Authorization:'Bearer '+gdTok.t},(opt&&opt.headers)||{})}));
+  if(r.status===401){gdTok=null;try{sessionStorage.removeItem(GD_KEY+'_t')}catch{}throw new Error('auth')}if(!r.ok)throw new Error('Drive greška '+r.status);return r}
+async function gdFindFile(){if(gd.fileId){try{const j=await (await gdApi('https://www.googleapis.com/drive/v3/files/'+gd.fileId+'?fields=id,trashed')).json();if(!j.trashed)return gd.fileId}catch(e){if(e.message==='auth')throw e}gd.fileId=''}
+  const q=encodeURIComponent("name='"+GD_NAME.replace(/'/g,"\\'")+"' and trashed=false");const j=await (await gdApi('https://www.googleapis.com/drive/v3/files?spaces=drive&orderBy=modifiedTime desc&fields=files(id)&q='+q)).json();gd.fileId=(j.files&&j.files[0]&&j.files[0].id)||'';return gd.fileId}
+async function gdUpload(body){const txt=JSON.stringify(body);if(gd.fileId){await gdApi('https://www.googleapis.com/upload/drive/v3/files/'+gd.fileId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:txt});return}
+  const b='atmosdash'+Date.now(),meta={name:GD_NAME,mimeType:'application/json',description:'Podaci aplikacije Atmos Dashboard. Ne menjaj ručno.'};
+  const r=await gdApi('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:'--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+txt+'\r\n--'+b+'--'});gd.fileId=(await r.json()).id}
+function gdSoon(ms){if(!gd.on)return;clearTimeout(gdT);gdT=setTimeout(()=>{if(gdValid())gdSync()},ms==null?5000:ms)}
+async function gdSync(manual){if(!gd.on||gdBusy)return;
+  if(!navigator.onLine){gd.err='Nema interneta — izmene čekaju';gdStore();gdRender();return}
+  gdBusy=true;gdRender();let got=0,sent=0;
+  try{if(!gdValid()){if(!manual){gd.err='Potrebna je potvrda — dodirni „Sinhronizuj“';return}await gdAuth(false)}
+    let R={};if(await gdFindFile()){try{R=((await (await gdApi('https://www.googleapis.com/drive/v3/files/'+gd.fileId+'?alt=media')).json()).recs)||{}}catch(e){if(e.message==='auth')throw e}}
+    const out=Object.assign({},R),now=Date.now(),first=!gd.last;
+    GD_KEYS.forEach(k=>{const v=gdGet(k),lh=v==null?null:gdHash(v),base=gd.h[k]||null,r=R[k],rv=r?r.d:undefined,rh=rv==null?null:gdHash(rv);
+      const locCh=lh!==base,remCh=r!==undefined&&rh!==base;
+      if(remCh&&(!locCh||first||(r.t||0)>=(gd.mt[k]||0))){if(rh!==lh){gdPut(k,rv);got++}gd.h[k]=rh}       /* stiglo sa drugog uređaja */
+      else if(locCh&&v!=null){out[k]={t:gd.mt[k]||now,d:v};gd.h[k]=lh;sent++}
+      else if(locCh&&v==null&&r){out[k]={t:now,d:null};gd.h[k]=null;sent++}
+      delete gd.mt[k]});
+    if(sent||!gd.fileId)await gdUpload({app:'Atmos Dashboard',v:1,t:new Date().toISOString(),recs:out});
+    gd.last=Date.now();gd.err='';if(manual)gdMsg(got?'Sinhronizovano ✔ — stiglo izmena: '+got:'Sinhronizovano ✔');
+    if(got){const playing=[...document.querySelectorAll('audio')].some(a=>!a.paused)||(typeof yt!=='undefined'&&yt&&yt.getPlayerState&&yt.getPlayerState()===1);
+      if(playing||$('setmodal').classList.contains('open')||document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))$('syncbar').style.display='flex';else setTimeout(()=>location.reload(),400)}}
+  catch(e){gd.err=e.message==='auth'?'Potrebna je potvrda — dodirni „Sinhronizuj“':String(e.message||'Greška');if(manual)gdMsg('⚠ '+gd.err)}
+  finally{gdBusy=false;gdStore();gdRender()}}
+function gdMsg(t){const s=$('gd_status');if(s)s.textContent=t}
+function gdRender(){const b=$('gd_btns'),s=$('gd_status');if(!b)return;
+  if(!gd.on){b.innerHTML='<button class="primary" id="gd_con">☁️ Poveži Google Drive</button>';s.textContent='';$('gd_con').onclick=gdConnect;return}
+  const t=gd.last?new Date(gd.last):null;b.innerHTML=`<button class="primary" id="gd_sync" ${gdBusy?'disabled':''}>${gdBusy?'⏳':'🔄'} Sinhronizuj</button><button id="gd_dis">Prekini vezu</button>`;
+  s.textContent=(gd.email?gd.email+' · ':'')+(gd.err?gd.err:t?'poslednja sinhronizacija '+t.toLocaleString('sr-RS',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}):'još nije sinhronizovano');
+  $('gd_sync').onclick=()=>gdSync(true);$('gd_dis').onclick=gdDisconnect}
+async function gdConnect(){try{await gdAuth(true);try{const u=await (await gdApi('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)')).json();gd.email=(u.user&&u.user.emailAddress)||''}catch{}
+  gd.on=true;gd.h={};gd.mt={};gd.fileId='';gd.last=0;gdStore();await gdSync(true)}catch(e){gdMsg('⚠ '+(e.message||'Povezivanje nije uspelo'))}}
+function gdDisconnect(){if(!confirm('Prekinuti sinhronizaciju sa Google Drive-om? Podaci ostaju i na uređaju i na Drive-u.'))return;try{if(gdTok&&window.google&&google.accounts)google.accounts.oauth2.revoke(gdTok.t,()=>{})}catch{}
+  gdTok=null;try{sessionStorage.removeItem(GD_KEY+'_t')}catch{}gd={on:false,fileId:'',h:{},mt:{},last:0,err:'',email:''};gdStore();gdRender()}
+gdRender();setInterval(()=>{if(gd.on&&gdValid())gdSync()},5*60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')gdSoon(1500)});addEventListener('online',()=>gdSoon(1000));
+if(gd.on&&gdValid())gdSoon(1500);
 </script></body></html>
