@@ -183,3 +183,13 @@ Aplikaciju moižete slobodno koristiti uz uslov da ostavite credits link ka auto
 Ako Vam se dopadaju moje aplikacije i želite da uplatite neki simboličan iznos za kafu ili ručak :D 
 Možete donirati na račun: 115000000006810143 Željko Ilić, Beograd. 
 Hvala!
+
+---
+
+## Raspored widgeta
+
+- Na računaru i tabletu widgeti se slažu bez praznog prostora (mreža od 12 kolona; na tabletu 2 kolone, na telefonu jedna)
+- **✥ Raspored** → prevuci karticu mišem (na telefonu ručicom ⠿) da je pomeriš
+- Veličina: dugmad **¼ ⅓ ½ ⅔ ▭** ili povlačenje ugla kartice
+- Traka „Widgeti“ — uključi / isključi bilo koji widget; **↺ Podrazumevano** vraća početni raspored
+- Svetski satovi su podrazumevano isključeni (uključuju se u traci „Widgeti“)
