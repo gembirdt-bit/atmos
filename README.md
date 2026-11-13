@@ -190,6 +190,6 @@ Hvala!
 
 - Na računaru i tabletu widgeti se slažu bez praznog prostora (mreža od 12 kolona; na tabletu 2 kolone, na telefonu jedna)
 - **✥ Raspored** → prevuci karticu mišem (na telefonu ručicom ⠿) da je pomeriš
-- Veličina: dugmad **¼ ⅓ ½ ⅔ ▭** ili povlačenje ugla kartice
+- Veličina: dugmad **¼ ⅓ ½ ⅔ ▭** ili povlačenje ugla kartice (širina i visina); **↕** vraća automatsku visinu
 - Traka „Widgeti“ — uključi / isključi bilo koji widget; **↺ Podrazumevano** vraća početni raspored
 - Svetski satovi su podrazumevano isključeni (uključuju se u traci „Widgeti“)
