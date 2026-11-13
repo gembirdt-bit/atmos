@@ -1,5 +1,5 @@
 // Atmos service worker — čuva osnovne fajlove za rad bez mreže
-const CACHE = 'atmos-v10';
+const CACHE = 'atmos-v11';
 const SHELL = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-180.png'];
 
 self.addEventListener('install', e => {
