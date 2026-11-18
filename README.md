@@ -170,7 +170,7 @@ Atmos Dashboard koristi:
 
 ## Autor
 
-**Gemb-Bit Željko Ilić**
+**zeljkoracunariborca**
 
 - GitHub: https://github.com/gembirdt-bit
 - Repozitorijum: https://github.com/gembirdt-bit/atmos
